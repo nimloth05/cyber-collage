@@ -1,5 +1,5 @@
 <template>
-  <div class="command-list"
+  <div class="command"
        v-for="action in actions"
        :key="action.id">
     {{ action.name }}
@@ -20,3 +20,10 @@ export default class ActionPanel extends Vue {
   actions!: Array<ActionInstance>;
 }
 </script>
+
+<style lang="less">
+.command {
+  margin-left: 2rem;
+}
+
+</style>

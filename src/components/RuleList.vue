@@ -5,7 +5,12 @@
       :key="rule.id"
       :rule="rule"
       :ruleIndex="index"
-      :noOfRules="rules.length"/>
+      :noOfRules="rules.length">
+      <add-command-button/>
+    </rule-panel>
+    <div>
+      <add-command-button/>
+    </div>
   </div>
 </template>
 
@@ -16,11 +21,13 @@ import {RuleInstance} from "@/model/RuleInstance";
 import {ConditionInstance} from "@/model/ConditionInstance";
 import {ActionInstance} from "@/model/ActionInstance";
 import RulePanel from "@/components/RulePanel.vue";
+import AddCommandButton from "./AddCommandButton.vue";
 
 @Options({
   name: "RuleList",
   components: {
     RulePanel,
+    AddCommandButton,
   },
 })
 export default class RuleList extends Vue {
@@ -31,7 +38,7 @@ export default class RuleList extends Vue {
         new ConditionInstance("see a dog"),
         new ConditionInstance("the dog barks"),
       ], [
-        new ActionInstance("bite"),
+        new ActionInstance("pet dog"),
       ]),
     new RuleInstance(
       "rule1",

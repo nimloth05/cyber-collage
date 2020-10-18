@@ -1,11 +1,12 @@
 <template>
   <div class="rule">
     <div class="ifStatement">
-      <span>{{ getIfLabel() }}</span>
+      <span class="ifKeyword">{{ getIfLabel() }}</span>
       <condition-list :conditions="rule.conditions"/>
     </div>
     <div>then</div>
     <action-panel :actions="rule.actions"/>
+    <slot/>
   </div>
 </template>
 
@@ -50,9 +51,13 @@ export default class Rule extends Vue {
 <style lang="less">
 .rule {
   background-color: lightgray;
-  margin: auto auto 10px;
+  margin: 0 0 10px;
   width: 50%;
   border-radius: 10px;
   padding: 1rem;
+}
+
+.ifKeyword {
+  padding-right: 1rem;
 }
 </style>
