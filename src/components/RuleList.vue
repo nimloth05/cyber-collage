@@ -6,10 +6,9 @@
       :rule="rule"
       :ruleIndex="index"
       :noOfRules="rules.length">
-      <add-command-button/>
     </rule-panel>
     <div>
-      <add-command-button/>
+      <add-command-button @click="addRule"/>
     </div>
   </div>
 </template>
@@ -40,15 +39,19 @@ export default class RuleList extends Vue {
       ], [
         new ActionInstance("pet dog"),
       ]),
-    new RuleInstance(
-      "rule1",
-      [
-        new ConditionInstance("see a frog"),
-        new ConditionInstance("the frog is red"),
-      ], [
-        new ActionInstance("move left"),
-        new ActionInstance("move right"),
-      ]),
+    // new RuleInstance(
+    //   "rule1",
+    //   [
+    //     new ConditionInstance("see a frog"),
+    //     new ConditionInstance("the frog is red"),
+    //   ], [
+    //     new ActionInstance("move left"),
+    //     new ActionInstance("move right"),
+    //   ]),
   ];
+
+  addRule() {
+    this.rules.push(new RuleInstance("rule3", [], []));
+  }
 }
 </script>

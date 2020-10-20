@@ -5,8 +5,7 @@
       <condition-list :conditions="rule.conditions"/>
     </div>
     <div>then</div>
-    <action-panel :actions="rule.actions"/>
-    <slot/>
+    <action-list :actions="rule.actions"/>
   </div>
 </template>
 
@@ -14,13 +13,13 @@
 import {Options, Vue} from "vue-class-component";
 import ConditionList from "@/components/ConditionList.vue";
 import {RuleInstance} from "@/model/RuleInstance";
-import ActionPanel from "@/components/ActionPanel.vue";
+import ActionList from "@/components/ActionList.vue";
 
 @Options({
   name: "RulePanel",
   components: {
     ConditionList,
-    ActionPanel,
+    ActionList,
   },
   props: {
     ruleIndex: Number,
