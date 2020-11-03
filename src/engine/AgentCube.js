@@ -1,9 +1,22 @@
-//***************************************************
-// A G E N T C U B E
-//***************************************************
+//* **************************************************
 
-class AgentCube {
+import {AgentCamera} from "@/engine/AgentCamera";
+import {
+  AmbientLight, BasicShadowMap,
+  BufferGeometry,
+  LineBasicMaterial, LineSegments,
+  Mesh, MeshPhongMaterial,
+  PlaneGeometry, Raycaster,
+  Scene,
+  SpotLight, Vector2,
+  Vector3,
+  WebGLRenderer,
+} from "three";
+import {foundationGridColor, foundationSurfaceColor, selectionBoxColor} from "@/engine/globals";
+import {app, SandGrain} from "@/engine/app";
+import {findObjectAgent} from "@/engine/helperfunctions";
 
+export class AgentCube {
     constructor(gallery, rows = 9, columns = 16, layers = 1, cellSize = 20.0) {
         this.gallery = gallery;
         this.rows = rows;
@@ -17,26 +30,27 @@ class AgentCube {
             for (let row = 0; row < rows; row++) {
                 this.grid[layer][row] = new Array(columns);
                 for (let column = 0; column < columns; column++) {
-                    this.grid[layer][row][column] = new Array();
+                    this.grid[layer][row][column] = [];
                 }
             }
         }
         this.agentHovered = null;
         this.agentSelected = null;
-        this.raycaster = new THREE.Raycaster();
-        this.mouseMove = new THREE.Vector2();
+        this.raycaster = new Raycaster();
+        this.mouseMove = new Vector2();
         this.mouseMove.x = null; // don't start with valid coordinate
-        this.mouseClick = new THREE.Vector2();
+        this.mouseClick = new Vector2();
         this.mouseClick.x = null; // don't start with valid coordinate
         this.initTHREE();
         this.addFoundationGrid();
         this.addFoundationSurface();
         this.addFoundationHover();
     }
+
     initTHREE() {
         //  scene
-        this.container = document.querySelector('.scene');
-        this.scene = new THREE.Scene();
+        this.container = document.querySelector(".scene");
+        this.scene = new Scene();
 
         //  camera
         const fov = 35;
@@ -46,74 +60,74 @@ class AgentCube {
 
         this.camera = new AgentCamera(fov, aspect, near, far);
         this.camera.aim(200, 400, 600, 0, 0, 0);
-        //this.camera.position.set(300, 400, 500);
+        // this.camera.position.set(300, 400, 500);
         // this.camera.lookAt(0, 0, 0);
 
-
-
         // lights
-        const ambientLight = new THREE.AmbientLight(0x404040, 2);
+        const ambientLight = new AmbientLight(0x404040, 2);
         this.scene.add(ambientLight);
 
-        const pointlLight = new THREE.SpotLight(0xffffff, 1.0);
-        pointlLight.position.set(500, 0, 800);
-        pointlLight.castShadow = true;
-        pointlLight.shadow.radius = 8;
+        const spotLight = new SpotLight(0xffffff, 1.0);
+        spotLight.position.set(500, 0, 800);
+        spotLight.castShadow = true;
+        spotLight.shadow.radius = 8;
 
-        //pointlLight.shadow.bias = -0.0001;
-        pointlLight.shadow.mapSize.width = 1024 * 8;
-        pointlLight.shadow.mapSize.height = 1024 * 8;
+        // pointLight.shadow.bias = -0.0001;
+        spotLight.shadow.mapSize.width = 1024 * 8;
+        spotLight.shadow.mapSize.height = 1024 * 8;
 
-        pointlLight.shadow.camera.near = 0.1;
-        pointlLight.shadow.camera.far = 2500;
-        this.scene.add(pointlLight);
+        spotLight.shadow.camera.near = 0.1;
+        spotLight.shadow.camera.far = 2500;
+        this.scene.add(spotLight);
 
         // renderer
-        this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        this.renderer = new WebGLRenderer({antialias: true, alpha: true});
         this.renderer.setSize(this.container.clientWidth, this.container.clientHeight);
         this.renderer.setPixelRatio(window.devicePixelRatio);
 
         // orbit controls
-        //this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
-        //this.controls.update();
+        // this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
+        // this.controls.update();
 
         // shadows
         this.renderer.shadowMap.enabled = true;
-        this.renderer.shadowMap.type = THREE.BasicShadowMap;
+        this.renderer.shadowMap.type = BasicShadowMap;
 
         this.container.appendChild(this.renderer.domElement);
-
     }
+
     broadcast(methodName) {
         this.grid.forEach(
             layer => layer.forEach(
                 row => row.forEach(
                     column => column.forEach(
-                        agent => agent[methodName]()
-                    )
-                )
-            )
-        )
+                        agent => agent[methodName](),
+                    ),
+                ),
+            ),
+        );
     }
+
     addFoundationGrid() {
-        let points = [];
+        const points = [];
         /// ignore layers for the moment
         for (let row = 0; row < this.rows + 1; row++) {
-            points.push(new THREE.Vector3(0.0, row * this.cellSize, 0.0));
-            points.push(new THREE.Vector3(this.columns * this.cellSize, row * this.cellSize, 0.0));
+            points.push(new Vector3(0.0, row * this.cellSize, 0.0));
+            points.push(new Vector3(this.columns * this.cellSize, row * this.cellSize, 0.0));
         }
         for (let column = 0; column < this.columns + 1; column++) {
-            points.push(new THREE.Vector3(column * this.cellSize, 0.0, 0.0));
-            points.push(new THREE.Vector3(column * this.cellSize, this.rows * this.cellSize, 0.0));
+            points.push(new Vector3(column * this.cellSize, 0.0, 0.0));
+            points.push(new Vector3(column * this.cellSize, this.rows * this.cellSize, 0.0));
         }
-        const material = new THREE.LineBasicMaterial({ color: foundationGridColor });
-        const geometry = new THREE.BufferGeometry().setFromPoints(points);
-        const foundationGrid = new THREE.LineSegments(geometry, material);
+        const material = new LineBasicMaterial({color: foundationGridColor});
+        const geometry = new BufferGeometry().setFromPoints(points);
+        const foundationGrid = new LineSegments(geometry, material);
         this.scene.add(foundationGrid);
     }
+
     addFoundationSurface() {
-        let plane = new THREE.Mesh(new THREE.PlaneGeometry(this.columns * this.cellSize, this.rows * this.cellSize),
-            new THREE.MeshPhongMaterial({ color: foundationSurfaceColor }));
+        const plane = new Mesh(new PlaneGeometry(this.columns * this.cellSize, this.rows * this.cellSize),
+            new MeshPhongMaterial({color: foundationSurfaceColor}));
         plane.position.x = 0.5 * this.columns * this.cellSize;
         plane.position.y = 0.5 * this.rows * this.cellSize;
         plane.position.z = -3.0;
@@ -121,6 +135,7 @@ class AgentCube {
         plane.receiveShadow = true;
         this.scene.add(plane);
     }
+
     /*    addFoundationSurface() {
             const z = -3.0;
             const x1 = 0.0;
@@ -149,52 +164,55 @@ class AgentCube {
         } */
     addFoundationHover() {
         const z = 4;
-        let points = []; // square with a long vertical antenna 
-        points.push(new THREE.Vector3(0.0, 0.0, z));
-        points.push(new THREE.Vector3(this.cellSize, 0.0, z));
+        const points = []; // square with a long vertical antenna
+        points.push(new Vector3(0.0, 0.0, z));
+        points.push(new Vector3(this.cellSize, 0.0, z));
 
-        points.push(new THREE.Vector3(this.cellSize, 0.0, z));
-        points.push(new THREE.Vector3(this.cellSize, this.cellSize, z));
+        points.push(new Vector3(this.cellSize, 0.0, z));
+        points.push(new Vector3(this.cellSize, this.cellSize, z));
 
-        points.push(new THREE.Vector3(this.cellSize, this.cellSize, z));
-        points.push(new THREE.Vector3(0.0, this.cellSize, z));
+        points.push(new Vector3(this.cellSize, this.cellSize, z));
+        points.push(new Vector3(0.0, this.cellSize, z));
 
-        points.push(new THREE.Vector3(0.0, this.cellSize, z));
-        points.push(new THREE.Vector3(0.0, 0.0, z));
+        points.push(new Vector3(0.0, this.cellSize, z));
+        points.push(new Vector3(0.0, 0.0, z));
 
-        points.push(new THREE.Vector3(0.5 * this.cellSize, 0.5 * this.cellSize, z));
-        points.push(new THREE.Vector3(0.5 * this.cellSize, 0.5 * this.cellSize, 2 * this.cellSize));
+        points.push(new Vector3(0.5 * this.cellSize, 0.5 * this.cellSize, z));
+        points.push(new Vector3(0.5 * this.cellSize, 0.5 * this.cellSize, 2 * this.cellSize));
 
-        const material = new THREE.LineBasicMaterial({ color: selectionBoxColor });
-        const geometry = new THREE.BufferGeometry().setFromPoints(points);
-        this.foundationHoverShape = new THREE.LineSegments(geometry, material);
+        const material = new LineBasicMaterial({color: selectionBoxColor});
+        const geometry = new BufferGeometry().setFromPoints(points);
+        this.foundationHoverShape = new LineSegments(geometry, material);
         this.scene.add(this.foundationHoverShape);
     }
+
     step() {
         this.broadcast("step");
     }
+
     draw() {
         // no actual drawing happening here. Shapes are in the scene graph
         this.broadcast("draw");
     }
+
     clickAt(row, column, layer = 0) {
         this.pushAgent(new SandGrain("cobble_wall"), row, column, layer);
     }
+
     hoverAt(row, column, layer = 0) {
         this.foundationHoverShape.position.x = column * this.cellSize;
         this.foundationHoverShape.position.y = row * this.cellSize;
     }
+
     pushAgent(agent, row, column, layer = 0) {
-        let agents = this.grid[layer][row][column];
-        let agentAtTop = agents[agents.length - 1]
+        const agents = this.grid[layer][row][column];
+        const agentAtTop = agents[agents.length - 1];
 
         // adjust geometry
         agent.x = column * this.cellSize + 0.5 * this.cellSize;
-        agent.y = row * this.cellSize + 0.5 * this.cellSize;;
-        if (agentAtTop == undefined)
-            agent.z = layer * this.cellSize
-        else
-            agent.z = agentAtTop.z + agentAtTop.depth
+        agent.y = row * this.cellSize + 0.5 * this.cellSize;
+
+        if (agentAtTop == null) { agent.z = layer * this.cellSize; } else { agent.z = agentAtTop.z + agentAtTop.depth; }
 
         // adjust topology
         agent.row = row;
@@ -205,6 +223,7 @@ class AgentCube {
         // update stack
         agents.push(agent);
     }
+
     processMouseHover() {
         if (this.mouseMove.x !== null) {
             this.raycaster.setFromCamera(this.mouseMove, this.camera);
@@ -231,6 +250,7 @@ class AgentCube {
             this.mouseMove.x = null;
         }
     }
+
     processMouseClick() {
         if (this.mouseClick.x != null) {
             this.raycaster.setFromCamera(this.mouseClick, this.camera);
@@ -257,11 +277,13 @@ class AgentCube {
             this.mouseClick.x = null;
         }
     }
+
     render() {
         this.processMouseHover();
         this.processMouseClick();
         this.renderer.render(this.scene, this.camera);
     }
+
     animate() {
         requestAnimationFrame(app.agentCube.animate);
         this.renderer.render(this.scene, this.camera);

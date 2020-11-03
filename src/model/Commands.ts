@@ -12,8 +12,8 @@ const seeCondition: CommandDeclaration = {
 }
 
 const moveAction: CommandDeclaration = {
-  type: CommandType.ACTION,
   name: "move",
+  type: CommandType.ACTION,
   icon: "move.png",
   parameters: {},
   explanation: "",
