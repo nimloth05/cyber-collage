@@ -28,7 +28,7 @@ registerMouseListener(div, "mousemove", (x, y) => {
   app.agentCube.mouseMove.y = y;
 });
 
-registerMouseListener(div, "click", (x, y, event) => {
+registerMouseListener(div, "click", (x, y) => {
   app.agentCube.mouseClick.x = x;
   app.agentCube.mouseClick.y = y;
 });
