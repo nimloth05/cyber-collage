@@ -42,8 +42,8 @@ function registerMouseListener(target, eventName, listener) {
   const offset = getClientOffset(target, document.body);
   function onMouseMove(event) {
     console.log("offset", document.scrollingElement.scrollTop);
-    const x = ((event.clientX - offset.left + document.scrollingElement.scrollLeft) / (target.clientWidth));
-    const y = -((event.clientY - offset.top + document.scrollingElement.scrollTop) / (target.clientHeight));
+    const x = event.offsetX / event.target.width * window.devicePixelRatio;
+    const y = -(event.offsetY / event.target.height * window.devicePixelRatio);
 
     listener(x, y, event);
   }
