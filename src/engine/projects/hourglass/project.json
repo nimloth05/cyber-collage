@@ -1,0 +1,5 @@
+{
+    "name": "hourglass",
+    "agents": ["sandcorn"],
+    "worlds": ["level1"]
+}

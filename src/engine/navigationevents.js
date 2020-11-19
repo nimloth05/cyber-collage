@@ -43,6 +43,8 @@ function onMouseWheel(event) {
     // app.agentCube.camera.position.x += event.deltaX * app.agentCube.camera.position.z * cameraIncrement;
     // app.agentCube.controls.update();
     // console.log(app.agentCube.camera.position.z);
+  } else if (event.metaKey) {
+    app.agentCube.camera.trackSpinn(event.deltaX, event.deltaY);
   } else {
     app.agentCube.camera.trackPan(event.deltaX, event.deltaY);
     // make x/y sensitity proportional to camera distance, e.g., if you are close only small increments
@@ -54,4 +56,4 @@ function onMouseWheel(event) {
   }
 }
 
-window.addEventListener("wheel", onMouseWheel, {passive: false, capture: true});
+div.addEventListener("wheel", onMouseWheel, {passive: false, capture: true});

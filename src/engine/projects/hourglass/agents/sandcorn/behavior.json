@@ -1,0 +1,224 @@
+[
+    "behavior",
+    {
+        "methods": [
+            [
+                "method",
+                {
+                    "name": "whileRunning",
+                    "rules": [
+                        [
+                            "rule",
+                            {
+                                "conditions": [
+                                    [
+                                        "see",
+                                        {
+                                            "direction": [
+                                                0,
+                                                1
+                                            ],
+                                            "shape": "dog"
+                                        }
+                                    ],
+                                    [
+                                        "see",
+                                        {
+                                            "direction": [
+                                                0,
+                                                -1
+                                            ],
+                                            "shape": "cat"
+                                        }
+                                    ]
+                                ],
+                                "actions": [
+                                    [
+                                        "move",
+                                        {
+                                            "direction": [
+                                                0,
+                                                1
+                                            ]
+                                        }
+                                    ],
+                                    [
+                                        "playSound",
+                                        {
+                                            "sound": "boing"
+                                        }
+                                    ]
+                                ]
+                            }
+                        ],
+                        [
+                            "rule",
+                            {
+                                "conditions": [
+                                    [
+                                        "see",
+                                        {
+                                            "direction": [
+                                                0,
+                                                1
+                                            ],
+                                            "shape": "dog"
+                                        }
+                                    ],
+                                    [
+                                        "see",
+                                        {
+                                            "direction": [
+                                                0,
+                                                -1
+                                            ],
+                                            "shape": "cat"
+                                        }
+                                    ]
+                                ],
+                                "actions": [
+                                    [
+                                        "move",
+                                        {
+                                            "direction": [
+                                                0,
+                                                1
+                                            ]
+                                        }
+                                    ],
+                                    [
+                                        "playSound",
+                                        {
+                                            "sound": "boing"
+                                        }
+                                    ]
+                                ]
+                            }
+                        ]
+                    ]
+                }
+            ],
+            [
+                "method",
+                {
+                    "name": "mouseClick",
+                    "rules": [
+                        [
+                            "rule",
+                            {
+                                "conditions": [
+                                    [
+                                        "see",
+                                        {
+                                            "direction": [
+                                                0,
+                                                1
+                                            ],
+                                            "shape": "dog"
+                                        }
+                                    ],
+                                    [
+                                        "see",
+                                        {
+                                            "direction": [
+                                                0,
+                                                -1
+                                            ],
+                                            "shape": "cat"
+                                        }
+                                    ]
+                                ],
+                                "actions": [
+                                    [
+                                        "move",
+                                        {
+                                            "direction": [
+                                                0,
+                                                1
+                                            ]
+                                        }
+                                    ],
+                                    [
+                                        "playSound",
+                                        {
+                                            "sound": "boing"
+                                        }
+                                    ]
+                                ]
+                            }
+                        ],
+                        [
+                            "rule",
+                            {
+                                "conditions": [
+                                    [
+                                        "see",
+                                        {
+                                            "direction": [
+                                                0,
+                                                1
+                                            ],
+                                            "shape": "dog"
+                                        }
+                                    ],
+                                    [
+                                        "see",
+                                        {
+                                            "direction": [
+                                                0,
+                                                -1
+                                            ],
+                                            "shape": "cat"
+                                        }
+                                    ]
+                                ],
+                                "actions": [
+                                    [
+                                        "move",
+                                        {
+                                            "direction": [
+                                                0,
+                                                1
+                                            ]
+                                        }
+                                    ],
+                                    [
+                                        "playSound",
+                                        {
+                                            "sound": "boing"
+                                        }
+                                    ]
+                                ]
+                            }
+                        ],
+                        [
+                            "rule",
+                            {
+                                "conditions": [
+                                    [
+                                        "see",
+                                        {
+                                            "direction": [
+                                                0,
+                                                1
+                                            ],
+                                            "shape": "dog"
+                                        }
+                                    ]
+                                ],
+                                "actions": [
+                                    [
+                                        "playSound",
+                                        {
+                                            "sound": "boing"
+                                        }
+                                    ]
+                                ]
+                            }
+                        ]
+                    ]
+                }
+            ]
+        ]
+    }
+]

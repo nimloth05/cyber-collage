@@ -420,7 +420,7 @@ console.log(seeInstruction);
 console.log(Instruction.deserialize('["move", {"direction": [0, 1]}]'));
 
 console.time("deserialize")
-const repeatInstruction = Instruction.deserialize('["repeat", {"times": 10, "actions": [["move", {"direction": [0, 1]}], ["move", {"direction": [-1, 1]}]]}]');
+const repeatInstruction = Instruction.deserialize(`["repeat", {"times": 10, "actions": [["move", {"direction": [0, 1]}], ["move", {"direction": [-1, 1]}]]}]`);
 console.timeEnd("deserialize")
 
 console.log(repeatInstruction);
