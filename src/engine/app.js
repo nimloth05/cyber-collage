@@ -42,6 +42,8 @@ export class SandGrain extends Agent {
 
 export const app = {name: "Cyber Collage"};
 
+window.app = app; // need to be able to tinker with this
+
 export const shapeNames = ["Sheep", "Rabbit", "Pig", "Penguin", "Panda", "Monkey", "Ostrich", "Lion", "Hippo", "Giraffe", "Elephant", "Dog", "Frog", "Deer", "Cat", "Chicken", "Crocodile", "Cow", "Rooster", "Bear", "cobble_wall"];
 
 app.gallery = new Gallery(shapeNames);
