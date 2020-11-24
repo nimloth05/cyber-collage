@@ -43,7 +43,7 @@ function onMouseWheel(event) {
     // app.agentCube.camera.position.x += event.deltaX * app.agentCube.camera.position.z * cameraIncrement;
     // app.agentCube.controls.update();
     // console.log(app.agentCube.camera.position.z);
-  } else if (event.metaKey) {
+  } else if (event.altKey) {
     app.agentCube.camera.trackSpinn(event.deltaX, event.deltaY);
   } else {
     app.agentCube.camera.trackPan(event.deltaX, event.deltaY);
