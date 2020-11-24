@@ -26,16 +26,9 @@ export function rotateZ(x, y, z, angle) {
   return new Vector3(x * cos - y * sin, x * sin + y * cos, z);
 }
 
-function polarToCarthesian(radius, azimuth, zenith) {
-  return new Vector3(
-    radius * Math.sin(azimuth) * Math.cos(zenith),
-    radius * Math.sin(zenith),
-    radius * Math.cos(azimuth) * Math.cos(zenith));
-}
-
-//* *********************************
+// **********************************
 // AgentCamera
-//* *********************************
+// **********************************
 
 export class AgentCamera extends PerspectiveCamera {
   aim(x, y, z, centerX, centerY, centerZ) {
@@ -74,11 +67,6 @@ export class AgentCamera extends PerspectiveCamera {
 
     return Math.acos(dz / Math.sqrt(dx * dx + dy * dy + dz * dz));
   }
-  /*
-  lookingAt(distance = 1) {
-    /// does not return the proper LookAt point one would expept from GLULookAt kinds of functions
-    return new Vector3(0, 0, -distance).applyQuaternion(this.quaternion).add(this.position);
-  }  */
 
   // Tracking Methods
   trackPan(trackingX, trackingY, gain = 0.2) {
@@ -87,18 +75,11 @@ export class AgentCamera extends PerspectiveCamera {
     const dz = this.position.z - this.centerZ;
     const sina = Math.sin(this.azimuth);
     const cosa = Math.cos(this.azimuth);
-    const sinz = Math.sin(this.zenith);
-    const cosz = Math.cos(this.zenith);
     const mx = trackingX * gain;
     const my = trackingY * gain;
-    // rotate by azimuth, factor vertical mouse input by cos of zenith: look from top=max, look from side=min
-    /* const dex = mx * cosa - my * sina * cosz;
-    const dey = mx * sina + my * cosa * cosz;
-    const dez = my * sinz;
-    */
-   const dex = -mx * sina + my * cosa;
-   const dey = mx * cosa + my * sina;
-   const dez = 0; // my * sinz;
+    const dex = -mx * sina + my * cosa;
+    const dey = mx * cosa + my * sina;
+    const dez = 0;
 
     this.aim(this.centerX + dx + dex, this.centerY + dy + dey, this.centerZ + dz + dez, this.centerX + dex, this.centerY + dey, this.centerZ + dez);
   }
@@ -129,28 +110,13 @@ export class AgentCamera extends PerspectiveCamera {
     let newZenith = this.zenith + trackingY * gain;
     const zenitMargin = 0.001;
     newZenith = Math.min(Math.max(zenitMargin, newZenith), Math.PI / 2 - zenitMargin);
-    // const newPosition = polarToCarthesian(radius, newAzimuth, newZenith);
-    if (this.az === undefined) this.az = 0.0;
-    if (this.ze === undefined) this.ze = Math.PI / 2;
-    this.az += gain * trackingX;
-    this.ze += gain * trackingY;
-    this.ze = Math.min(Math.max(0, this.ze), Math.PI / 2 - zenitMargin);
-
-    // console.log("az:", this.az / Math.PI * 180, "ze: ", this.ze / Math.PI * 180);
-
-    // const newPosition = polarToCarthesian(radius, this.az, this.ze);
-
     this.up = new Vector3(Math.cos(newAzimuth + Math.PI / 1), Math.sin(newAzimuth + Math.PI / 1), 0);
-
-    // const newPosition = new Vector3(radius * Math.sin(this.az) * Math.cos(this.ze), radius * Math.cos(this.az) * Math.cos(this.ze), 400);
     const newPosition = new Vector3(
       radius * Math.sin(newZenith) * Math.cos(newAzimuth),
       radius * Math.sin(newZenith) * Math.sin(newAzimuth),
       radius * Math.cos(newZenith)
     );
-
     this.aim(this.centerX + newPosition.x, this.centerY + newPosition.y, this.centerZ + newPosition.z, this.centerX, this.centerY, this.centerZ);
-    // console.log("dx: ", dx, "dy: ", dy, "dz: ", dz);
     console.log("azimut:", this.azimuth / Math.PI * 180, "zenith: ", this.zenith / Math.PI * 180);
   }
 }
