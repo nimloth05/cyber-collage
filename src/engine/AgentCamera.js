@@ -103,16 +103,21 @@ export class AgentCamera extends PerspectiveCamera {
     this.aim(this.centerX + dx + dex, this.centerY + dy + dey, this.centerZ + dz + dez, this.centerX + dex, this.centerY + dey, this.centerZ + dez);
   }
 
-  trackZoom(trackingX, trackingY, gain = 0.00001) {
-    const dx = this.position.x - this.centerX;
-    const dy = this.position.y - this.centerY;
-    const dz = this.position.z - this.centerZ;
+  trackZoom(trackingX, trackingY, gain = 0.0004) {
+    const maxRadius = 5000;
+    let dx = this.position.x - this.centerX;
+    let dy = this.position.y - this.centerY;
+    let dz = this.position.z - this.centerZ;
     const radius = Math.sqrt(dx * dx + dy * dy + dz * dz);
-    const delta = -trackingY * gain;
-    // consider using the log of the distance
-    this.position.x += dx * radius * delta;
-    this.position.y += dy * radius * delta;
-    this.position.z += dz * radius * delta;
+    const delta = -trackingY * gain * Math.log(radius);
+    dx += dx * delta;
+    dy += dy * delta;
+    dz += dz * delta;
+    const radius2 = Math.sqrt(dx * dx + dy * dy + dz * dz);
+    if (radius2 > maxRadius) return;
+    this.position.x += dx * delta;
+    this.position.y += dy * delta;
+    this.position.z += dz * delta;
   }
 
   trackSpinn(trackingX, trackingY, gain = 0.001) {
