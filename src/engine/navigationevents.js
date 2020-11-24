@@ -34,25 +34,13 @@ registerMouseListener(div, "click", (x, y) => {
 });
 
 function onMouseWheel(event) {
-  const cameraIncrement = 0.001;
-  const scrollToZoomRatio = 0.5;
   event.preventDefault();
   if (event.shiftKey) {
     app.agentCube.camera.trackZoom(event.deltaX, event.deltaY);
-    // app.agentCube.camera.position.z += event.deltaY * scrollToZoomRatio;
-    // app.agentCube.camera.position.x += event.deltaX * app.agentCube.camera.position.z * cameraIncrement;
-    // app.agentCube.controls.update();
-    // console.log(app.agentCube.camera.position.z);
   } else if (event.altKey) {
     app.agentCube.camera.trackSpinn(event.deltaX, event.deltaY);
   } else {
     app.agentCube.camera.trackPan(event.deltaX, event.deltaY);
-    // make x/y sensitity proportional to camera distance, e.g., if you are close only small increments
-    // app.agentCube.camera.position.x += event.deltaX * app.agentCube.camera.position.z * cameraIncrement;
-    // app.agentCube.camera.position.y -= event.deltaY * app.agentCube.camera.position.z * cameraIncrement;
-    // app.agentCube.controls.update();
-    // prevent scrolling beyond a min/max value
-    // camera.position.clampScalar( 0, 10 );
   }
 }
 
