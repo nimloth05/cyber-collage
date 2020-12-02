@@ -117,6 +117,6 @@ export class AgentCamera extends PerspectiveCamera {
       radius * Math.cos(newZenith)
     );
     this.aim(this.centerX + newPosition.x, this.centerY + newPosition.y, this.centerZ + newPosition.z, this.centerX, this.centerY, this.centerZ);
-    console.log("azimut:", this.azimuth / Math.PI * 180, "zenith: ", this.zenith / Math.PI * 180);
+    // console.log("azimut:", this.azimuth / Math.PI * 180, "zenith: ", this.zenith / Math.PI * 180);
   }
 }
