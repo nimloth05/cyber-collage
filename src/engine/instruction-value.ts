@@ -1,4 +1,3 @@
-// FIXME: Think about renaming: Why editor? This is not a UI control
 export class InstructionValue {
   private _value!: any;
 
