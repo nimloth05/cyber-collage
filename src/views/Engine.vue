@@ -6,8 +6,8 @@
 export default {
   mounted() {
     this.$nextTick(async () => {
-      await import("../engine/app");
-      await import("../engine/navigationevents");
+      await import("../engine/app.ts");
+      await import("../engine/navigationevents.ts");
     });
   },
 };

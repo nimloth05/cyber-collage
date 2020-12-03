@@ -1,6 +1,6 @@
-import {CommandDeclaration, CommandType} from "@/model/CommandDeclaration";
+import {InstructionDeclaration, CommandType} from "@/model/InstructionDeclaration";
 
-const seeCondition: CommandDeclaration = {
+const seeCondition: InstructionDeclaration = {
   name: "see",
   type: CommandType.CONDITION,
   icon: "see.png",
@@ -11,7 +11,7 @@ const seeCondition: CommandDeclaration = {
   },
 }
 
-const moveAction: CommandDeclaration = {
+const moveAction: InstructionDeclaration = {
   name: "move",
   type: CommandType.ACTION,
   icon: "move.png",
