@@ -1,5 +1,6 @@
 <template>
-  <div class="scene"/>
+  <button onclick="askOrientationPermission">enable tilt sensor</button>
+  <div class="scene" />
 </template>
 
 <script type="ts">
@@ -12,10 +13,30 @@ export default {
   },
 };
 
+async function promptUserforOrientationPermission() {
+  if (
+    DeviceOrientationEvent &&
+    typeof DeviceOrientationEvent.requestPermission === "function"
+  ) {
+    const permissionState = await DeviceOrientationEvent.requestPermission();
+    if (permissionState === "granted") {
+      // Permission granted
+      return true;
+    } else {
+      // Permission denied
+      return false;
+    }
+  }
+}
+
+function askOrientationPermission() {
+  promptUserforOrientationPermission().then((enabled) => console.log("orientation is", enabled));
+}
 </script>
 
 <style>
-.scene, canvas {
+.scene,
+canvas {
   position: absolute;
   background-color: gray;
   width: 100%;
