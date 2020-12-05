@@ -20,11 +20,12 @@ export class Agent {
   isHovered = false;
   rotationSpeed: Vector3 = new Vector3();
   owner: AgentCube;
-  constructor(shape: Shape, owner: AgentCube, row = 0, column = 0, layer = 0) {
-    this.row = row;
-    this.column = column;
-    this.layer = layer;
-    this.shape = shape;
+
+  constructor(shapeName: string, owner: AgentCube) {
+    this.row = 0;
+    this.column = 0;
+    this.layer = 0;
+    this.shape = app.gallery!.createShapeForAgent(shapeName)!;
 
     // define shape as mesh and add clone of mesh to scene
     // NEED to check if this clone copies the geometry which is SHOULD NOT

@@ -18,7 +18,7 @@ export class Gallery {
     this.shapes = shapes;
   }
 
-  findShape(shapeName: string): Shape | undefined {
+  private findShape(shapeName: string): Shape | undefined {
     const shape = this.shapes[shapeName.toLocaleLowerCase()];
     if (shape == null) {
       console.error(`cannot find shape "${shapeName}"`);

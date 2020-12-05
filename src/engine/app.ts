@@ -32,11 +32,11 @@ function animate() {
 
 // add agents
 
-  const r1 = new ChickenAgent(app.gallery.createShapeForAgent("Giraffe"), app.agentCube);
-  const r2 = new ChickenAgent(app.gallery.createShapeForAgent("Giraffe"), app.agentCube);
-  const r3 = new ChickenAgent(app.gallery.createShapeForAgent("Dog"), app.agentCube);
-  const r4 = new ChickenAgent(app.gallery.createShapeForAgent("Rooster"), app.agentCube);
-  const c1 = new ChickenAgent(app.gallery.createShapeForAgent("Elephant"), app.agentCube);
+  const r1 = new ChickenAgent("Giraffe", app.agentCube);
+  const r2 = new ChickenAgent("Giraffe", app.agentCube);
+  const r3 = new ChickenAgent("Dog", app.agentCube);
+  const r4 = new ChickenAgent("Rooster", app.agentCube);
+  const c1 = new ChickenAgent("Elephant", app.agentCube);
 
   app.agentCube.pushAgent(r1, 0, 0);
   app.agentCube.pushAgent(c1, 0, 0);
@@ -45,11 +45,11 @@ function animate() {
   app.agentCube.pushAgent(r4, 5, 5);
 
   for (let i = 0; i < 0; i++) {
-    app.agentCube.pushAgent(new ChickenAgent(app.gallery.createShapeForAgent("Dog"), app.agentCube), 0, 0);
+    app.agentCube.pushAgent(new ChickenAgent("Dog", app.agentCube), 0, 0);
   }
 
   for (let i = 0; i < 0; i++) {
-    app.agentCube.pushAgent(new ChickenAgent(app.gallery.createShapeForAgent("Rabbit"), app.agentCube), 0, 0);
+    app.agentCube.pushAgent(new ChickenAgent("Rabbit", app.agentCube), 0, 0);
   }
 
 // console.log(app.agentCube);
@@ -61,7 +61,7 @@ function animate() {
 //        app.agentCube.pushAgent(new ChickenAgent(), row, column);
 
   for (let i = 0; i < 50; i++) {
-    const agent = new ChickenAgent(app.gallery.createShapeForAgent(oneOf(shapeNames)), app.agentCube);
+    const agent = new ChickenAgent(oneOf(shapeNames), app.agentCube);
     app.agentCube.pushAgent(
       agent,
       Math.floor(Math.random() * app.agentCube.rows),

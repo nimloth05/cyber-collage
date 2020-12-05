@@ -224,7 +224,7 @@ export class AgentCube {
   }
 
   clickAt(row: number, column: number, layer = 0) {
-    this.pushAgent(new SandGrain(app.gallery!.createShapeForAgent("cobble_wall"), app.agentCube), row, column, layer);
+    this.pushAgent(new SandGrain("cobble_wall", app.agentCube), row, column, layer);
   }
 
   hoverAt(row: number, column: number, layer = 0) {
@@ -237,6 +237,7 @@ export class AgentCube {
     const agentAtTop = agents[agents.length - 1];
 
     // adjust geometry
+    // FIXME: If agent would be aware of the cell size it could calculate the correct coordinates by itself
     agent.x = column * this.cellSize + 0.5 * this.cellSize;
     agent.y = row * this.cellSize + 0.5 * this.cellSize;
 

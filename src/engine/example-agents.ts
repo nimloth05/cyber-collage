@@ -1,12 +1,6 @@
 import {Agent} from "@/engine/Agent";
-import {Shape} from "@/engine/Shape";
-import {AgentCube} from "@/engine/AgentCube";
 
 export class ChickenAgent extends Agent {
-  constructor(shape: Shape, owner: AgentCube, row = 0, column = 0, layer = 0) {
-    super(shape, owner, row, column, layer);
-  }
-
   step() {
     super.step(); /*
         if (this.percentChance(25))
@@ -21,10 +15,6 @@ export class ChickenAgent extends Agent {
 }
 
 export class SandGrain extends Agent {
-  constructor(shape: Shape, owner: AgentCube, row = 0, column = 0, layer = 0) {
-    super(shape, owner, row, column, layer);
-  }
-
   step() {
     // super.step();
     if (this.empty(-1, 0)) {
