@@ -21,9 +21,6 @@ async function promptUserforOrientationPermission() {
 // Mouse, Scroll
 //* **************************************************
 
-// FIXME: Redundant to initializer code
-const div = document.querySelector(".scene")!;
-
 /**
  * Mouse listener which calculates device normalized coordinates [-1, +1]
  * @param target
@@ -44,16 +41,6 @@ function registerMouseListener(target: Element, eventName: "mousemove" | "click"
   }, false);
 }
 
-registerMouseListener(div, "mousemove", (x, y) => {
-  app.agentCube.mouseMove.x = x;
-  app.agentCube.mouseMove.y = y;
-});
-
-registerMouseListener(div, "click", (x, y) => {
-  app.agentCube.mouseClick.x = x;
-  app.agentCube.mouseClick.y = y;
-});
-
 function onMouseWheel(event: any) {
   event.preventDefault();
   if (event.shiftKey) {
@@ -64,8 +51,6 @@ function onMouseWheel(event: any) {
     app.agentCube.camera.trackPan(event.deltaX, event.deltaY);
   }
 }
-
-div.addEventListener("wheel", onMouseWheel, {passive: false, capture: true});
 
 // ***************************************************
 // Touch Handlers
@@ -84,14 +69,12 @@ function handleStart(event: any) {
   console.log(event.changedTouches);
   console.log("start", event.changedTouches[0].radiusX, event.changedTouches[0].radiusX);
 // touch start pretends to be also a mouse click
-  const box = div.getBoundingClientRect();
+  const box = event.currentTarget.getBoundingClientRect();
   app.agentCube.mouseClick.x = (event.changedTouches[0].clientX - box.left) / event.target.width * window.devicePixelRatio * 2 - 1;
   app.agentCube.mouseClick.y = -(event.changedTouches[0].clientY - box.top) / event.target.height * window.devicePixelRatio * 2 + 1;
   console.log("click x: ", app.agentCube.mouseClick.x, " y: ", app.agentCube.mouseClick.y);
   ongoingTouches = event.changedTouches;
 }
-
-div.addEventListener("touchstart", handleStart, false);
 
 function handleMove(event: any) {
   event.preventDefault();
@@ -103,8 +86,26 @@ function handleMove(event: any) {
   ongoingTouches = event.changedTouches;
 }
 
-div.addEventListener("touchmove", handleMove, false);
-
 // ***************************************************
 // Orientation
 // ***************************************************
+
+// Registrations
+// FIXME: Redundant to initializer code
+export function registerListeners() {
+  const div = document.querySelector(".scene")!;
+
+  registerMouseListener(div, "mousemove", (x, y) => {
+    app.agentCube.mouseMove.x = x;
+    app.agentCube.mouseMove.y = y;
+  });
+
+  registerMouseListener(div, "click", (x, y) => {
+    app.agentCube.mouseClick.x = x;
+    app.agentCube.mouseClick.y = y;
+  });
+
+  div.addEventListener("wheel", onMouseWheel, {passive: false, capture: true});
+  div.addEventListener("touchstart", handleStart, false);
+  div.addEventListener("touchmove", handleMove, false);
+}

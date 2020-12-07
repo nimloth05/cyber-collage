@@ -39,7 +39,6 @@ export class Agent {
     this.depth = box.max.z - box.min.z;
 
     this.owner = owner;
-    this.owner.addToScene(this.shape.mesh);
 
     // selection and hover boxes:
     // warn: it would be possible to share a single set of boxes reduce memory but this would not work if multiple selections will be allowed

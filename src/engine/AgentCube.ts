@@ -2,7 +2,7 @@
 
 import {AgentCamera} from "@/engine/AgentCamera.ts";
 import {
-  AmbientLight,
+  AmbientLight, AxesHelper,
   BasicShadowMap,
   BufferGeometry,
   LineBasicMaterial,
@@ -69,6 +69,9 @@ export class AgentCube {
     // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
     // @ts-ignore
     this.mouseClick.x = null; // don't start with valid coordinate
+  }
+
+  init3DSystem() {
     this.initTHREE();
     this.addFoundationGrid();
     this.addFoundationSurface();
@@ -122,6 +125,13 @@ export class AgentCube {
     this.renderer.shadowMap.type = BasicShadowMap;
 
     this.container.appendChild(this.renderer.domElement);
+
+    // FIXME: Remove, this is only temporary, since I don't understand why our coordinate system is different. so
+    const axesHelper = new AxesHelper(50);
+    axesHelper.position.x = 0;
+    axesHelper.position.y = 0;
+    axesHelper.position.z = 50;
+    this.scene.add(axesHelper);
   }
 
   broadcast(methodName: string) {
@@ -233,6 +243,10 @@ export class AgentCube {
   }
 
   pushAgent(agent: Agent, row: number, column: number, layer = 0) {
+    if (agent.shape.mesh.parent == null) {
+      this.scene.add(agent.shape.mesh);
+    }
+
     const agents = this.grid[layer][row][column];
     const agentAtTop = agents[agents.length - 1];
 
@@ -255,6 +269,18 @@ export class AgentCube {
     agent.owner = this;
     // update stack
     agents.push(agent);
+  }
+
+  removeAgent(agent: Agent) {
+    const mesh = agent.shape.mesh;
+    const parent = mesh.parent!;
+    parent.remove(agent.shape.mesh);
+
+    const stack = this.grid[agent.layer][agent.row][agent.column];
+    const index = stack.indexOf(agent);
+    if (index > -1) {
+      stack.splice(index, 1);
+    }
   }
 
   processMouseHover() {

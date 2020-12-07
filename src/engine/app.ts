@@ -6,15 +6,18 @@ import {Gallery, shapeNames} from "@/engine/Gallery.ts";
 import {AgentCube} from "@/engine/AgentCube";
 import {oneOf} from "@/engine/helperfunctions";
 import {ChickenAgent} from "@/engine/example-agents";
+import {registerListeners} from "@/engine/navigationevents";
+import {UndoManager} from "@/model/UndoManager";
 
 //* **************************************************
 // T E S T I N G
 //* **************************************************
 
-export const app: { name: string; agentCube: AgentCube; gallery: Gallery | null } = {
+export const app: { name: string; agentCube: AgentCube; gallery: Gallery | null; undoManager: UndoManager } = {
   name: "Cyber Collage",
   agentCube: new AgentCube(60, 20),
   gallery: null,
+  undoManager: new UndoManager(),
 };
 
 // window.app = app; // need to be able to tinker with this
@@ -25,7 +28,9 @@ function animate() {
   app.agentCube.render();
 }
 
-(async function () {
+export async function init() {
+  app.agentCube.init3DSystem();
+
   app.gallery = await Gallery.loadShapes(app.agentCube.cellSize, (loaded, total, percentage) => {
     console.log(`loaded ${loaded} of ${total} ${percentage}% completion`);
   });
@@ -38,10 +43,10 @@ function animate() {
   const r4 = new ChickenAgent("Rooster", app.agentCube);
   const c1 = new ChickenAgent("Elephant", app.agentCube);
 
-  app.agentCube.pushAgent(r1, 0, 0);
-  app.agentCube.pushAgent(c1, 0, 0);
-  app.agentCube.pushAgent(r2, 0, 0);
-  app.agentCube.pushAgent(r3, 0, 0);
+  app.agentCube.pushAgent(r1, 1, 1);
+  app.agentCube.pushAgent(c1, 1, 1);
+  app.agentCube.pushAgent(r2, 1, 1);
+  app.agentCube.pushAgent(r3, 1, 1);
   app.agentCube.pushAgent(r4, 5, 5);
 
   for (let i = 0; i < 0; i++) {
@@ -71,7 +76,9 @@ function animate() {
 
 // app.agentCube.broadcast("whenCreatingNewAgent");
 
+  registerListeners();
+  console.log("App init complete, start render cycle");
   animate();
-})().then();
+}
 
 // app.agentCube.draw();

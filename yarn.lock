@@ -9515,6 +9515,11 @@ vue@^3.0.0:
     "@vue/runtime-dom" "3.0.1"
     "@vue/shared" "3.0.1"
 
+vuejs-dialog@^1.4.2:
+  version "1.4.2"
+  resolved "https://registry.yarnpkg.com/vuejs-dialog/-/vuejs-dialog-1.4.2.tgz#33ef5a7669291c1bb09f2e958c4a438e54cdd293"
+  integrity sha512-6kRse144WXDFBMKdeuqE43rHy0ZJ81uLOFh62r2d80ICKavQYHIvr+GlTFmoR23190lC4f2w+ZJ8cS4ljkCDMw==
+
 vuex@^4.0.0-0:
   version "4.0.0-beta.4"
   resolved "https://registry.yarnpkg.com/vuex/-/vuex-4.0.0-beta.4.tgz#7b319ead2ef30432b7eaa4e37258ea3c5e44f698"

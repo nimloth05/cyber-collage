@@ -1,21 +1,26 @@
 <template>
-  <div class="scene"/>
+  <div class="scene-container">
+    <div class="scene"/>
+    <h-u-d/>
+  </div>
 </template>
 
 <script type="ts">
+
+import {init} from "@/engine/app";
+import HUD from "@/components/hud/HUD.vue";
+
 export default {
-  mounted() {
-    this.$nextTick(async () => {
-      await import("../engine/app.ts");
-      await import("../engine/navigationevents.ts");
-    });
+  components: {HUD},
+  async mounted() {
+    await init();
   },
 };
 
 </script>
 
 <style>
-.scene, canvas {
+.scene-container, .scene, canvas {
   position: absolute;
   background-color: gray;
   width: 100%;

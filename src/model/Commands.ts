@@ -1,23 +1,11 @@
-import {InstructionDeclaration, CommandType} from "@/model/InstructionDeclaration";
+import {UndoContextId} from "@/model/Command";
+import {Agent} from "@/engine/Agent";
+import {app} from "@/engine/app";
 
-const seeCondition: InstructionDeclaration = {
-  name: "see",
-  type: CommandType.CONDITION,
-  icon: "see.png",
-  parameters: {},
-  explanation: "",
-  compile: () => {
-    return "";
-  },
-}
+export const WORLD_CONTEXT_ID: UndoContextId = "world";
 
-const moveAction: InstructionDeclaration = {
-  name: "move",
-  type: CommandType.ACTION,
-  icon: "move.png",
-  parameters: {},
-  explanation: "",
-  compile() {
-    return "";
-  },
+export class AgentFactory {
+  static createAgent(name: string, shapeName: string): Agent {
+    return new Agent(shapeName, app.agentCube);
+  }
 }

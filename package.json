@@ -16,12 +16,13 @@
     "vue": "^3.0.0",
     "vue-class-component": "^8.0.0-0",
     "vue-router": "^4.0.0-0",
+    "vuejs-dialog": "^1.4.2",
     "vuex": "^4.0.0-0"
   },
   "devDependencies": {
     "@types/chai": "^4.2.11",
-    "@types/mocha": "^5.2.4",
     "@types/lodash": "^4.14.165",
+    "@types/mocha": "^5.2.4",
     "@typescript-eslint/eslint-plugin": "^2.33.0",
     "@typescript-eslint/parser": "^2.33.0",
     "@vue/cli-plugin-babel": "~4.5.0",
