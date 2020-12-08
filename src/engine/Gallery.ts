@@ -4,7 +4,7 @@
 
 import {Dictionary, keyBy} from "lodash";
 import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
-import {LoadingManager, Mesh, Object3D} from "three";
+import {LoadingManager, Mesh} from "three";
 import {ProgressListener} from "@/engine/promise-util";
 import {centerMeshGeometryOnGround, normalizeGeometry} from "@/engine/helperfunctions";
 import {Shape} from "@/engine/Shape";

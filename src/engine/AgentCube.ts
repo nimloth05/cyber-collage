@@ -24,6 +24,7 @@ import {findObjectAgent} from "@/engine/helperfunctions.ts";
 import {Agent} from "@/engine/Agent";
 import {SandGrain} from "@/engine/example-agents";
 
+// FIXME: Think about separating splitting this class in a "World" abstraction, managing current agents, and a general rendering management class (name unknown, AgentCube not optimal)
 export class AgentCube {
   rows: number;
   columns: number;
@@ -126,7 +127,6 @@ export class AgentCube {
 
     this.container.appendChild(this.renderer.domElement);
 
-    // FIXME: Remove, this is only temporary, since I don't understand why our coordinate system is different. so
     const axesHelper = new AxesHelper(50);
     axesHelper.position.x = 0;
     axesHelper.position.y = 0;
@@ -234,7 +234,7 @@ export class AgentCube {
   }
 
   clickAt(row: number, column: number, layer = 0) {
-    this.pushAgent(new SandGrain("cobble_wall", app.agentCube), row, column, layer);
+    this.pushAgent(new SandGrain("cobble_wall"), row, column, layer);
   }
 
   hoverAt(row: number, column: number, layer = 0) {
@@ -266,15 +266,17 @@ export class AgentCube {
     agent.column = column;
     agent.layer = layer;
     // adjust part hierarchy
-    agent.owner = this;
+    agent.parent = this;
     // update stack
     agents.push(agent);
   }
 
-  removeAgent(agent: Agent) {
+  removeAgent(agent: Agent, removeFromScene = false) {
     const mesh = agent.shape.mesh;
     const parent = mesh.parent!;
-    parent.remove(agent.shape.mesh);
+    if (removeFromScene) {
+      parent.remove(agent.shape.mesh);
+    }
 
     const stack = this.grid[agent.layer][agent.row][agent.column];
     const index = stack.indexOf(agent);

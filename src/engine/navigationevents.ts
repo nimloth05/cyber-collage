@@ -91,8 +91,8 @@ function handleMove(event: any) {
 // ***************************************************
 
 // Registrations
-// FIXME: Redundant to initializer code
 export function registerListeners() {
+// FIXME: Redundant to initializer code
   const div = document.querySelector(".scene")!;
 
   registerMouseListener(div, "mousemove", (x, y) => {

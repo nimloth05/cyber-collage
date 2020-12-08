@@ -11,11 +11,13 @@
 </template>
 
 <script lang="ts">
+import {values} from "lodash";
 import {Options, Vue} from "vue-class-component";
 import {app} from "@/engine/app";
 import {AddAgentToWorldCommand} from "@/model/commands/AddAgentToWorld";
 import {AgentFactory} from "@/model/Commands";
 import {GridVector} from "@/model/util/GridVector";
+import {Shape} from "@/engine/Shape";
 
 @Options({
   name: "AddAgentShapeList",
@@ -25,7 +27,7 @@ export default class AddAgentShapeList extends Vue {
   shapes: Array<Shape> = [];
 
   created() {
-    this.shapes = app.gallery?.shapes;
+    this.shapes = values(app.gallery?.shapes);
   }
 
   addAgent(shape: Shape): void {

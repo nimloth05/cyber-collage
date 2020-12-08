@@ -15,7 +15,7 @@ export class RemoveAgentFromWorld implements Command {
 
   execute(): Command {
     const position = new GridVector(this.agent.column, this.agent.row, this.agent.layer);
-    app.agentCube.removeAgent(this.agent);
+    app.agentCube.removeAgent(this.agent, true);
     return new AddAgentToWorldCommand(this.agent, position);
   }
 }

@@ -9,6 +9,8 @@ import {Shape} from "@/engine/Shape";
 import {AgentCube} from "@/engine/AgentCube";
 
 export class Agent {
+  // FIXME: use static get field for app
+
   shape: Shape;
   row: number;
   layer: number;
@@ -19,9 +21,9 @@ export class Agent {
   isSelected = false;
   isHovered = false;
   rotationSpeed: Vector3 = new Vector3();
-  owner: AgentCube;
+  parent!: AgentCube;
 
-  constructor(shapeName: string, owner: AgentCube) {
+  constructor(shapeName: string) {
     this.row = 0;
     this.column = 0;
     this.layer = 0;
@@ -37,8 +39,6 @@ export class Agent {
     const box = new Box3();
     box.setFromObject(this.shape.mesh);
     this.depth = box.max.z - box.min.z;
-
-    this.owner = owner;
 
     // selection and hover boxes:
     // warn: it would be possible to share a single set of boxes reduce memory but this would not work if multiple selections will be allowed
@@ -135,35 +135,35 @@ export class Agent {
 
   hover() {
     this.isHovered = true;
-    this.owner.addToScene(this.hoverBox);
+    this.parent.addToScene(this.hoverBox);
     this.hoverBox.update();
   }
 
   unhover() {
     this.isHovered = false;
-    this.owner.scene.remove(this.hoverBox);
+    this.parent.scene.remove(this.hoverBox);
   }
 
   select() {
     console.log(`selected ${this.shape.name}`);
     this.isSelected = true;
-    this.owner.addToScene(this.selectionBox);
+    this.parent.addToScene(this.selectionBox);
     this.selectionBox.update();
   }
 
   deselect() {
     this.isSelected = false;
-    this.owner.scene.remove(this.selectionBox);
+    this.parent.scene.remove(this.selectionBox);
   }
 
   // Queries
   isValidCoordinate(row: number, column: number, layer = 0) {
     return !(row < 0 ||
-      row >= this.owner.rows ||
+      row >= this.parent.rows ||
       column < 0 ||
-      column >= this.owner.columns ||
+      column >= this.parent.columns ||
       layer < 0 ||
-      layer >= this.owner.layers);
+      layer >= this.parent.layers);
   }
 
   agentRelative(deltaRow: number, deltaColumn: number, deltaLayer = 0) {
@@ -174,7 +174,7 @@ export class Agent {
 
     // console.log(`accessing row, column, layer: ${row}, ${column}, ${layer}`)
     if (!this.isValidCoordinate(row, column, layer)) return null;
-    const agents = this.owner.grid[layer][row][column];
+    const agents = this.parent.grid[layer][row][column];
     const agent = agents[agents.length - 1];
     if (agent == null) {
       return null;
