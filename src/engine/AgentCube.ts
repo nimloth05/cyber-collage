@@ -174,18 +174,7 @@ export class AgentCube {
     this.scene.add(foundationGrid);
   }
 
-  /* addFoundationSurface() {
-    const plane = new Mesh(new PlaneGeometry(this.columns * this.cellSize, this.rows * this.cellSize),
-      new MeshPhongMaterial({color: foundationSurfaceColor}));
-    plane.position.x = 0.5 * this.columns * this.cellSize;
-    plane.position.y = 0.5 * this.rows * this.cellSize;
-    plane.position.z = -3.0;
-    plane.userData.isFoundation = true;
-    plane.receiveShadow = true;
-    this.scene.add(plane);
-  } */
-
-  addFoundationSurface() {
+   addFoundationSurface() {
     const texturePath = "textures/";
     const texturesFile = "chess_texture.png";
     const loader = new TextureLoader();
@@ -212,32 +201,6 @@ export class AgentCube {
     );
   }
 
-  /*    addFoundationSurface() {
-          const z = -3.0;
-          const x1 = 0.0;
-          const x2 = this.columns * this.cellSize
-          const y1 = 0.0;
-          const y2 = this.rows * this.cellSize;
-          const geometry = new THREE.Geometry();
-          geometry.vertices.push(new THREE.Vector3(x1, y1, z));
-          geometry.vertices.push(new THREE.Vector3(x2, y1, z));
-          geometry.vertices.push(new THREE.Vector3(x2, y2, z));
-          geometry.vertices.push(new THREE.Vector3(x1, y1, z));
-          geometry.vertices.push(new THREE.Vector3(x2, y2, z));
-          geometry.vertices.push(new THREE.Vector3(x1, y2, z));
-          const normal = new THREE.Vector3(0, 0, 1); //optional
-          const color = new THREE.Color(foundationSurfaceColor); //optional
-          const materialIndex = 0; //optional
-          geometry.faces.push(new THREE.Face3(0, 1, 2, normal, color, materialIndex));
-          geometry.faces.push(new THREE.Face3(3, 4, 5, normal, color, materialIndex));
-          //the face normals and vertex normals can be calculated automatically if not supplied above
-          geometry.computeFaceNormals();
-          geometry.computeVertexNormals();
-          const foundationSurface = new THREE.Mesh(geometry, new THREE.MeshPhongMaterial({ color: foundationSurfaceColor, wireframe: false }));
-          //foundationSurface.receiveShadow = true;
-          foundationSurface.isFoundation = true;
-          this.scene.add(foundationSurface);
-      } */
   addFoundationHover() {
     const z = 4;
     const points = []; // square with a long vertical antenna
