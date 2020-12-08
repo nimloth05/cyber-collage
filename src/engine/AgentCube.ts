@@ -201,7 +201,7 @@ export class AgentCube {
         );
         plane.position.x = 0.5 * this.columns * this.cellSize;
         plane.position.y = 0.5 * this.rows * this.cellSize;
-        plane.position.z = -3.0;
+        plane.position.z = 0.0;
         plane.userData.isFoundation = true;
         plane.receiveShadow = true;
         this.scene.add(plane);
