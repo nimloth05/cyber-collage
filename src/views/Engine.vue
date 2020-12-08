@@ -1,42 +1,26 @@
 <template>
-  <button onclick="askOrientationPermission">enable tilt sensor</button>
-  <div class="scene" />
+  <div class="scene-container">
+    <div class="scene"/>
+    <h-u-d/>
+  </div>
 </template>
 
 <script type="ts">
+
+import {init} from "@/engine/app";
+import HUD from "@/components/hud/HUD.vue";
+
 export default {
-  mounted() {
-    this.$nextTick(async () => {
-      await import("../engine/app");
-      await import("../engine/navigationevents");
-    });
+  components: {HUD},
+  async mounted() {
+    await init();
   },
 };
 
-async function promptUserforOrientationPermission() {
-  if (
-    DeviceOrientationEvent &&
-    typeof DeviceOrientationEvent.requestPermission === "function"
-  ) {
-    const permissionState = await DeviceOrientationEvent.requestPermission();
-    if (permissionState === "granted") {
-      // Permission granted
-      return true;
-    } else {
-      // Permission denied
-      return false;
-    }
-  }
-}
-
-function askOrientationPermission() {
-  promptUserforOrientationPermission().then((enabled) => console.log("orientation is", enabled));
-}
 </script>
 
 <style>
-.scene,
-canvas {
+.scene-container, .scene, canvas {
   position: absolute;
   background-color: gray;
   width: 100%;

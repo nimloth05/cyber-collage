@@ -1,8 +1,8 @@
-import {CommandDeclaration, CommandInstance} from "@/model/CommandDeclaration";
+import {InstructionDeclaration, CommandInstance} from "@/model/InstructionDeclaration";
 
 export class InstanceFactory {
 
-  static createInstance(commandDeclaration: CommandDeclaration): CommandInstance {
+  static createInstance(commandDeclaration: InstructionDeclaration): CommandInstance {
     return {};
   }
 }

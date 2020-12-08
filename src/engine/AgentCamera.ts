@@ -5,33 +5,16 @@
 
 import {PerspectiveCamera, Vector3} from "three";
 
-export function rotateX(x, y, z, angle) {
-  const sin = Math.sin(angle);
-  const cos = Math.cos(angle);
-
-  return new Vector3(x, y * cos - z * sin, y * sin + z * cos);
-}
-
-export function rotateY(x, y, z, angle) {
-  const sin = Math.sin(angle);
-  const cos = Math.cos(angle);
-
-  return new Vector3(x * cos + z * sin, y, z * cos - x * sin);
-}
-
-export function rotateZ(x, y, z, angle) {
-  const sin = Math.sin(angle);
-  const cos = Math.cos(angle);
-
-  return new Vector3(x * cos - y * sin, x * sin + y * cos, z);
-}
-
 // **********************************
 // AgentCamera
 // **********************************
 
 export class AgentCamera extends PerspectiveCamera {
-  aim(x, y, z, centerX, centerY, centerZ) {
+  centerX!: number;
+  centerY!: number;
+  centerZ!: number;
+
+  aim(x: number, y: number, z: number, centerX: number, centerY: number, centerZ: number) {
     this.position.set(x, y, z);
     this.lookAt(centerX, centerY, centerZ);
     // need to save look at position because it cannot be easily retrieved/computed
@@ -51,7 +34,7 @@ export class AgentCamera extends PerspectiveCamera {
         return Math.PI / -2;
       }
     } else {
-        const result = Math.atan(dy / dx);
+      const result = Math.atan(dy / dx);
       if (dx < 0.0) {
         return result - Math.PI;
       } else {
@@ -69,7 +52,7 @@ export class AgentCamera extends PerspectiveCamera {
   }
 
   // Tracking Methods
-  trackPan(trackingX, trackingY, gain = 0.2) {
+  trackPan(trackingX: number, trackingY: number, gain = 0.2) {
     const dx = this.position.x - this.centerX;
     const dy = this.position.y - this.centerY;
     const dz = this.position.z - this.centerZ;
@@ -84,7 +67,7 @@ export class AgentCamera extends PerspectiveCamera {
     this.aim(this.centerX + dx + dex, this.centerY + dy + dey, this.centerZ + dz + dez, this.centerX + dex, this.centerY + dey, this.centerZ + dez);
   }
 
-  trackZoom(trackingX, trackingY, gain = 0.0004) {
+  trackZoom(trackingX: number, trackingY: number, gain = 0.0004) {
     const maxRadius = 5000;
     let dx = this.position.x - this.centerX;
     let dy = this.position.y - this.centerY;
@@ -101,7 +84,7 @@ export class AgentCamera extends PerspectiveCamera {
     this.position.z += dz * delta;
   }
 
-  trackSpinn(trackingX, trackingY, gain = 0.001) {
+  trackSpinn(trackingX: number, trackingY: number, gain = 0.001) {
     const dx = this.position.x - this.centerX;
     const dy = this.position.y - this.centerY;
     const dz = this.position.z - this.centerZ;
@@ -110,7 +93,7 @@ export class AgentCamera extends PerspectiveCamera {
     let newZenith = this.zenith + trackingY * gain;
     const zenitMargin = 0.001;
     newZenith = Math.min(Math.max(zenitMargin, newZenith), Math.PI / 2 - zenitMargin);
-    this.up = new Vector3(Math.cos(newAzimuth + Math.PI / 1), Math.sin(newAzimuth + Math.PI / 1), 0);
+    this.up = new Vector3(Math.cos(newAzimuth + Math.PI), Math.sin(newAzimuth + Math.PI), 0);
     const newPosition = new Vector3(
       radius * Math.sin(newZenith) * Math.cos(newAzimuth),
       radius * Math.sin(newZenith) * Math.sin(newAzimuth),
