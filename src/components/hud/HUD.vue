@@ -10,12 +10,14 @@
     <button @click="redo">
       Redo
     </button>
+    <agent-list/>
   </div>
 </template>
 
 <script lang="ts">
 import {Options, Vue} from "vue-class-component";
 import AddAgentShapeList from "@/components/hud/AddAgentShapeList.vue";
+import AgentList from "@/components/hud/AgentList.vue";
 import {app} from "@/engine/app";
 import {WORLD_CONTEXT_ID} from "@/model/Commands";
 
@@ -23,6 +25,7 @@ import {WORLD_CONTEXT_ID} from "@/model/Commands";
   name: "HUD",
   components: {
     AddAgentShapeList,
+    AgentList,
   },
 })
 export default class HUD extends Vue {

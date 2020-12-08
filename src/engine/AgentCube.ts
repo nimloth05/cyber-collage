@@ -2,7 +2,8 @@
 
 import {AgentCamera} from "@/engine/AgentCamera.ts";
 import {
-  AmbientLight, AxesHelper,
+  AmbientLight,
+  AxesHelper,
   BasicShadowMap,
   BufferGeometry,
   LineBasicMaterial,
@@ -22,7 +23,10 @@ import {foundationGridColor, foundationSurfaceColor, selectionBoxColor} from "@/
 import {app} from "@/engine/app";
 import {findObjectAgent} from "@/engine/helperfunctions.ts";
 import {Agent} from "@/engine/Agent";
-import {SandGrain} from "@/engine/example-agents";
+import {AgentRepository} from "@/engine/agent/AgentRepository";
+import {AgentDescription} from "@/engine/agent/AgentDescription";
+import {AddAgentToWorldCommand} from "@/model/commands/AddAgentToWorld";
+import {GridVector} from "@/model/util/GridVector";
 
 // FIXME: Think about separating splitting this class in a "World" abstraction, managing current agents, and a general rendering management class (name unknown, AgentCube not optimal)
 export class AgentCube {
@@ -41,6 +45,8 @@ export class AgentCube {
   camera!: AgentCamera;
   renderer!: WebGLRenderer;
   foundationHoverShape!: LineSegments;
+  repository: AgentRepository;
+  selectedAgent!: AgentDescription | undefined;
 
   constructor(rows = 9, columns = 16, layers = 1, cellSize = 20.0) {
     this.rows = rows;
@@ -70,6 +76,7 @@ export class AgentCube {
     // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
     // @ts-ignore
     this.mouseClick.x = null; // don't start with valid coordinate
+    this.repository = new AgentRepository();
   }
 
   init3DSystem() {
@@ -234,7 +241,9 @@ export class AgentCube {
   }
 
   clickAt(row: number, column: number, layer = 0) {
-    this.pushAgent(new SandGrain("cobble_wall"), row, column, layer);
+    if (this.selectedAgent != null) {
+      app.undoManager.execute(new AddAgentToWorldCommand(this.selectedAgent.createAgent(), new GridVector(column, row, layer)));
+    }
   }
 
   hoverAt(row: number, column: number, layer = 0) {

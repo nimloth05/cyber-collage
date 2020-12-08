@@ -9,7 +9,7 @@ import {Shape} from "@/engine/Shape";
 import {AgentCube} from "@/engine/AgentCube";
 
 export class Agent {
-  // FIXME: use static get field for app
+  static app = app;
 
   shape: Shape;
   row: number;
@@ -27,7 +27,7 @@ export class Agent {
     this.row = 0;
     this.column = 0;
     this.layer = 0;
-    this.shape = app.gallery!.createShapeForAgent(shapeName)!;
+    this.shape = this.app.gallery!.createShapeForAgent(shapeName)!;
 
     // define shape as mesh and add clone of mesh to scene
     // NEED to check if this clone copies the geometry which is SHOULD NOT
@@ -49,6 +49,10 @@ export class Agent {
 
     // Selection and Hovering
     this.whenCreatingNewAgent();
+  }
+
+  get app() {
+    return app;
   }
 
   // Getters & Setters

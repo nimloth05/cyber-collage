@@ -14,10 +14,9 @@
 import {values} from "lodash";
 import {Options, Vue} from "vue-class-component";
 import {app} from "@/engine/app";
-import {AddAgentToWorldCommand} from "@/model/commands/AddAgentToWorld";
-import {AgentFactory} from "@/model/Commands";
-import {GridVector} from "@/model/util/GridVector";
 import {Shape} from "@/engine/Shape";
+import {CreateAgentClass} from "@/model/commands/CreateAgentClass";
+import {AgentDescription} from "@/engine/agent/AgentDescription";
 
 @Options({
   name: "AddAgentShapeList",
@@ -31,8 +30,7 @@ export default class AddAgentShapeList extends Vue {
   }
 
   addAgent(shape: Shape): void {
-    const agent = AgentFactory.createAgent(shape.name, shape.name);
-    app.undoManager.execute(new AddAgentToWorldCommand(agent, new GridVector(0, 0, 0)));
+    app.undoManager.execute(new CreateAgentClass(app.agentCube, new AgentDescription(shape.name)));
     this.$emit("agent-created");
   }
 }
