@@ -91,7 +91,7 @@ function handleMove(event: any) {
 // ***************************************************
 
 // Registrations
-// FIXME: Redundant to initializer code
+// FIXME: Redundant to initializer code bla bla
 export function registerListeners() {
   const div = document.querySelector(".scene")!;
 
