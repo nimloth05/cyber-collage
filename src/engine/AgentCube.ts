@@ -1,3 +1,4 @@
+/* eslint-disable comma-dangle */
 //* **************************************************
 
 import {AgentCamera} from "@/engine/AgentCamera.ts";
@@ -10,11 +11,14 @@ import {
   LineSegments,
   Mesh,
   MeshPhongMaterial,
+  MeshBasicMaterial,
   Object3D,
   PlaneGeometry,
   Raycaster,
+  RepeatWrapping,
   Scene,
   SpotLight,
+  TextureLoader,
   Vector2,
   Vector3,
   WebGLRenderer,
@@ -81,7 +85,7 @@ export class AgentCube {
 
   init3DSystem() {
     this.initTHREE();
-    this.addFoundationGrid();
+    // this.addFoundationGrid();
     this.addFoundationSurface();
     this.addFoundationHover();
   }
@@ -170,7 +174,7 @@ export class AgentCube {
     this.scene.add(foundationGrid);
   }
 
-  addFoundationSurface() {
+  /* addFoundationSurface() {
     const plane = new Mesh(new PlaneGeometry(this.columns * this.cellSize, this.rows * this.cellSize),
       new MeshPhongMaterial({color: foundationSurfaceColor}));
     plane.position.x = 0.5 * this.columns * this.cellSize;
@@ -179,6 +183,33 @@ export class AgentCube {
     plane.userData.isFoundation = true;
     plane.receiveShadow = true;
     this.scene.add(plane);
+  } */
+
+  addFoundationSurface() {
+    const texturePath = "textures/";
+    const texturesFile = "chess_texture.png";
+    const loader = new TextureLoader();
+    loader.load(
+      `${texturePath}${texturesFile}`,
+      texture => {
+        texture.wrapS = RepeatWrapping;
+        texture.wrapT = RepeatWrapping;
+        texture.repeat.set(Math.ceil(this.columns / 2), Math.ceil(this.rows / 2));
+        const plane = new Mesh(
+          new PlaneGeometry(this.columns * this.cellSize, this.rows * this.cellSize),
+          new MeshPhongMaterial({map: texture})
+        );
+        plane.position.x = 0.5 * this.columns * this.cellSize;
+        plane.position.y = 0.5 * this.rows * this.cellSize;
+        plane.position.z = -3.0;
+        plane.userData.isFoundation = true;
+        plane.receiveShadow = true;
+        this.scene.add(plane);
+      },
+      undefined,
+      // eslint-disable-next-line handle-callback-err
+      err => console.error("cannot load texture")
+    );
   }
 
   /*    addFoundationSurface() {
