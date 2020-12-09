@@ -15,7 +15,7 @@ export class AgentRepository {
   }
 
   get descriptions() {
-    // FIMXE: Pass out array?
+    // FIXME: Pass out array?
     return this.agents;
   }
 }

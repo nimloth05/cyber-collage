@@ -74,6 +74,10 @@ export async function init() {
     );
   }
 
+  window.addEventListener("resize", () => {
+    app.agentCube.threeResize();
+  });
+
 // app.agentCube.broadcast("whenCreatingNewAgent");
 
   registerListeners();

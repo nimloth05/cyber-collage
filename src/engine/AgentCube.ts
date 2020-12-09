@@ -141,6 +141,15 @@ export class AgentCube {
     this.scene.add(axesHelper);
   }
 
+  threeResize() {
+    const w = this.container.clientWidth;
+    const h = this.container.clientHeight;
+    this.renderer.setSize(w, h);
+    this.camera.aspect = w / h;
+    this.camera.updateProjectionMatrix();
+    this.render();
+  }
+
   broadcast(methodName: string) {
     this.grid.forEach((layer) => {
       layer.forEach((row) => {
