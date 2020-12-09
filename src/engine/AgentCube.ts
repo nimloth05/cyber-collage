@@ -49,6 +49,7 @@ export class AgentCube {
   camera!: AgentCamera;
   renderer!: WebGLRenderer;
   foundationHoverShape!: LineSegments;
+  foundationSurface!: Mesh;
   repository: AgentRepository;
   selectedAgent!: AgentDescription | undefined;
 
@@ -86,8 +87,8 @@ export class AgentCube {
   init3DSystem() {
     this.initTHREE();
     // this.addFoundationGrid();
-    this.addFoundationSurface();
     this.addFoundationHover();
+    this.addFoundationSurface();
   }
 
   initTHREE() {
@@ -129,6 +130,7 @@ export class AgentCube {
 
     // renderer
     this.renderer = new WebGLRenderer({antialias: true, alpha: true});
+    this.renderer.sortObjects = false; // to work with disabled depth testing
     this.renderer.setSize(this.container.clientWidth, this.container.clientHeight);
     this.renderer.setPixelRatio(window.devicePixelRatio);
 
@@ -193,16 +195,16 @@ export class AgentCube {
         texture.wrapS = RepeatWrapping;
         texture.wrapT = RepeatWrapping;
         texture.repeat.set(Math.ceil(this.columns / 2), Math.ceil(this.rows / 2));
-        const plane = new Mesh(
+        this.foundationSurface = new Mesh(
           new PlaneGeometry(this.columns * this.cellSize, this.rows * this.cellSize),
           new MeshPhongMaterial({map: texture})
         );
-        plane.position.x = 0.5 * this.columns * this.cellSize;
-        plane.position.y = 0.5 * this.rows * this.cellSize;
-        plane.position.z = 0.0;
-        plane.userData.isFoundation = true;
-        plane.receiveShadow = true;
-        this.scene.add(plane);
+        this.foundationSurface.position.x = 0.5 * this.columns * this.cellSize;
+        this.foundationSurface.position.y = 0.5 * this.rows * this.cellSize;
+        this.foundationSurface.position.z = 0.0;
+        this.foundationSurface.userData.isFoundation = true;
+        this.foundationSurface.receiveShadow = true;
+        this.scene.add(this.foundationSurface);
       },
       undefined,
       // eslint-disable-next-line handle-callback-err
@@ -211,7 +213,7 @@ export class AgentCube {
   }
 
   addFoundationHover() {
-    const z = 4;
+    const z = 1.0;
     const points = []; // square with a long vertical antenna
     points.push(new Vector3(0.0, 0.0, z));
     points.push(new Vector3(this.cellSize, 0.0, z));
@@ -229,6 +231,7 @@ export class AgentCube {
     points.push(new Vector3(0.5 * this.cellSize, 0.5 * this.cellSize, 2 * this.cellSize));
 
     const material = new LineBasicMaterial({color: selectionBoxColor});
+    // material.depthTest = false;
     const geometry = new BufferGeometry().setFromPoints(points);
     this.foundationHoverShape = new LineSegments(geometry, material);
     this.scene.add(this.foundationHoverShape);
@@ -300,7 +303,8 @@ export class AgentCube {
   processMouseHover() {
     if (this.mouseMove.x !== null) {
       this.raycaster.setFromCamera(this.mouseMove, this.camera);
-      const firstIntersection = this.raycaster.intersectObjects(this.scene.children, true)[0];
+      const intersections = this.raycaster.intersectObjects(this.scene.children, true);
+      const firstIntersection = intersections.filter(intersection => intersection.object !== this.foundationHoverShape)[0];
       let agent = null;
       if (firstIntersection) {
         if (firstIntersection.object.userData.isFoundation) {
@@ -330,7 +334,8 @@ export class AgentCube {
   processMouseClick() {
     if (this.mouseClick.x != null) {
       this.raycaster.setFromCamera(this.mouseClick, this.camera);
-      const firstIntersection = this.raycaster.intersectObjects(this.scene.children, true)[0];
+      const intersections = this.raycaster.intersectObjects(this.scene.children, true);
+      const firstIntersection = intersections.filter(intersection => intersection.object !== this.foundationHoverShape)[0];
       let agent = null;
       if (firstIntersection) {
         if (firstIntersection.object.userData.isFoundation) {
