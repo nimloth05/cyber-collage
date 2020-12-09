@@ -1,22 +1,21 @@
 <template>
-  <div style="position: relative; top: calc(100% - 200px); height: 200px;">
+  <div class="hud">
     <button @click='switchToggle'>
-      Agent hinzufügen
+      Agent selektieren
     </button>
-    <AddAgentShapeList v-if="toggle" @agent-created="agentCreated"/>
+    <agent-list v-if="toggle" @click="agentListClick"/>
     <button @click="undo">
       Undo
     </button>
     <button @click="redo">
       Redo
     </button>
-    <agent-list/>
   </div>
 </template>
 
 <script lang="ts">
 import {Options, Vue} from "vue-class-component";
-import AddAgentShapeList from "@/components/hud/AddAgentShapeList.vue";
+import ShapeList from "@/components/hud/ShapeList.vue";
 import AgentList from "@/components/hud/AgentList.vue";
 import {app} from "@/engine/app";
 import {WORLD_CONTEXT_ID} from "@/model/Commands";
@@ -24,7 +23,7 @@ import {WORLD_CONTEXT_ID} from "@/model/Commands";
 @Options({
   name: "HUD",
   components: {
-    AddAgentShapeList,
+    ShapeList,
     AgentList,
   },
 })
@@ -36,7 +35,7 @@ export default class HUD extends Vue {
     console.log("button clicked, current toggle state", this.toggle);
   }
 
-  agentCreated() {
+  agentListClick() {
     this.toggle = false;
   }
 
@@ -50,3 +49,13 @@ export default class HUD extends Vue {
   }
 }
 </script>
+
+<style>
+.hud {
+  position: relative;
+  top: calc(100% - 200px);
+  height: 200px;
+  /*background-color: #d3d3d3;*/
+  background-color: #A0A0A0;
+}
+</style>

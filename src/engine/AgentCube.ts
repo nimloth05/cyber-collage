@@ -11,7 +11,6 @@ import {
   LineSegments,
   Mesh,
   MeshPhongMaterial,
-  MeshBasicMaterial,
   Object3D,
   PlaneGeometry,
   Raycaster,
@@ -23,7 +22,7 @@ import {
   Vector3,
   WebGLRenderer,
 } from "three";
-import {foundationGridColor, foundationSurfaceColor, selectionBoxColor} from "@/engine/globals.ts";
+import {foundationGridColor, selectionBoxColor} from "@/engine/globals.ts";
 import {app} from "@/engine/app";
 import {findObjectAgent} from "@/engine/helperfunctions.ts";
 import {Agent} from "@/engine/Agent";
@@ -50,6 +49,7 @@ export class AgentCube {
   renderer!: WebGLRenderer;
   foundationHoverShape!: LineSegments;
   foundationSurface!: Mesh;
+  // FIXME: move to app
   repository: AgentRepository;
   selectedAgent!: AgentDescription | undefined;
 

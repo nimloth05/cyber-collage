@@ -9,7 +9,9 @@ import {Shape} from "@/engine/Shape";
 import {AgentCube} from "@/engine/AgentCube";
 
 export class Agent {
-  static app = app;
+  static get app() {
+    return app;
+  }
 
   shape: Shape;
   row: number;
@@ -52,7 +54,7 @@ export class Agent {
   }
 
   get app() {
-    return app;
+    return Agent.app;
   }
 
   // Getters & Setters
@@ -125,7 +127,7 @@ export class Agent {
   }
 
   draw() {
-    console.log(`drawing agent: ${this.shape.name} @[${this.row}, ${this.column}]`);
+    console.log(`drawing agent: ${this.shape.id} @[${this.row}, ${this.column}]`);
   }
 
   step() { // Step your behavior
@@ -134,7 +136,7 @@ export class Agent {
   }
 
   mouseClick() {
-    console.log(`clicked @ ${this.shape.name}`);
+    console.log(`clicked @ ${this.shape.id}`);
   }
 
   hover() {
@@ -149,7 +151,7 @@ export class Agent {
   }
 
   select() {
-    console.log(`selected ${this.shape.name}`);
+    console.log(`selected ${this.shape.id}`);
     this.isSelected = true;
     this.parent.addToScene(this.selectionBox);
     this.selectionBox.update();
@@ -202,7 +204,7 @@ export class Agent {
   see(shapeName: string, deltaRow: number, deltaColumn: number, deltaLayer = 0) {
     const agent = this.agentRelative(deltaRow, deltaColumn, deltaLayer);
     // console.log(`agent: ${agent}`);
-    return (agent != null && agent.shape.name === shapeName);
+    return (agent != null && agent.shape.id === shapeName);
   }
 
   percentChance(chance: number) {

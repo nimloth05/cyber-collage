@@ -34,7 +34,8 @@ export class Gallery {
     }
     return {
       mesh: shape?.mesh.clone(),
-      name: shape.name,
+      id: shape.id,
+      iconPath: shape.iconPath,
     };
   }
 
@@ -52,8 +53,9 @@ export class Gallery {
 
     function loadShape(shapeName: string): Promise<Shape> {
       return new Promise((resolve) => {
+        const path = shapePath + shapeName + "/";
         loader.load(
-          shapePath + shapeName + "/" + shapeFile,
+          path + shapeFile,
           gltf => {
             const shape = gltf.scene;
             centerMeshGeometryOnGround(shape);
@@ -67,9 +69,12 @@ export class Gallery {
               }
             });
 
+            const id = shapeName.toLowerCase();
+
             resolve({
               mesh: shape,
-              name: shapeName.toLocaleLowerCase(),
+              id,
+              iconPath: `${path}${id}-image.png`,
             });
           },
           () => ({}), // xhr => console.log("shape " + name + " " + (xhr.loaded / xhr.total * 100) + '% loaded'),
@@ -80,6 +85,6 @@ export class Gallery {
 
     const shapes = await Promise.all(shapeNames.map(name => loadShape(name)));
 
-    return new Gallery(keyBy(shapes, "name"));
+    return new Gallery(keyBy(shapes, "id"));
   }
 }

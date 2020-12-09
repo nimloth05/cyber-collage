@@ -1,13 +1,14 @@
 import {Agent} from "@/engine/Agent";
+import {Shape, ShapeRef} from "@/engine/Shape";
 
-export class AgentDescription {
-  shapeName: string;
+export class AgentDescription implements ShapeRef {
+  shape: Shape;
 
-  constructor(shapeName: string) {
-    this.shapeName = shapeName;
+  constructor(shape: Shape) {
+    this.shape = shape;
   }
 
   createAgent(): Agent {
-    return new Agent(this.shapeName);
+    return new Agent(this.shape.id);
   }
 }
