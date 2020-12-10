@@ -20,7 +20,7 @@ export const app: { name: string; agentCube: AgentCube; gallery: Gallery | null;
   undoManager: new UndoManager(),
 };
 
-// window.app = app; // need to be able to tinker with this
+ (window as any).app = app; // need to be able to tinker with this
 
 function animate() {
   requestAnimationFrame(animate);
