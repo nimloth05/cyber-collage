@@ -129,7 +129,7 @@ export class AgentCube {
     this.scene.add(spotLight);
 
     // renderer
-    this.renderer = new WebGLRenderer({antialias: true, alpha: true});
+    this.renderer = new WebGLRenderer({antialias: true, alpha: true, logarithmicDepthBuffer: true});
     this.renderer.sortObjects = false; // to work with disabled depth testing
     this.renderer.setSize(this.container.clientWidth, this.container.clientHeight);
     this.renderer.setPixelRatio(window.devicePixelRatio);
