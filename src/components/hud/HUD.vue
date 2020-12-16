@@ -1,15 +1,19 @@
 <template>
   <div class="hud">
-    <button @click='switchToggle'>
-      Agent selektieren
-    </button>
-    <agent-list v-if="toggle" @click="agentListClick"/>
-    <button @click="undo">
-      Undo
-    </button>
-    <button @click="redo">
-      Redo
-    </button>
+    <div style="display: flex">
+      <button @click='switchToggle'>
+        Agent selektieren
+      </button>
+      <agent-list v-if="toggle" @click="agentListClick"/>
+      <button @click="undo">
+        Undo
+      </button>
+      <button @click="redo">
+        Redo
+      </button>
+      <tab-header/>
+    </div>
+    <tab-container/>
   </div>
 </template>
 
@@ -17,6 +21,8 @@
 import {Options, Vue} from "vue-class-component";
 import ShapeList from "@/components/hud/ShapeList.vue";
 import AgentList from "@/components/hud/AgentList.vue";
+import TabHeader from "./tab/TabHeader.vue";
+import TabContainer from "./tab/TabContainer.vue";
 import {app} from "@/engine/app";
 import {WORLD_CONTEXT_ID} from "@/model/Commands";
 
@@ -25,6 +31,8 @@ import {WORLD_CONTEXT_ID} from "@/model/Commands";
   components: {
     ShapeList,
     AgentList,
+    TabHeader,
+    TabContainer,
   },
 })
 export default class HUD extends Vue {
@@ -56,6 +64,6 @@ export default class HUD extends Vue {
   top: calc(100% - 200px);
   height: 200px;
   /*background-color: #d3d3d3;*/
-  background-color: #A0A0A0;
+  background-color: #b5b5b5;
 }
 </style>
