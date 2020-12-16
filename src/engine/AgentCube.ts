@@ -8,10 +8,12 @@ import {
   BasicShadowMap,
   BufferGeometry,
   LineBasicMaterial,
+  MeshBasicMaterial,
   LineSegments,
   Mesh,
   MeshPhongMaterial,
   Object3D,
+  DoubleSide,
   PlaneGeometry,
   Raycaster,
   RepeatWrapping,
@@ -131,6 +133,7 @@ export class AgentCube {
     // renderer
     this.renderer = new WebGLRenderer({antialias: true, alpha: true, logarithmicDepthBuffer: true});
     this.renderer.sortObjects = false; // to work with disabled depth testing
+    this.renderer.autoClear = true;
     this.renderer.setSize(this.container.clientWidth, this.container.clientHeight);
     this.renderer.setPixelRatio(window.devicePixelRatio);
 
@@ -201,7 +204,7 @@ export class AgentCube {
         );
         this.foundationSurface.position.x = 0.5 * this.columns * this.cellSize;
         this.foundationSurface.position.y = 0.5 * this.rows * this.cellSize;
-        this.foundationSurface.position.z = 0.0;
+        this.foundationSurface.position.z = -50.0;
         this.foundationSurface.userData.isFoundation = true;
         this.foundationSurface.receiveShadow = true;
         this.scene.add(this.foundationSurface);
