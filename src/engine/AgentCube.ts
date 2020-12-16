@@ -105,8 +105,8 @@ export class AgentCube {
     //  camera
     const fov = 35;
     const aspect = this.container.clientWidth / this.container.clientHeight;
-    const near = 0.01;
-    const far = 50000;
+    const near = 10; // set to max to avoid z-buffer fights
+    const far = 8000;
 
     this.camera = new AgentCamera(fov, aspect, near, far);
     this.camera.aim(200, -400, 600, 200, 400, 0);
@@ -131,7 +131,7 @@ export class AgentCube {
     this.scene.add(spotLight);
 
     // renderer
-    this.renderer = new WebGLRenderer({antialias: true, alpha: true, logarithmicDepthBuffer: true});
+    this.renderer = new WebGLRenderer({antialias: true, alpha: true, logarithmicDepthBuffer: false});
     this.renderer.sortObjects = false; // to work with disabled depth testing
     this.renderer.autoClear = true;
     this.renderer.setSize(this.container.clientWidth, this.container.clientHeight);

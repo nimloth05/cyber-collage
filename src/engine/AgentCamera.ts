@@ -53,13 +53,15 @@ export class AgentCamera extends PerspectiveCamera {
 
   // Tracking Methods
   trackPan(trackingX: number, trackingY: number, gain = 0.2) {
+    const sensititity = 0.01;
     const dx = this.position.x - this.centerX;
     const dy = this.position.y - this.centerY;
     const dz = this.position.z - this.centerZ;
+    const radius = Math.sqrt(dx * dx + dy * dy + dz * dz);
     const sina = Math.sin(this.azimuth);
     const cosa = Math.cos(this.azimuth);
-    const mx = trackingX * gain;
-    const my = trackingY * gain;
+    const mx = trackingX * gain * radius * sensititity;
+    const my = trackingY * gain * radius * sensititity;
     const dex = -mx * sina + my * cosa;
     const dey = mx * cosa + my * sina;
     const dez = 0;

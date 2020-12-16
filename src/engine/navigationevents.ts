@@ -162,6 +162,22 @@ function oldPointerPathDistance() {
                    (pointerPath1.cordOld[1] - pointerPath2.cordOld[1]) ** 2);
 }
 
+function newPointerPathMidpointX() {
+  return (pointerPath1.cordNew[0] + pointerPath2.cordNew[0]) / 2;
+}
+
+function newPointerPathMidpointY() {
+  return (pointerPath1.cordNew[1] + pointerPath2.cordNew[1]) / 2;
+}
+
+function oldPointerPathMidpointX() {
+  return (pointerPath1.cordOld[0] + pointerPath2.cordOld[0]) / 2;
+}
+
+function oldPointerPathMidpointY() {
+  return (pointerPath1.cordOld[1] + pointerPath2.cordOld[1]) / 2;
+}
+
 function pointsToAngle(x1: number, y1: number, x2: number, y2: number) {
   const dx = x2 - x1;
   const dy = y2 - y1;
@@ -197,7 +213,7 @@ function twoFingerTouch() {
   return (pointerPath1.identifier !== -1) && (pointerPath2.identifier !== -1);
 }
 
-function interpretPointerPath() {
+/* function interpretPointerPath() {
   const panVersusPinchThreshold = 120; //  device coordinates
   if (twoFingerTouch()) {
     // console.log(`rotate by ${newPointerPathAngle() - oldPointerPathAngle()}`);
@@ -209,6 +225,14 @@ function interpretPointerPath() {
                                     pointerPath1.cordNew[1] - pointerPath1.cordOld[1],
                                     1.0);
     }
+  }
+} */
+
+function interpretPointerPath() {
+  if (twoFingerTouch()) {
+    app.agentCube.camera.trackSpinn(oldPointerPathAngle() - newPointerPathAngle(), 0, Math.PI / 180);
+    app.agentCube.camera.trackZoom(0, newPointerPathDistance() - oldPointerPathDistance());
+    app.agentCube.camera.trackPan(oldPointerPathMidpointX() - newPointerPathMidpointX(), newPointerPathMidpointY() - oldPointerPathMidpointY(), 0.2);
   }
 }
 
