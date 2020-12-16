@@ -204,7 +204,7 @@ export class AgentCube {
         );
         this.foundationSurface.position.x = 0.5 * this.columns * this.cellSize;
         this.foundationSurface.position.y = 0.5 * this.rows * this.cellSize;
-        this.foundationSurface.position.z = -50.0;
+        // this.foundationSurface.position.z = -50.0;
         this.foundationSurface.userData.isFoundation = true;
         this.foundationSurface.receiveShadow = true;
         this.scene.add(this.foundationSurface);

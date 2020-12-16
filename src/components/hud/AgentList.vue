@@ -29,7 +29,11 @@ export default class AddAgentShapeList extends Vue {
   }
 
   createAgent() {
-    const shape = app.gallery?.shapes["chicken"]!;
+    const retVal = prompt("Enter ShapeName", "chicken");
+    if (retVal == null) {
+      return;
+    }
+    const shape = app.gallery?.shapes[retVal]!;
     app.undoManager.execute(new CreateAgentClass(app.agentCube, new AgentDescription(shape)));
   }
 
