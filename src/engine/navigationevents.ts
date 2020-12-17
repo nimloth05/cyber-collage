@@ -213,26 +213,47 @@ function twoFingerTouch() {
   return (pointerPath1.identifier !== -1) && (pointerPath2.identifier !== -1);
 }
 
-/* function interpretPointerPath() {
-  const panVersusPinchThreshold = 120; //  device coordinates
-  if (twoFingerTouch()) {
-    // console.log(`rotate by ${newPointerPathAngle() - oldPointerPathAngle()}`);
-    if (newPointerPathDistance() > panVersusPinchThreshold) {
-      app.agentCube.camera.trackSpinn(oldPointerPathAngle() - newPointerPathAngle(), 0, Math.PI / 180);
-      app.agentCube.camera.trackZoom(0, newPointerPathDistance() - oldPointerPathDistance());
-    } else {
-      app.agentCube.camera.trackPan(pointerPath1.cordOld[0] - pointerPath1.cordNew[0],
-                                    pointerPath1.cordNew[1] - pointerPath1.cordOld[1],
-                                    1.0);
-    }
-  }
-} */
+// -----------------------------------------------------------------------------
+// Dampening: 1 = no dampening, 0 = fully damened. Reasonable values 0.9 ... 0.1
+// A damper implements a low-pass filter to get rid of touch tracking noise
+// -----------------------------------------------------------------------------
+
+const spinnDamper = {value: 0, dampening: 0.5};
+const zoomDamper = {value: 0, dampening: 0.5};
+const panDamperX = {value: 0, dampening: 0.5};
+const panDamperY = {value: 0, dampening: 0.5};
+
+function dampenedSpinn(value: number) {
+  // avoid flips
+  if (value > 180) value = value - 360;
+  if (value < -180) value = value + 360;
+  // low pass filter
+  spinnDamper.value = spinnDamper.dampening * value + (1 - spinnDamper.dampening) * spinnDamper.value;
+  return spinnDamper.value;
+}
+
+function dampenedZoom(value: number) {
+  zoomDamper.value = zoomDamper.dampening * value + (1 - zoomDamper.dampening) * zoomDamper.value;
+  return zoomDamper.value;
+}
+
+function dampenedPanX(value: number) {
+  panDamperX.value = panDamperX.dampening * value + (1 - panDamperX.dampening) * panDamperX.value;
+  return panDamperX.value;
+}
+
+function dampenedPanY(value: number) {
+  panDamperY.value = panDamperY.dampening * value + (1 - panDamperY.dampening) * panDamperY.value;
+  return panDamperY.value;
+}
 
 function interpretPointerPath() {
   if (twoFingerTouch()) {
-    app.agentCube.camera.trackSpinn(oldPointerPathAngle() - newPointerPathAngle(), 0, Math.PI / 180);
-    app.agentCube.camera.trackZoom(0, newPointerPathDistance() - oldPointerPathDistance());
-    app.agentCube.camera.trackPan(oldPointerPathMidpointX() - newPointerPathMidpointX(), newPointerPathMidpointY() - oldPointerPathMidpointY(), 0.2);
+    app.agentCube.camera.trackSpinn(dampenedSpinn(oldPointerPathAngle() - newPointerPathAngle()), 0, Math.PI / 180);
+    app.agentCube.camera.trackZoom(0, dampenedZoom(newPointerPathDistance() - oldPointerPathDistance()));
+    app.agentCube.camera.trackPan(dampenedPanX(oldPointerPathMidpointX() - newPointerPathMidpointX()),
+                                  dampenedPanY(newPointerPathMidpointY() - oldPointerPathMidpointY()),
+                                   0.2);
   }
 }
 
@@ -250,6 +271,11 @@ function handlePointerDown(event: any) {
       pointerPath2.identifier = event.pointerId;
       pointerPath2.cordNew = relativeDeviceCoordinates(event);
   }
+  // reset dampers
+  spinnDamper.value = 0;
+  zoomDamper.value = 0;
+  panDamperX.value = 0;
+  panDamperY.value = 0;
 }
 
 function handlePointerMove(event: any) {
