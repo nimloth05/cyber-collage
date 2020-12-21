@@ -1,0 +1,9 @@
+Render 500 Animals (Git e474cd7)
+
+    iPhone 11
+        Point shadows 145ms (mobile Safari)
+        no shadows 9ms (mobile Safari, 3ms zoomed in)
+    Mac PBP 
+        Point shadows 7ms (Chrome), 35ms (Safari)
+        no shadows  4.2ms (Chrome), 20ms (Safari)
+
