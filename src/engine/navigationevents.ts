@@ -17,8 +17,14 @@ async function promptUserforOrientationPermission() {
   }
 }
 
+function relativeDeviceCoordinates(event: any) {
+  const box = event.target.getBoundingClientRect();
+  console.log("client Y", event.clientY - box.top);
+  return [event.clientX - box.left, event.clientY - box.top];
+}
+
 //* **************************************************
-// Mouse, Scroll
+// Mouse, ScrollWheel Events
 //* **************************************************
 
 /**
@@ -53,99 +59,16 @@ function onMouseWheel(event: any) {
 }
 
 // ***************************************************
-// Touch Handlers
+// Touch Events
 // ***************************************************
 
-// let ongoingTouches: TouchList;
-let neverTouched = true;
-
-const touchPath1 = {identifier: -1, cordNew: [0, 0], cordOld: [0, 0]};
-const touchPath2 = {identifier: -1, cordNew: [0, 0], cordOld: [0, 0]};
-
-function touchIdStrings(touches: any) {
-  let string = "";
-  touches.forEach(function (touch: any) { string += `id: ${touch.identifier} `; });
-  return string;
-}
-
-function touchNormalizedDeviceCoordinates(touch: any, target: any) {
-  const box = target.getBoundingClientRect();
-  return [
-    (touch.clientX - box.left) / target.width * window.devicePixelRatio * 2 - 1,
-    -(touch.clientY - box.top) / target.height * window.devicePixelRatio * 2 + 1,
-  ];
-}
-
-function normalizedDeviceCoordinates(event: any) {
-  const box = event.target.getBoundingClientRect();
-  return [
-    (event.clientX - box.left) / event.target.width * window.devicePixelRatio * 2 - 1,
-    -(event.clientY - box.top) / event.target.height * window.devicePixelRatio * 2 + 1,
-  ];
-}
-
-function relativeDeviceCoordinates(event: any) {
-  const box = event.target.getBoundingClientRect();
-  console.log("client Y", event.clientY - box.top);
-  return [event.clientX - box.left, event.clientY - box.top];
-}
-
-function handleStart(event: any) {
-  if (neverTouched) {
-    promptUserforOrientationPermission().then(enabled => console.log("orientation is", enabled));
-    neverTouched = false;
-  }
-  event.preventDefault();
-  console.log("%c Touch Start", "background: #000; color: green", touchIdStrings(event.changedTouches));
-  // only interpret first two touches
-  for (let i = 0; i < Math.min(event.changedTouches.length, 2); i++) {
-    const touch = event.changedTouches[i];
-    if (touchPath1.identifier === -1) {
-      touchPath1.identifier = touch.identifier;
-      touchPath1.cordNew = touchNormalizedDeviceCoordinates(touch, event.target);
-      // consider first touch as click
-      app.agentCube.mouseClick.x = touchPath1.cordNew[0];
-      app.agentCube.mouseClick.y = touchPath1.cordNew[1];
-    } else if (touchPath2.identifier === -1) {
-      touchPath2.identifier = touch.identifier;
-      touchPath2.cordNew = touchNormalizedDeviceCoordinates(touch, event.target);
-    }
-  }
-  console.table(touchPath1);
-  console.table(touchPath2);
-}
-
-/*
-  // console.log("start", event.changedTouches[0].radiusX, event.changedTouches[0].radiusX);
-  // touch start pretends to be also a mouse click
-  const [x, y] = touchNormalizedDeviceCoordinates(event.changedTouches[0], event.target);
-  app.agentCube.mouseClick.x = x;
-  app.agentCube.mouseClick.y = y;
-  // console.log("click x: ", app.agentCube.mouseClick.x, " y: ", app.agentCube.mouseClick.y);
-  ongoingTouches = event.changedTouches;
-}  */
-
+// Need to keep this touch event to disable default touch scrolling
 function handleMove(event: any) {
   event.preventDefault();
-  // console.log("%c Touch Move", "background: #000; color: orange", touchIdStrings(event.changedTouches));
-  // console.log("moved", event.changedTouches[0].clientY - div.getBoundingClientRect().top);
-  // console.log("Touch Move", event.changedTouches[0].radiusX, event.changedTouches[0].radiusX);
-  // console.log("touch move dx=", event.changedTouches[0].clientX - ongoingTouches[0].clientX, "dy= ", event.changedTouches[0].clientY - ongoingTouches[0].clientY);
-  // app.agentCube.camera.trackPan(-event.changedTouches[0].clientX + ongoingTouches[0].clientX, -event.changedTouches[0].clientY + ongoingTouches[0].clientY, 2.0);
-}
-
-function handleEnd(event: any) {
-  event.preventDefault();
-  console.log("%c Touch End", "background: #000; color: red", touchIdStrings(event.changedTouches));
-  // reset IDs
-  touchPath1.identifier = -1;
-  touchPath2.identifier = -1;
-  console.table(touchPath1);
-  console.table(touchPath2);
 }
 
 // ***************************************************
-// Pointer Handlers
+// Pointer Events
 // ***************************************************
 // https://developer.mozilla.org/en-US/docs/Web/API/Pointer_events/Using_Pointer_Events
 // https://mobiforge.com/design-development/html5-pointer-events-api-combining-touch-mouse-and-pen
@@ -354,7 +277,7 @@ function handlePointerUp(event: any) {
   // start momentum mode
   if (twoFingerTouch()) {
     inMomentumMode = true;
-    // CONSIDER: set a timer to prevent run away momentum handling?
+    // CONSIDER: set a timer to prevent run-away momentum handling?
   }
   // reset path id to mark end of touch
   if (pointerPath1.identifier === event.pointerId) {
@@ -367,7 +290,9 @@ function handlePointerUp(event: any) {
 }
 
 // ------------------------------------------------
-// Touch Momentum                                  |
+// Touch Momentum
+//   Can be called by the engine to deal with post-up
+//   event handling such as touch momentum
 // ------------------------------------------------
 
 function handleTouchMomentum() {
@@ -402,10 +327,10 @@ export function registerListeners() {
 
   // wheel events
   div.addEventListener("wheel", onMouseWheel, {passive: false, capture: true});
+
   // touch events
-  // div.addEventListener("touchstart", handleStart, false);
   div.addEventListener("touchmove", handleMove, false);
-  // div.addEventListener("touchend", handleEnd, false);
+
   // pointer events
   div.addEventListener("pointerdown", handlePointerDown, false);
   div.addEventListener("pointermove", handlePointerMove, false);
