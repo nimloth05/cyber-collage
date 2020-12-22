@@ -17,10 +17,17 @@ async function promptUserforOrientationPermission() {
   }
 }
 
-function relativeDeviceCoordinates(event: any) {
-  const box = event.target.getBoundingClientRect();
-  console.log("client Y", event.clientY - box.top);
-  return [event.clientX - box.left, event.clientY - box.top];
+function relativeDeviceCoordinates(x: number, y: number, target: any) {
+  // top left = 0, 0
+  const box = target.getBoundingClientRect();
+  return [x - box.left, y - box.top];
+}
+
+function normalizedDeviceCoordinates(x: number, y: number, target: any) {
+  // range [-1, -1] ... [1, 1] lower left = [-1, -1]
+  const box = target.getBoundingClientRect();
+  // clientRect does not appear to take devicePixelRatio into account. Can ignore window.devicePixelRatio
+  return [(x - box.left) / box.width * 2 - 1, -(y - box.top) / box.height * 2 + 1];
 }
 
 //* **************************************************
@@ -35,14 +42,11 @@ function relativeDeviceCoordinates(event: any) {
  */
 function registerMouseListener(target: Element, eventName: "mousemove" | "click", listener: (x: number, y: number) => void) {
   target.addEventListener(eventName, function (event) {
-// calculate mouse position in normalized device coordinates
-// (-1 to +1) for both components
+    // calculate mouse position in normalized device coordinates
+    // (-1 to +1) for both components
     const mouseEvent = event as MouseEvent;
     const eventTarget = mouseEvent.target as HTMLCanvasElement;
-
-    const x = (mouseEvent.offsetX / eventTarget.width * window.devicePixelRatio) * 2 - 1;
-    const y = -(mouseEvent.offsetY / eventTarget.height * window.devicePixelRatio) * 2 + 1;
-
+    const [x, y] = normalizedDeviceCoordinates(mouseEvent.clientX, mouseEvent.clientY, eventTarget);
     listener(x, y);
   }, false);
 }
@@ -232,14 +236,14 @@ function handlePointerDown(event: any) {
   console.log("%c Pointer Down", "background: #000; color: green", event.pointerId, event.pointerType);
   if (pointerPath1.identifier === -1) {
       pointerPath1.identifier = event.pointerId;
-      pointerPath1.cordNew = relativeDeviceCoordinates(event);
+      pointerPath1.cordNew = relativeDeviceCoordinates(event.clientX, event.clientY, event.target);
       // consider first touch as click
       // FIX: wrong coordinate system
       app.agentCube.mouseClick.x = pointerPath1.cordNew[0];
       app.agentCube.mouseClick.y = pointerPath1.cordNew[1];
   } else if (pointerPath2.identifier === -1) {
       pointerPath2.identifier = event.pointerId;
-      pointerPath2.cordNew = relativeDeviceCoordinates(event);
+      pointerPath2.cordNew = relativeDeviceCoordinates(event.clientX, event.clientY, event.target);
   }
   // reset dampers
   spinnDamper.value = 0;
@@ -257,13 +261,13 @@ function handlePointerMove(event: any) {
   if (pointerPath1.identifier === event.pointerId) {
     pointerPath1.cordOld = pointerPath1.cordNew;
     pointerPath2.cordOld = pointerPath2.cordNew;
-    pointerPath1.cordNew = relativeDeviceCoordinates(event);
+    pointerPath1.cordNew = relativeDeviceCoordinates(event.clientX, event.clientY, event.target);
     // logPointerPath();
     interpretPointerPath();
   } else if (pointerPath2.identifier === event.pointerId) {
     pointerPath1.cordOld = pointerPath1.cordNew;
     pointerPath2.cordOld = pointerPath2.cordNew;
-    pointerPath2.cordNew = relativeDeviceCoordinates(event);
+    pointerPath2.cordNew = relativeDeviceCoordinates(event.clientX, event.clientY, event.target);
     // logPointerPath();
     interpretPointerPath();
   } else {
