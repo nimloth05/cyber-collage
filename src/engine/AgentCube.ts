@@ -4,6 +4,9 @@
 import {AgentCamera} from "@/engine/AgentCamera.ts";
 import {
   AmbientLight,
+  DirectionalLight,
+  DirectionalLightHelper,
+  CameraHelper,
   AxesHelper,
   BasicShadowMap,
   BufferGeometry,
@@ -54,6 +57,7 @@ export class AgentCube {
   // FIXME: move to app
   repository: AgentRepository;
   selectedAgent!: AgentDescription | undefined;
+  touchMomentumHandler: Function | null;
 
   constructor(rows = 9, columns = 16, layers = 1, cellSize = 20.0) {
     this.rows = rows;
@@ -84,6 +88,7 @@ export class AgentCube {
     // @ts-ignore
     this.mouseClick.x = null; // don't start with valid coordinate
     this.repository = new AgentRepository();
+    this.touchMomentumHandler = null;
   }
 
   init3DSystem() {
@@ -114,21 +119,42 @@ export class AgentCube {
     // this.camera.lookAt(0, 0, 0);
 
     // lights
-    const ambientLight = new AmbientLight(0x404040, 2);
+    const ambientLight = new AmbientLight(0xffffff, 0.5);
     this.scene.add(ambientLight);
 
-    const spotLight = new SpotLight(0xffffff, 1.0);
-    spotLight.position.set(500, 0, 800);
-    spotLight.castShadow = true;
-    spotLight.shadow.radius = 8;
+    const spotLight = new DirectionalLight(0xffffff, 1.0);
+    spotLight.position.set(100, -100, 100);
+    this.scene.add(spotLight.target);
+
+    // spotLight.target.position.set(50, 50, -4);
+    spotLight.castShadow = false;
+    // spotLight.shadow.radius = 8;
 
     // pointLight.shadow.bias = -0.0001;
-    spotLight.shadow.mapSize.width = 1024 * 8;
-    spotLight.shadow.mapSize.height = 1024 * 8;
+    // super sensitive: a bit too large and an iPhone 11 will kick into 10x slower
+    // spotLight.shadow.mapSize.width = 8 * 512; // 1024 * 8;
+    // spotLight.shadow.mapSize.height = 8 * 512; // 1024 * 8;
 
-    spotLight.shadow.camera.near = 0.1;
+    spotLight.shadow.camera.near = 1;
     spotLight.shadow.camera.far = 2500;
+
+    spotLight.shadow.camera.left = 0;
+    spotLight.shadow.camera.right = this.cellSize * this.columns * 1.2;
+    spotLight.shadow.camera.top = 0;
+    spotLight.shadow.camera.bottom = this.cellSize * this.rows * 1.2;
+
+    spotLight.shadow.camera.updateProjectionMatrix();
+
     this.scene.add(spotLight);
+
+    // helpers
+    /*
+    const lightHelper = new DirectionalLightHelper(spotLight);
+    this.scene.add(lightHelper);
+
+    const cameraHelper = new CameraHelper(spotLight.shadow.camera);
+    this.scene.add(cameraHelper);
+    */
 
     // renderer
     this.renderer = new WebGLRenderer({antialias: true, alpha: true, logarithmicDepthBuffer: false});
@@ -143,7 +169,7 @@ export class AgentCube {
 
     this.container.appendChild(this.renderer.domElement);
 
-    const axesHelper = new AxesHelper(50);
+    const axesHelper = new AxesHelper(100);
     axesHelper.position.x = 0;
     axesHelper.position.y = 0;
     axesHelper.position.z = 50;
@@ -364,10 +390,20 @@ export class AgentCube {
     }
   }
 
+  processTouchMomentum() {
+    // if there is a handler function call it to deal with potential touch wrap up
+    if (this.touchMomentumHandler) {
+      this.touchMomentumHandler();
+    }
+  }
+
   render() {
     this.processMouseHover();
     this.processMouseClick();
+    this.processTouchMomentum();
+    // console.time("render");
     this.renderer.render(this.scene, this.camera);
+    // console.timeEnd("render");
   }
 
   animate() {

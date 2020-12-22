@@ -8,10 +8,10 @@ async function promptUserforOrientationPermission() {
   if (DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission === "function") {
     const permissionState = await DeviceOrientationEvent.requestPermission();
     if (permissionState === "granted") {
-// Permission granted
+      // Permission granted
       return true;
     } else {
-// Permission denied
+      // Permission denied
       return false;
     }
   }
@@ -86,7 +86,8 @@ function normalizedDeviceCoordinates(event: any) {
 
 function relativeDeviceCoordinates(event: any) {
   const box = event.target.getBoundingClientRect();
-  return [event.clientX - box.left, event.target.height - event.clientY + box.top];
+  console.log("client Y", event.clientY - box.top);
+  return [event.clientX - box.left, event.clientY - box.top];
 }
 
 function handleStart(event: any) {
@@ -216,46 +217,92 @@ function twoFingerTouch() {
 // -----------------------------------------------------------------------------
 // Dampening: 1 = no dampening, 0 = fully damened. Reasonable values 0.9 ... 0.1
 // A damper implements a low-pass filter to get rid of touch tracking noise
+// Assume dampening to run @ 60FPS
 // -----------------------------------------------------------------------------
 
-const spinnDamper = {value: 0, dampening: 0.5};
-const zoomDamper = {value: 0, dampening: 0.5};
-const panDamperX = {value: 0, dampening: 0.5};
-const panDamperY = {value: 0, dampening: 0.5};
+let inMomentumMode = false;
+
+const spinnDamper = {value: 0, minValue: 0.01, dampening: 0.5, momentumDampening: 0.02};
+const zoomDamper = {value: 0, minValue: 0.1, dampening: 0.5, momentumDampening: 0.02};
+const panDamperX = {value: 0, minValue: 0.1, dampening: 0.5, momentumDampening: 0.02};
+const panDamperY = {value: 0, minValue: 0.1, dampening: 0.5, momentumDampening: 0.02};
+
+function currentDampening (damper: any) {
+  if (inMomentumMode) {
+    return damper.momentumDampening;
+  } else {
+    return damper.dampening;
+  }
+}
+
+function isDamperRequired(damper: any) {
+  // if the value falls below the min value then the damper is not needed anymore
+  return (Math.abs(damper.value) > damper.minValue);
+}
+
+function areDampersRequired() {
+  // is there at least one damper that needs being serviced?
+  return (isDamperRequired(spinnDamper) || isDamperRequired(zoomDamper) || isDamperRequired(panDamperX) || isDamperRequired(panDamperY));
+}
 
 function dampenedSpinn(value: number) {
   // avoid flips
   if (value > 180) value = value - 360;
   if (value < -180) value = value + 360;
   // low pass filter
-  spinnDamper.value = spinnDamper.dampening * value + (1 - spinnDamper.dampening) * spinnDamper.value;
+  const dampening = currentDampening(spinnDamper);
+  spinnDamper.value = dampening * value + (1 - dampening) * spinnDamper.value;
   return spinnDamper.value;
 }
 
 function dampenedZoom(value: number) {
-  zoomDamper.value = zoomDamper.dampening * value + (1 - zoomDamper.dampening) * zoomDamper.value;
+  const dampening = currentDampening(zoomDamper);
+  zoomDamper.value = dampening * value + (1 - dampening) * zoomDamper.value;
+  // console.log("dampened zoom value", zoomDamper.value);
   return zoomDamper.value;
 }
 
 function dampenedPanX(value: number) {
-  panDamperX.value = panDamperX.dampening * value + (1 - panDamperX.dampening) * panDamperX.value;
+  const dampening = currentDampening(panDamperX);
+  panDamperX.value = dampening * value + (1 - dampening) * panDamperX.value;
+  // console.log("dampened pan X value", zoomDamper.value);
   return panDamperX.value;
 }
 
 function dampenedPanY(value: number) {
-  panDamperY.value = panDamperY.dampening * value + (1 - panDamperY.dampening) * panDamperY.value;
+  const dampening = currentDampening(panDamperY);
+  panDamperY.value = dampening * value + (1 - dampening) * panDamperY.value;
   return panDamperY.value;
+}
+
+function isTiltingGesture() {
+  // Hack: interpret two nearly vertical fingers as Tilting Gesture if first finger touched is near top
+  const topMargin = 40;
+  if (pointerPath1.cordNew[1] > topMargin) return false;
+  let angle = newPointerPathAngle();
+  if (angle > 180) angle -= 180; // if upper/lower finger flipped
+  const titleAngle = 90;
+  const tiltMargin = 10;
+  return ((angle < titleAngle + tiltMargin) && (angle > titleAngle - tiltMargin));
 }
 
 function interpretPointerPath() {
   if (twoFingerTouch()) {
-    app.agentCube.camera.trackSpinn(dampenedSpinn(oldPointerPathAngle() - newPointerPathAngle()), 0, Math.PI / 180);
-    app.agentCube.camera.trackZoom(0, dampenedZoom(newPointerPathDistance() - oldPointerPathDistance()));
-    app.agentCube.camera.trackPan(dampenedPanX(oldPointerPathMidpointX() - newPointerPathMidpointX()),
-                                  dampenedPanY(newPointerPathMidpointY() - oldPointerPathMidpointY()),
-                                   0.2);
+    if (isTiltingGesture()) {
+      app.agentCube.camera.trackSpinn(0, dampenedZoom(oldPointerPathDistance() - newPointerPathDistance()), Math.PI / 180);
+    } else {
+      app.agentCube.camera.trackSpinn(dampenedSpinn(newPointerPathAngle() - oldPointerPathAngle()), 0, Math.PI / 180);
+      app.agentCube.camera.trackZoom(0, dampenedZoom(newPointerPathDistance() - oldPointerPathDistance()));
+      app.agentCube.camera.trackPan(dampenedPanX(oldPointerPathMidpointX() - newPointerPathMidpointX()),
+                                    dampenedPanY(oldPointerPathMidpointY() - newPointerPathMidpointY()),
+                                    0.2);
+    }
   }
 }
+
+// -------------------------------------
+// Down, Move, Up Event Handlers        |
+// -------------------------------------
 
 function handlePointerDown(event: any) {
   event.preventDefault();
@@ -276,6 +323,7 @@ function handlePointerDown(event: any) {
   zoomDamper.value = 0;
   panDamperX.value = 0;
   panDamperY.value = 0;
+  inMomentumMode = false;
 }
 
 function handlePointerMove(event: any) {
@@ -303,6 +351,11 @@ function handlePointerMove(event: any) {
 function handlePointerUp(event: any) {
   event.preventDefault();
   console.log("%c Pointer Up", "background: #000; color: red", event.pointerId, event.pointerType);
+  // start momentum mode
+  if (twoFingerTouch()) {
+    inMomentumMode = true;
+    // CONSIDER: set a timer to prevent run away momentum handling?
+  }
   // reset path id to mark end of touch
   if (pointerPath1.identifier === event.pointerId) {
     pointerPath1.identifier = -1;
@@ -310,6 +363,21 @@ function handlePointerUp(event: any) {
     pointerPath2.identifier = -1;
   } else {
     console.error(`Pointer Id ${event.pointerId} not found in pointer path tables. > 2 touches?`);
+  }
+}
+
+// ------------------------------------------------
+// Touch Momentum                                  |
+// ------------------------------------------------
+
+function handleTouchMomentum() {
+  if (inMomentumMode && areDampersRequired()) {
+    app.agentCube.camera.trackSpinn(dampenedSpinn(0), 0, Math.PI / 180);
+    app.agentCube.camera.trackZoom(0, dampenedZoom(0));
+    app.agentCube.camera.trackPan(dampenedPanX(0), dampenedPanY(0), 0.2);
+  } else {
+    if (inMomentumMode) console.log("%c end of momentun", "background: #000; color: red");
+    inMomentumMode = false;
   }
 }
 
@@ -342,4 +410,7 @@ export function registerListeners() {
   div.addEventListener("pointerdown", handlePointerDown, false);
   div.addEventListener("pointermove", handlePointerMove, false);
   div.addEventListener("pointerup", handlePointerUp, false);
+
+  // touch momentum handler
+  app.agentCube.touchMomentumHandler = handleTouchMomentum;
 }

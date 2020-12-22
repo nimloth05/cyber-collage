@@ -15,7 +15,7 @@ import {UndoManager} from "@/model/UndoManager";
 
 export const app: { name: string; agentCube: AgentCube; gallery: Gallery | null; undoManager: UndoManager } = {
   name: "Cyber Collage",
-  agentCube: new AgentCube(60, 20),
+  agentCube: new AgentCube(100, 100),
   gallery: null,
   undoManager: new UndoManager(),
 };
@@ -65,7 +65,7 @@ export async function init() {
 //    for (let column = 0; column < app.agentCube.columns; column++)
 //        app.agentCube.pushAgent(new ChickenAgent(), row, column);
 
-  for (let i = 0; i < 50; i++) {
+  for (let i = 0; i < 500; i++) {
     const agent = new ChickenAgent(oneOf(shapeNames));
     app.agentCube.pushAgent(
       agent,
