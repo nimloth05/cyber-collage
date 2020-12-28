@@ -8,18 +8,23 @@ import {hoverBoxColor, selectionBoxColor} from "@/engine/globals";
 import {Shape} from "@/engine/Shape";
 import {AgentCube} from "@/engine/AgentCube";
 
+class SelectionBox extends BoxHelper {
+
+}
+
 export class Agent {
   static get app() {
     return app;
   }
 
   shape: Shape;
+  shapeName: string;
   row: number;
   layer: number;
   column: number;
   depth: number;
-  private readonly hoverBox: BoxHelper;
-  private readonly selectionBox: BoxHelper;
+  private readonly hoverBox: SelectionBox;
+  private readonly selectionBox: SelectionBox;
   isSelected = false;
   isHovered = false;
   rotationSpeed: Vector3 = new Vector3();
@@ -29,6 +34,7 @@ export class Agent {
     this.row = 0;
     this.column = 0;
     this.layer = 0;
+    this.shapeName = shapeName;
     this.shape = this.app.gallery!.createShapeForAgent(shapeName)!;
 
     // define shape as mesh and add clone of mesh to scene
@@ -44,9 +50,9 @@ export class Agent {
 
     // selection and hover boxes:
     // warn: it would be possible to share a single set of boxes reduce memory but this would not work if multiple selections will be allowed
-    this.hoverBox = new BoxHelper(this.shape.mesh, hoverBoxColor);
+    this.hoverBox = new SelectionBox(this.shape.mesh, hoverBoxColor);
     this.hoverBox.userData.agent = this;
-    this.selectionBox = new BoxHelper(this.shape.mesh, selectionBoxColor);
+    this.selectionBox = new SelectionBox(this.shape.mesh, selectionBoxColor);
     this.selectionBox.userData.agent = this;
 
     // Selection and Hovering
