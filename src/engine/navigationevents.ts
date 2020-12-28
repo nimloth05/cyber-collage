@@ -241,6 +241,7 @@ function handlePointerDown(event: any) {
       // FIX: wrong coordinate system
       app.agentCube.mouseClick.x = pointerPath1.cordNew[0];
       app.agentCube.mouseClick.y = pointerPath1.cordNew[1];
+      app.agentCube.mouseWasClicked = true;
   } else if (pointerPath2.identifier === -1) {
       pointerPath2.identifier = event.pointerId;
       pointerPath2.cordNew = relativeDeviceCoordinates(event.clientX, event.clientY, event.target);
@@ -322,11 +323,13 @@ export function registerListeners() {
   registerMouseListener(div, "mousemove", (x, y) => {
     app.agentCube.mouseMove.x = x;
     app.agentCube.mouseMove.y = y;
+    app.agentCube.mouseWasMoved = true;
   });
 
   registerMouseListener(div, "click", (x, y) => {
     app.agentCube.mouseClick.x = x;
     app.agentCube.mouseClick.y = y;
+    app.agentCube.mouseWasClicked = true;
   });
 
   // wheel events
