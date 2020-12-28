@@ -36,7 +36,30 @@ import {AgentDescription} from "@/engine/agent/AgentDescription";
 import {AddAgentToWorldCommand} from "@/model/commands/AddAgentToWorld";
 import {GridVector} from "@/model/util/GridVector";
 
-// FIXME: Think about separating splitting this class in a "World" abstraction, managing current agents, and a general rendering management class (name unknown, AgentCube not optimal)
+// --------------------------------------
+// Scene Edit Objects Classes
+// --------------------------------------
+
+class FoundationSurface extends Mesh {
+  // can differentiate from other ohter Object3D using obj.constructor.name
+}
+
+class FoundationGrid extends LineSegments {
+  // can differentiate from other ohter Object3D using obj.constructor.name
+}
+
+class FoundationHover extends LineSegments {
+  // can differentiate from other ohter Object3D using obj.constructor.name
+}
+
+let debug = false;
+
+// **********************************************
+// AgentCube
+//   A 4D Matrix containing and managing agents
+//   row, column, layer, stack
+// **********************************************
+
 export class AgentCube {
   rows: number;
   columns: number;
@@ -47,7 +70,9 @@ export class AgentCube {
   agentSelected: Agent | null;
   raycaster: Raycaster;
   mouseMove: Vector2;
+  mouseWasMoved: boolean;
   mouseClick: Vector2;
+  mouseWasClicked: boolean;
   container!: HTMLElement;
   scene!: Scene;
   camera!: AgentCamera;
@@ -79,14 +104,9 @@ export class AgentCube {
     this.agentSelected = null;
     this.raycaster = new Raycaster();
     this.mouseMove = new Vector2();
-    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-    // @ts-ignore
-    this.mouseMove.x = null; // don't start with valid coordinate
-
+    this.mouseWasMoved = false;
     this.mouseClick = new Vector2();
-    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-    // @ts-ignore
-    this.mouseClick.x = null; // don't start with valid coordinate
+    this.mouseWasClicked = false;
     this.repository = new AgentRepository();
     this.touchMomentumHandler = null;
   }
@@ -210,7 +230,7 @@ export class AgentCube {
     }
     const material = new LineBasicMaterial({color: foundationGridColor});
     const geometry = new BufferGeometry().setFromPoints(points);
-    const foundationGrid = new LineSegments(geometry, material);
+    const foundationGrid = new FoundationGrid(geometry, material);
     this.scene.add(foundationGrid);
   }
 
@@ -224,7 +244,7 @@ export class AgentCube {
         texture.wrapS = RepeatWrapping;
         texture.wrapT = RepeatWrapping;
         texture.repeat.set(Math.ceil(this.columns / 2), Math.ceil(this.rows / 2));
-        this.foundationSurface = new Mesh(
+        this.foundationSurface = new FoundationSurface(
           new PlaneGeometry(this.columns * this.cellSize, this.rows * this.cellSize),
           new MeshPhongMaterial({map: texture})
         );
@@ -260,9 +280,8 @@ export class AgentCube {
     points.push(new Vector3(0.5 * this.cellSize, 0.5 * this.cellSize, 2 * this.cellSize));
 
     const material = new LineBasicMaterial({color: selectionBoxColor});
-    // material.depthTest = false;
     const geometry = new BufferGeometry().setFromPoints(points);
-    this.foundationHoverShape = new LineSegments(geometry, material);
+    this.foundationHoverShape = new FoundationHover(geometry, material);
     this.scene.add(this.foundationHoverShape);
   }
 
@@ -286,13 +305,17 @@ export class AgentCube {
     this.foundationHoverShape.position.y = row * this.cellSize;
   }
 
+  agentAtTop(row: number, column: number, layer = 0) {
+    const agents = this.grid[layer][row][column];
+    return agents[agents.length - 1];
+  }
+
   pushAgent(agent: Agent, row: number, column: number, layer = 0) {
     if (agent.shape.mesh.parent == null) {
       this.scene.add(agent.shape.mesh);
     }
-
     const agents = this.grid[layer][row][column];
-    const agentAtTop = agents[agents.length - 1];
+    const agentAtTop = this.agentAtTop(row, column, layer);
 
     // adjust geometry
     // FIXME: If agent would be aware of the cell size it could calculate the correct coordinates by itself
@@ -329,64 +352,67 @@ export class AgentCube {
     }
   }
 
-  processMouseHover() {
-    if (this.mouseMove.x !== null) {
-      this.raycaster.setFromCamera(this.mouseMove, this.camera);
-      const intersections = this.raycaster.intersectObjects(this.scene.children, true);
-      const firstIntersection = intersections.filter(intersection => intersection.object !== this.foundationHoverShape)[0];
-      let agent = null;
-      if (firstIntersection) {
-        if (firstIntersection.object.userData.isFoundation) {
-          this.hoverAt(
-            Math.floor(firstIntersection.point.y / this.cellSize),
-            Math.floor(firstIntersection.point.x / this.cellSize));
-        } else {
-          agent = findObjectAgent(firstIntersection.object);
-        }
+  findAgentAt(x: number, y: number, exludedClasses: Array<string> = ["SelectionBox", "FoundationHover"]) {
+    this.raycaster.setFromCamera(new Vector2(x, y), this.camera);
+    const intersections = this.raycaster.intersectObjects(this.scene.children, true);
+    if (debug) {
+      (window as any).intersects = intersections;
+      debug = false;
+    }
+    console.log("intersections", intersections.map(inter => inter.object.constructor.name));
+    const firstIntersection = intersections.filter(intersection => !exludedClasses.includes(intersection.object.constructor.name))[0];
+    const hit = {agent: null, row: -1, column: -1};
+    if (firstIntersection) {
+      if (firstIntersection.object.userData.isFoundation) {
+        hit.row = Math.floor(firstIntersection.point.y / this.cellSize);
+        hit.column = Math.floor(firstIntersection.point.x / this.cellSize);
+        // Heuristic: if we find an agent in that cell use it; May not work well in a tall stack
+        (hit.agent as any) = this.agentAtTop(hit.row, hit.column);
+      } else {
+        (hit.agent as any) = findObjectAgent(firstIntersection.object);
       }
+    }
+    if (hit.agent) {
+      console.log("hit", (hit.agent as any).shapeName);
+    } else {
+      console.log("hit", hit);
+      }
+    return hit;
+  }
+
+  processMouseHover() {
+    if (this.mouseWasMoved) {
+      const {agent, row, column} = this.findAgentAt(this.mouseMove.x, this.mouseMove.y);
+      if (!agent) this.hoverAt(row, column);
       if (agent !== this.agentHovered) {
         if (this.agentHovered) {
           this.agentHovered.unhover();
           this.agentHovered = null;
         }
         if (agent) {
-          agent.hover();
+          (agent as any).hover(); // TypeScript madness!! We are checking if agent is not null
           this.agentHovered = agent;
         }
       }
-      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-      // @ts-ignore
-      this.mouseMove.x = null;
+      this.mouseWasMoved = false;
     }
   }
 
-  processMouseClick() {
-    if (this.mouseClick.x != null) {
-      this.raycaster.setFromCamera(this.mouseClick, this.camera);
-      const intersections = this.raycaster.intersectObjects(this.scene.children, true);
-      const firstIntersection = intersections.filter(intersection => intersection.object !== this.foundationHoverShape)[0];
-      let agent = null;
-      if (firstIntersection) {
-        if (firstIntersection.object.userData.isFoundation) {
-          this.clickAt(Math.floor(firstIntersection.point.y / this.cellSize),
-            Math.floor(firstIntersection.point.x / this.cellSize));
-        } else {
-          agent = findObjectAgent(firstIntersection.object);
-        }
-      }
+   processMouseClick() {
+    if (this.mouseWasClicked) {
+      debug = true;
+      const {agent, row, column} = this.findAgentAt(this.mouseClick.x, this.mouseClick.y);
       if (agent !== this.agentSelected) {
         if (this.agentSelected) {
           this.agentSelected.deselect();
           this.agentSelected = null;
         }
         if (agent) {
-          agent.select();
+          (agent as any).select(); // TypeScript madness!! We are checking if agent is not null
           this.agentSelected = agent;
         }
       }
-      // eslint-disable-next-line
-      // @ts-ignore
-      this.mouseClick.x = null;
+      this.mouseWasClicked = false;
     }
   }
 
