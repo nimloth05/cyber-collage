@@ -1,12 +1,12 @@
 <template>
   <ul class="shape-list">
-    <li>
-      <button @click="plusClicked" style="width: 64px; height: 64px">+</button>
-    </li>
     <li
       v-for="shape in shapes"
       :key="shape.shape.id">
       <shape-element :shape-ref="shape" @click="shapeClicked(shape)"/>
+    </li>
+    <li>
+      <empty-shape-element @click="plusClicked"/>
     </li>
   </ul>
 </template>
@@ -15,12 +15,17 @@
 import {Options, Vue} from "vue-class-component";
 import {ShapeRef} from "@/engine/Shape";
 import ShapeElement from "@/components/hud/ShapeElement.vue";
+import EmptyShapeElement from "@/components/hud/EmptyShapeElement.vue";
 
 @Options({
   name: "ShapeList",
   components: {
     ShapeElement,
+    EmptyShapeElement,
   },
+  emits: [
+    "shape-selected",
+  ],
   props: {
     shapes: Array,
   },
@@ -29,7 +34,6 @@ export default class ShapeList extends Vue {
   shapes: Array<ShapeRef> = [];
 
   shapeClicked(shape: ShapeRef): void {
-    // this.$emit("agent-created");
     this.$emit("shape-selected", shape);
   }
 
@@ -41,18 +45,12 @@ export default class ShapeList extends Vue {
 
 <style>
 .shape-list {
-  position: absolute;
-  bottom: 100%;
   list-style: none;
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
-  overflow: auto;
-  height: calc(5.7 * 64px);
 }
 
-/* Hide scrollbar for Chrome, Safari and Opera */
-.shape-list::-webkit-scrollbar {
-  display: none;
+.shape-list li {
+  display: inline;
+  margin: 1rem;
 }
 
 .shape-list button {

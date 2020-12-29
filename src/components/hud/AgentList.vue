@@ -15,6 +15,9 @@ import {CreateAgentClass} from "@/model/commands/CreateAgentClass";
   components: {
     ShapeList,
   },
+  emits: [
+    "agent-clicked",
+  ],
 })
 export default class AddAgentShapeList extends Vue {
   private disposable: Disposable = new Disposables();
@@ -35,12 +38,18 @@ export default class AddAgentShapeList extends Vue {
     }
     const shape = app.gallery?.findShape(retVal);
     if (shape != null) {
-      app.undoManager.execute(new CreateAgentClass(app.repository, new AgentDescription(shape)));
+      const desc = new AgentDescription(shape);
+      app.undoManager.execute(new CreateAgentClass(app.repository, desc));
+      app.agentCube.selectedAgent = desc;
     }
+
+    this.$emit("agent-clicked");
   }
 
   agentSelected(description: AgentDescription) {
     app.agentCube.selectedAgent = description;
+    this.$emit("agent-clicked");
+    this.$forceUpdate();
   }
 
   unmounted() {
