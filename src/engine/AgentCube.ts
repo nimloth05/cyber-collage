@@ -4,24 +4,19 @@
 import {AgentCamera} from "@/engine/AgentCamera.ts";
 import {
   AmbientLight,
-  DirectionalLight,
-  DirectionalLightHelper,
-  CameraHelper,
   AxesHelper,
   BasicShadowMap,
   BufferGeometry,
+  DirectionalLight,
   LineBasicMaterial,
-  MeshBasicMaterial,
   LineSegments,
   Mesh,
   MeshPhongMaterial,
   Object3D,
-  DoubleSide,
   PlaneGeometry,
   Raycaster,
   RepeatWrapping,
   Scene,
-  SpotLight,
   TextureLoader,
   Vector2,
   Vector3,
@@ -53,6 +48,8 @@ class FoundationHover extends LineSegments {
 }
 
 let debug = false;
+
+export type FindAgentResult = { agent: Agent | null; row: number; column: number };
 
 // **********************************************
 // AgentCube
@@ -234,7 +231,7 @@ export class AgentCube {
     this.scene.add(foundationGrid);
   }
 
-   addFoundationSurface() {
+  addFoundationSurface() {
     const texturePath = "textures/";
     const texturesFile = "chess_texture.png";
     const loader = new TextureLoader();
@@ -257,7 +254,7 @@ export class AgentCube {
       },
       undefined,
       // eslint-disable-next-line handle-callback-err
-      err => console.error("cannot load texture")
+      err => console.error("cannot load texture", err)
     );
   }
 
@@ -340,9 +337,8 @@ export class AgentCube {
 
   removeAgent(agent: Agent, removeFromScene = false) {
     const mesh = agent.shape.mesh;
-    const parent = mesh.parent!;
-    if (removeFromScene) {
-      parent.remove(agent.shape.mesh);
+    if (removeFromScene && mesh.parent != null) {
+      mesh.parent.remove(agent.shape.mesh);
     }
 
     const stack = this.grid[agent.layer][agent.row][agent.column];
@@ -352,31 +348,32 @@ export class AgentCube {
     }
   }
 
-  findAgentAt(x: number, y: number, exludedClasses: Array<string> = ["SelectionBox", "FoundationHover"]) {
+  findAgentAt(x: number, y: number, excludedClasses: Array<string> = ["SelectionBox", "FoundationHover"]): FindAgentResult {
     this.raycaster.setFromCamera(new Vector2(x, y), this.camera);
     const intersections = this.raycaster.intersectObjects(this.scene.children, true);
     if (debug) {
+      // FIXME: Global scope pollution
       (window as any).intersects = intersections;
       debug = false;
     }
     console.log("intersections", intersections.map(inter => inter.object.constructor.name));
-    const firstIntersection = intersections.filter(intersection => !exludedClasses.includes(intersection.object.constructor.name))[0];
-    const hit = {agent: null, row: -1, column: -1};
+    const firstIntersection = intersections.filter(intersection => !excludedClasses.includes(intersection.object.constructor.name))[0];
+    const hit: FindAgentResult = {agent: null, row: -1, column: -1};
     if (firstIntersection) {
       if (firstIntersection.object.userData.isFoundation) {
         hit.row = Math.floor(firstIntersection.point.y / this.cellSize);
         hit.column = Math.floor(firstIntersection.point.x / this.cellSize);
         // Heuristic: if we find an agent in that cell use it; May not work well in a tall stack
-        (hit.agent as any) = this.agentAtTop(hit.row, hit.column);
+        hit.agent = this.agentAtTop(hit.row, hit.column);
       } else {
-        (hit.agent as any) = findObjectAgent(firstIntersection.object);
+        hit.agent = findObjectAgent(firstIntersection.object);
       }
     }
     if (hit.agent) {
-      console.log("hit", (hit.agent as any).shapeName);
+      console.log("hit", hit.agent.shapeName);
     } else {
       console.log("hit", hit);
-      }
+    }
     return hit;
   }
 
@@ -389,8 +386,8 @@ export class AgentCube {
           this.agentHovered.unhover();
           this.agentHovered = null;
         }
-        if (agent) {
-          (agent as any).hover(); // TypeScript madness!! We are checking if agent is not null
+        if (agent != null) {
+          agent.hover(); // TypeScript madness!! We are checking if agent is not null
           this.agentHovered = agent;
         }
       }
@@ -398,7 +395,7 @@ export class AgentCube {
     }
   }
 
-   processMouseClick() {
+  processMouseClick() {
     if (this.mouseWasClicked) {
       debug = true;
       const {agent, row, column} = this.findAgentAt(this.mouseClick.x, this.mouseClick.y);
@@ -407,9 +404,12 @@ export class AgentCube {
           this.agentSelected.deselect();
           this.agentSelected = null;
         }
-        if (agent) {
-          (agent as any).select(); // TypeScript madness!! We are checking if agent is not null
+        if (agent != null) {
+          agent.select();
           this.agentSelected = agent;
+        } else {
+          // Don't know if correct, quick fix so agents can be place inside the world again. so, 29.12.2020
+          this.clickAt(row, column);
         }
       }
       this.mouseWasClicked = false;
