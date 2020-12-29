@@ -258,4 +258,9 @@ export class Agent {
     this.pitch = deltaPitch;
     this.heading = deltaHeading;
   }
+
+  erase() {
+    this.removeFromAgentCube();
+    this.parent.scene.remove(this.shape.mesh);
+  }
 }

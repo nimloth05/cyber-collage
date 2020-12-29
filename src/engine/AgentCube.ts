@@ -52,8 +52,6 @@ class FoundationHover extends LineSegments {
   // can differentiate from other ohter Object3D using obj.constructor.name
 }
 
-let debug = false;
-
 // **********************************************
 // AgentCube
 //   A 4D Matrix containing and managing agents
@@ -83,6 +81,8 @@ export class AgentCube {
   repository: AgentRepository;
   selectedAgent!: AgentDescription | undefined;
   touchMomentumHandler: Function | null;
+  toolRow: number;
+  toolColumn: number;
 
   constructor(rows = 9, columns = 16, layers = 1, cellSize = 20.0) {
     this.rows = rows;
@@ -109,6 +109,8 @@ export class AgentCube {
     this.mouseWasClicked = false;
     this.repository = new AgentRepository();
     this.touchMomentumHandler = null;
+    this.toolRow = -1;
+    this.toolColumn = -1;
   }
 
   init3DSystem() {
@@ -355,10 +357,6 @@ export class AgentCube {
   findAgentAt(x: number, y: number, exludedClasses: Array<string> = ["SelectionBox", "FoundationHover"]) {
     this.raycaster.setFromCamera(new Vector2(x, y), this.camera);
     const intersections = this.raycaster.intersectObjects(this.scene.children, true);
-    if (debug) {
-      (window as any).intersects = intersections;
-      debug = false;
-    }
     console.log("intersections", intersections.map(inter => inter.object.constructor.name));
     const firstIntersection = intersections.filter(intersection => !exludedClasses.includes(intersection.object.constructor.name))[0];
     const hit = {agent: null, row: -1, column: -1};
@@ -380,37 +378,89 @@ export class AgentCube {
     return hit;
   }
 
-  processMouseHover() {
+  processMouseMove() {
     if (this.mouseWasMoved) {
-      const {agent, row, column} = this.findAgentAt(this.mouseMove.x, this.mouseMove.y);
-      if (!agent) this.hoverAt(row, column);
-      if (agent !== this.agentHovered) {
-        if (this.agentHovered) {
-          this.agentHovered.unhover();
-          this.agentHovered = null;
-        }
-        if (agent) {
-          (agent as any).hover(); // TypeScript madness!! We are checking if agent is not null
-          this.agentHovered = agent;
-        }
+      let {agent, row, column} = this.findAgentAt(this.mouseMove.x, this.mouseMove.y);
+      switch (app.tool()) {
+        case "pen":
+          // new agent
+          if (agent) {
+            row = (agent as any).row;
+            column = (agent as any).column;
+          }
+          if (row !== this.toolRow || column !== this.toolColumn) {
+            app.agentCube.pushAgent(new Agent(app.agentType()), row, column);
+            this.toolRow = row;
+            this.toolColumn = column;
+          }
+          break;
+        case "arrow":
+          // select agent
+          if (!agent) this.hoverAt(row, column);
+          if (agent !== this.agentHovered) {
+            if (this.agentHovered) {
+              this.agentHovered.unhover();
+              this.agentHovered = null;
+            }
+            if (agent) {
+              (agent as any).hover(); // TS!#$
+              this.agentHovered = agent;
+            }
+          }
+          break;
+        case "eraser":
+          // erase agent
+          if (agent) {
+            row = (agent as any).row;
+            column = (agent as any).column;
+            if (row !== this.toolRow || column !== this.toolColumn) {
+              (agent as any).erase();
+              this.toolRow = row;
+              this.toolColumn = column;
+            }
+          } else {
+            this.toolRow = row;
+            this.toolColumn = column;
+          }
+          break;
       }
       this.mouseWasMoved = false;
     }
   }
 
-   processMouseClick() {
+  processMouseClick() {
     if (this.mouseWasClicked) {
-      debug = true;
-      const {agent, row, column} = this.findAgentAt(this.mouseClick.x, this.mouseClick.y);
-      if (agent !== this.agentSelected) {
-        if (this.agentSelected) {
-          this.agentSelected.deselect();
-          this.agentSelected = null;
-        }
-        if (agent) {
-          (agent as any).select(); // TypeScript madness!! We are checking if agent is not null
-          this.agentSelected = agent;
-        }
+      let {agent, row, column} = this.findAgentAt(this.mouseClick.x, this.mouseClick.y);
+      switch (app.tool()) {
+        case "pen":
+          // new agent
+          if (agent) {
+            row = (agent as any).row;
+            column = (agent as any).column;
+          }
+          app.agentCube.pushAgent(new Agent(app.agentType()), row, column);
+          this.toolRow = row;
+          this.toolColumn = column;
+          break;
+        case "arrow":
+          // select agent
+          if (agent !== this.agentSelected) {
+            if (this.agentSelected) {
+              this.agentSelected.deselect();
+              this.agentSelected = null;
+            }
+            if (agent) {
+              (agent as any).select(); // TypeScript madness!! We are checking if agent is not null
+              this.agentSelected = agent;
+            }
+          }
+          break;
+        case "eraser":
+          // erase agent
+          if (agent) {
+            (agent as any).erase();
+          }
+          break;
       }
       this.mouseWasClicked = false;
     }
@@ -424,7 +474,7 @@ export class AgentCube {
   }
 
   render() {
-    this.processMouseHover();
+    this.processMouseMove();
     this.processMouseClick();
     this.processTouchMomentum();
     // console.time("render");

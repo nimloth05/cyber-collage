@@ -213,7 +213,7 @@ function isTiltingGesture() {
   return ((angle < titleAngle + tiltMargin) && (angle > titleAngle - tiltMargin));
 }
 
-function interpretPointerPath() {
+function interpretPointerPath(clientX: number, clientY: number, target: any) {
   if (twoFingerTouch()) {
     if (isTiltingGesture()) {
       app.agentCube.camera.trackSpinn(0, dampenedZoom(oldPointerPathDistance() - newPointerPathDistance()), Math.PI / 180);
@@ -224,6 +224,11 @@ function interpretPointerPath() {
                                     dampenedPanY(oldPointerPathMidpointY() - newPointerPathMidpointY()),
                                     0.2);
     }
+  } else {
+    const [x, y] = normalizedDeviceCoordinates(clientX, clientY, target);
+    app.agentCube.mouseMove.x = x;
+    app.agentCube.mouseMove.y = y;
+    app.agentCube.mouseWasMoved = true;
   }
 }
 
@@ -231,20 +236,26 @@ function interpretPointerPath() {
 // Down, Move, Up Event Handlers        |
 // -------------------------------------
 
+function handleSingleTouchDown(x: number, y: number) {
+  if (!twoFingerTouch()) {
+    app.agentCube.mouseClick.x = x;
+    app.agentCube.mouseClick.y = y;
+    app.agentCube.mouseWasClicked = true;
+  }
+}
+
 function handlePointerDown(event: any) {
+  const touch1touch2Delay = 100;
   event.preventDefault();
   console.log("%c Pointer Down", "background: #000; color: green", event.pointerId, event.pointerType);
   if (pointerPath1.identifier === -1) {
-      pointerPath1.identifier = event.pointerId;
-      pointerPath1.cordNew = relativeDeviceCoordinates(event.clientX, event.clientY, event.target);
-      // consider first touch as click
-      // FIX: wrong coordinate system
-      app.agentCube.mouseClick.x = pointerPath1.cordNew[0];
-      app.agentCube.mouseClick.y = pointerPath1.cordNew[1];
-      app.agentCube.mouseWasClicked = true;
+    pointerPath1.identifier = event.pointerId;
+    pointerPath1.cordNew = relativeDeviceCoordinates(event.clientX, event.clientY, event.target);
+    const [x, y] = normalizedDeviceCoordinates(event.clientX, event.clientY, event.target);
+    setTimeout(handleSingleTouchDown, touch1touch2Delay, x, y);
   } else if (pointerPath2.identifier === -1) {
-      pointerPath2.identifier = event.pointerId;
-      pointerPath2.cordNew = relativeDeviceCoordinates(event.clientX, event.clientY, event.target);
+    pointerPath2.identifier = event.pointerId;
+    pointerPath2.cordNew = relativeDeviceCoordinates(event.clientX, event.clientY, event.target);
   }
   // reset dampers
   spinnDamper.value = 0;
@@ -257,22 +268,22 @@ function handlePointerDown(event: any) {
 function handlePointerMove(event: any) {
   event.preventDefault();
   // console.log("%c Pointer Move", "background: #000; color: orange", event.pointerId, event.pointerType);
-  if (event.pointerType === "mouse") return; // mice cannot do multi-touch: bail!
+  // if (event.pointerType === "mouse") return; // mice cannot do multi-touch: bail!
   // find matching pointer path and shift coordinates
   if (pointerPath1.identifier === event.pointerId) {
     pointerPath1.cordOld = pointerPath1.cordNew;
     pointerPath2.cordOld = pointerPath2.cordNew;
     pointerPath1.cordNew = relativeDeviceCoordinates(event.clientX, event.clientY, event.target);
     // logPointerPath();
-    interpretPointerPath();
+    interpretPointerPath(event.clientX, event.clientY, event.target);
   } else if (pointerPath2.identifier === event.pointerId) {
     pointerPath1.cordOld = pointerPath1.cordNew;
     pointerPath2.cordOld = pointerPath2.cordNew;
     pointerPath2.cordNew = relativeDeviceCoordinates(event.clientX, event.clientY, event.target);
     // logPointerPath();
-    interpretPointerPath();
+    interpretPointerPath(event.clientX, event.clientY, event.target);
   } else {
-    console.error(`Pointer Id ${event.pointerId} not found in pointer path tables. > 2 touches?`);
+    // console.error(`Pointer Id ${event.pointerId} not found in pointer path tables. > 2 touches?`);
   }
 }
 
@@ -321,15 +332,15 @@ export function registerListeners() {
   const div = document.querySelector(".scene")!;
 
   registerMouseListener(div, "mousemove", (x, y) => {
-    app.agentCube.mouseMove.x = x;
-    app.agentCube.mouseMove.y = y;
-    app.agentCube.mouseWasMoved = true;
+    // app.agentCube.mouseMove.x = x;
+    // app.agentCube.mouseMove.y = y;
+    // app.agentCube.mouseWasMoved = true;
   });
 
   registerMouseListener(div, "click", (x, y) => {
-    app.agentCube.mouseClick.x = x;
-    app.agentCube.mouseClick.y = y;
-    app.agentCube.mouseWasClicked = true;
+    // app.agentCube.mouseClick.x = x;
+    // app.agentCube.mouseClick.y = y;
+    // app.agentCube.mouseWasClicked = true;
   });
 
   // wheel events

@@ -9,15 +9,23 @@ import {ChickenAgent} from "@/engine/example-agents";
 import {registerListeners} from "@/engine/navigationevents";
 import {UndoManager} from "@/model/UndoManager";
 
-//* **************************************************
+// ***************************************************
 // T E S T I N G
-//* **************************************************
+// ***************************************************
 
-export const app: { name: string; agentCube: AgentCube; gallery: Gallery | null; undoManager: UndoManager } = {
+export const app: { name: string; agentCube: AgentCube; gallery: Gallery | null; undoManager: UndoManager; agentType: Function; tool: Function } = {
   name: "Cyber Collage",
   agentCube: new AgentCube(100, 100),
   gallery: null,
   undoManager: new UndoManager(),
+  agentType: function () {
+    const e: any = document.getElementById("agent-menu");
+    return e.options[e.selectedIndex].value;
+  },
+  tool: function () {
+    const e: any = document.getElementById("tool-mode");
+    return e.options[e.selectedIndex].value;
+  },
 };
 
  (window as any).app = app; // need to be able to tinker with this
