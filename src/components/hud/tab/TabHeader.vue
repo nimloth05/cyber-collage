@@ -1,9 +1,9 @@
 <template>
   <ul class="hud-tab-list">
-    <li>
-<!--      <img src="" alt="Play-Knopf" title="Spielen"/>-->
-      Play
-    </li>
+<!--    <li>-->
+<!--&lt;!&ndash;      <img src="" alt="Play-Knopf" title="Spielen"/>&ndash;&gt;-->
+<!--      Play-->
+<!--    </li>-->
     <li>
 <!--      <img src="" alt="Welt designen" title="Designen"/>-->
       Design

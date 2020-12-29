@@ -22,10 +22,10 @@ export default class AddAgentShapeList extends Vue {
 
   created() {
     this.disposable = app.undoManager.addListener(() => {
-      this.agentClasses = [...app.agentCube.repository.descriptions];
+      this.agentClasses = [...app.repository.descriptions];
     });
 
-    this.agentClasses = [...app.agentCube.repository.descriptions];
+    this.agentClasses = [...app.repository.descriptions];
   }
 
   createAgent() {
@@ -33,8 +33,10 @@ export default class AddAgentShapeList extends Vue {
     if (retVal == null) {
       return;
     }
-    const shape = app.gallery?.shapes[retVal]!;
-    app.undoManager.execute(new CreateAgentClass(app.agentCube, new AgentDescription(shape)));
+    const shape = app.gallery?.findShape(retVal);
+    if (shape != null) {
+      app.undoManager.execute(new CreateAgentClass(app.repository, new AgentDescription(shape)));
+    }
   }
 
   agentSelected(description: AgentDescription) {

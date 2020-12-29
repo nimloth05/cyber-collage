@@ -26,7 +26,6 @@ import {foundationGridColor, selectionBoxColor} from "@/engine/globals.ts";
 import {app} from "@/engine/app";
 import {findObjectAgent} from "@/engine/helperfunctions.ts";
 import {Agent} from "@/engine/Agent";
-import {AgentRepository} from "@/engine/agent/AgentRepository";
 import {AgentDescription} from "@/engine/agent/AgentDescription";
 import {AddAgentToWorldCommand} from "@/model/commands/AddAgentToWorld";
 import {GridVector} from "@/model/util/GridVector";
@@ -51,12 +50,12 @@ let debug = false;
 
 export type FindAgentResult = { agent: Agent | null; row: number; column: number };
 
-// **********************************************
-// AgentCube
-//   A 4D Matrix containing and managing agents
-//   row, column, layer, stack
-// **********************************************
-
+/**
+ /* AgentCube
+ /*   A 4D Matrix containing and managing agents
+ /*   row, column, layer, stack
+ **/
+// FIXME: Code smell: Class has multiple responsibilities
 export class AgentCube {
   rows: number;
   columns: number;
@@ -76,8 +75,6 @@ export class AgentCube {
   renderer!: WebGLRenderer;
   foundationHoverShape!: LineSegments;
   foundationSurface!: Mesh;
-  // FIXME: move to app
-  repository: AgentRepository;
   selectedAgent!: AgentDescription | undefined;
   touchMomentumHandler: Function | null;
 
@@ -104,7 +101,6 @@ export class AgentCube {
     this.mouseWasMoved = false;
     this.mouseClick = new Vector2();
     this.mouseWasClicked = false;
-    this.repository = new AgentRepository();
     this.touchMomentumHandler = null;
   }
 
@@ -171,16 +167,16 @@ export class AgentCube {
 
     const cameraHelper = new CameraHelper(spotLight.shadow.camera);
     this.scene.add(cameraHelper);
-    */
+ */
 
-    // renderer
+// renderer
     this.renderer = new WebGLRenderer({antialias: true, alpha: true, logarithmicDepthBuffer: false});
     this.renderer.sortObjects = false; // to work with disabled depth testing
     this.renderer.autoClear = true;
     this.renderer.setSize(this.container.clientWidth, this.container.clientHeight);
     this.renderer.setPixelRatio(window.devicePixelRatio);
 
-    // shadows
+// shadows
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = BasicShadowMap;
 
@@ -231,6 +227,7 @@ export class AgentCube {
     this.scene.add(foundationGrid);
   }
 
+  // FIXME: Function is async but doesn't communicate this fact
   addFoundationSurface() {
     const texturePath = "textures/";
     const texturesFile = "chess_texture.png";
