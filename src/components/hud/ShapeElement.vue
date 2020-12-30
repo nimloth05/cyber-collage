@@ -13,13 +13,12 @@ import {ShapeRef} from "@/engine/Shape";
     // FIXME: Should be ShapeRef?
     shapeRef: Object,
   },
+  emits: [
+    "click",
+  ],
 })
 export default class ShapeElement extends Vue {
   shapeRef!: ShapeRef;
-
-  created() {
-    console.log("this.shapeRef", this.shapeRef.shape);
-  }
 
   click() {
     this.$emit("click", this.shapeRef);

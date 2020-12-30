@@ -18,7 +18,6 @@ export class Agent {
   }
 
   shape: Shape;
-  shapeName: string;
   row: number;
   layer: number;
   column: number;
@@ -31,11 +30,14 @@ export class Agent {
   parent!: AgentCube;
 
   constructor(shapeName: string) {
+    if (this.app.gallery == null) {
+      throw new Error("Gallery not ready, system cannot be used");
+    }
+
     this.row = 0;
     this.column = 0;
     this.layer = 0;
-    this.shapeName = shapeName;
-    this.shape = this.app.gallery!.createShapeForAgent(shapeName)!;
+    this.shape = this.app.gallery.createShapeForAgent(shapeName);
 
     // define shape as mesh and add clone of mesh to scene
     // NEED to check if this clone copies the geometry which is SHOULD NOT
@@ -57,6 +59,10 @@ export class Agent {
 
     // Selection and Hovering
     this.whenCreatingNewAgent();
+  }
+
+  get shapeName(): string {
+    return this.shape.id;
   }
 
   get app() {

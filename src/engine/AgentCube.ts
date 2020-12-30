@@ -4,24 +4,19 @@
 import {AgentCamera} from "@/engine/AgentCamera.ts";
 import {
   AmbientLight,
-  DirectionalLight,
-  DirectionalLightHelper,
-  CameraHelper,
   AxesHelper,
   BasicShadowMap,
   BufferGeometry,
+  DirectionalLight,
   LineBasicMaterial,
-  MeshBasicMaterial,
   LineSegments,
   Mesh,
   MeshPhongMaterial,
   Object3D,
-  DoubleSide,
   PlaneGeometry,
   Raycaster,
   RepeatWrapping,
   Scene,
-  SpotLight,
   TextureLoader,
   Vector2,
   Vector3,
@@ -31,7 +26,6 @@ import {foundationGridColor, selectionBoxColor} from "@/engine/globals.ts";
 import {app} from "@/engine/app";
 import {findObjectAgent} from "@/engine/helperfunctions.ts";
 import {Agent} from "@/engine/Agent";
-import {AgentRepository} from "@/engine/agent/AgentRepository";
 import {AgentDescription} from "@/engine/agent/AgentDescription";
 import {AddAgentToWorldCommand} from "@/model/commands/AddAgentToWorld";
 import {GridVector} from "@/model/util/GridVector";
@@ -52,12 +46,14 @@ class FoundationHover extends LineSegments {
   // can differentiate from other ohter Object3D using obj.constructor.name
 }
 
-// **********************************************
-// AgentCube
-//   A 4D Matrix containing and managing agents
-//   row, column, layer, stack
-// **********************************************
+export type FindAgentResult = { agent: Agent | null; row: number; column: number };
 
+/**
+ /* AgentCube
+ /*   A 4D Matrix containing and managing agents
+ /*   row, column, layer, stack
+ **/
+// FIXME: Code smell: Class has multiple responsibilities
 export class AgentCube {
   rows: number;
   columns: number;
@@ -77,9 +73,6 @@ export class AgentCube {
   renderer!: WebGLRenderer;
   foundationHoverShape!: LineSegments;
   foundationSurface!: Mesh;
-  // FIXME: move to app
-  repository: AgentRepository;
-  selectedAgent!: AgentDescription | undefined;
   touchMomentumHandler: Function | null;
   toolRow: number;
   toolColumn: number;
@@ -107,7 +100,6 @@ export class AgentCube {
     this.mouseWasMoved = false;
     this.mouseClick = new Vector2();
     this.mouseWasClicked = false;
-    this.repository = new AgentRepository();
     this.touchMomentumHandler = null;
     this.toolRow = -1;
     this.toolColumn = -1;
@@ -176,16 +168,16 @@ export class AgentCube {
 
     const cameraHelper = new CameraHelper(spotLight.shadow.camera);
     this.scene.add(cameraHelper);
-    */
+ */
 
-    // renderer
+// renderer
     this.renderer = new WebGLRenderer({antialias: true, alpha: true, logarithmicDepthBuffer: false});
     this.renderer.sortObjects = false; // to work with disabled depth testing
     this.renderer.autoClear = true;
     this.renderer.setSize(this.container.clientWidth, this.container.clientHeight);
     this.renderer.setPixelRatio(window.devicePixelRatio);
 
-    // shadows
+// shadows
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = BasicShadowMap;
 
@@ -236,7 +228,8 @@ export class AgentCube {
     this.scene.add(foundationGrid);
   }
 
-   addFoundationSurface() {
+  // FIXME: Function is async but doesn't communicate this fact
+  addFoundationSurface() {
     const texturePath = "textures/";
     const texturesFile = "chess_texture.png";
     const loader = new TextureLoader();
@@ -259,7 +252,7 @@ export class AgentCube {
       },
       undefined,
       // eslint-disable-next-line handle-callback-err
-      err => console.error("cannot load texture")
+      err => console.error("cannot load texture", err)
     );
   }
 
@@ -297,8 +290,9 @@ export class AgentCube {
   }
 
   clickAt(row: number, column: number, layer = 0) {
-    if (this.selectedAgent != null) {
-      app.undoManager.execute(new AddAgentToWorldCommand(this.selectedAgent.createAgent(), new GridVector(column, row, layer)));
+    const selectedAgent = app.uiState.selectedAgentClass;
+    if (selectedAgent != null) {
+      app.undoManager.execute(new AddAgentToWorldCommand(selectedAgent.createAgent(), new GridVector(column, row, layer)));
     }
   }
 
@@ -342,9 +336,8 @@ export class AgentCube {
 
   removeAgent(agent: Agent, removeFromScene = false) {
     const mesh = agent.shape.mesh;
-    const parent = mesh.parent!;
-    if (removeFromScene) {
-      parent.remove(agent.shape.mesh);
+    if (removeFromScene && mesh.parent != null) {
+      mesh.parent.remove(agent.shape.mesh);
     }
 
     const stack = this.grid[agent.layer][agent.row][agent.column];
@@ -354,27 +347,27 @@ export class AgentCube {
     }
   }
 
-  findAgentAt(x: number, y: number, exludedClasses: Array<string> = ["SelectionBox", "FoundationHover"]) {
+  findAgentAt(x: number, y: number, excludedClasses: Array<string> = ["SelectionBox", "FoundationHover"]): FindAgentResult {
     this.raycaster.setFromCamera(new Vector2(x, y), this.camera);
     const intersections = this.raycaster.intersectObjects(this.scene.children, true);
     console.log("intersections", intersections.map(inter => inter.object.constructor.name));
-    const firstIntersection = intersections.filter(intersection => !exludedClasses.includes(intersection.object.constructor.name))[0];
-    const hit = {agent: null, row: -1, column: -1};
+    const firstIntersection = intersections.filter(intersection => !excludedClasses.includes(intersection.object.constructor.name))[0];
+    const hit: FindAgentResult = {agent: null, row: -1, column: -1};
     if (firstIntersection) {
       if (firstIntersection.object.userData.isFoundation) {
         hit.row = Math.floor(firstIntersection.point.y / this.cellSize);
         hit.column = Math.floor(firstIntersection.point.x / this.cellSize);
         // Heuristic: if we find an agent in that cell use it; May not work well in a tall stack
-        (hit.agent as any) = this.agentAtTop(hit.row, hit.column);
+        hit.agent = this.agentAtTop(hit.row, hit.column);
       } else {
-        (hit.agent as any) = findObjectAgent(firstIntersection.object);
+        hit.agent = findObjectAgent(firstIntersection.object);
       }
     }
     if (hit.agent) {
-      console.log("hit", (hit.agent as any).shapeName);
+      console.log("hit", hit.agent.shapeName);
     } else {
       console.log("hit", hit);
-      }
+    }
     return hit;
   }
 

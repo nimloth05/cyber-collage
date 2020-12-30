@@ -18,11 +18,11 @@ export class Gallery {
     this.shapes = shapes;
   }
 
-  private findShape(shapeName: string): Shape | undefined {
+  findShape(shapeName: string): Shape | null {
     const shape = this.shapes[shapeName.toLocaleLowerCase()];
     if (shape == null) {
       console.error(`cannot find shape "${shapeName}"`);
-      return undefined;
+      return null;
     }
     return shape;
   }
