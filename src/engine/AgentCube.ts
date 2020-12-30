@@ -395,7 +395,19 @@ export class AgentCube {
           }
           break;
         case "arrow":
-          // select agent
+          // move agent
+          if (this.agentSelected) {
+            if (agent) {
+              row = (agent as any).row;
+              column = (agent as any).column;
+            }
+            if (row !== this.toolRow || column !== this.toolColumn) {
+              this.agentSelected.teleportTo(row, column);
+              this.toolRow = row;
+              this.toolColumn = column;
+            }
+          }
+          /*
           if (!agent) this.hoverAt(row, column);
           if (agent !== this.agentHovered) {
             if (this.agentHovered) {
@@ -406,7 +418,7 @@ export class AgentCube {
               (agent as any).hover(); // TS!#$
               this.agentHovered = agent;
             }
-          }
+          } */
           break;
         case "eraser":
           // erase agent

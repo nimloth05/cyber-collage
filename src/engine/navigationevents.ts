@@ -148,6 +148,7 @@ function twoFingerTouch() {
 // -----------------------------------------------------------------------------
 
 let inMomentumMode = false;
+let oneOrTwoTouchAmbivalence = false;
 
 const spinnDamper = {value: 0, minValue: 0.01, dampening: 0.5, momentumDampening: 0.02};
 const zoomDamper = {value: 0, minValue: 0.1, dampening: 0.5, momentumDampening: 0.02};
@@ -224,7 +225,7 @@ function interpretPointerPath(clientX: number, clientY: number, target: any) {
                                     dampenedPanY(oldPointerPathMidpointY() - newPointerPathMidpointY()),
                                     0.2);
     }
-  } else {
+  } else if (!oneOrTwoTouchAmbivalence) {
     const [x, y] = normalizedDeviceCoordinates(clientX, clientY, target);
     app.agentCube.mouseMove.x = x;
     app.agentCube.mouseMove.y = y;
@@ -242,10 +243,12 @@ function handleSingleTouchDown(x: number, y: number) {
     app.agentCube.mouseClick.y = y;
     app.agentCube.mouseWasClicked = true;
   }
+  oneOrTwoTouchAmbivalence = false;
 }
 
 function handlePointerDown(event: any) {
   const touch1touch2Delay = 100;
+  oneOrTwoTouchAmbivalence = true;
   event.preventDefault();
   console.log("%c Pointer Down", "background: #000; color: green", event.pointerId, event.pointerType);
   if (pointerPath1.identifier === -1) {
@@ -289,6 +292,11 @@ function handlePointerMove(event: any) {
 
 function handlePointerUp(event: any) {
   event.preventDefault();
+  // Evil HACK as work around to move still selected agent instead of new one
+  if (app.agentCube.agentSelected) {
+    app.agentCube.agentSelected.deselect();
+    app.agentCube.agentSelected = null;
+  }
   console.log("%c Pointer Up", "background: #000; color: red", event.pointerId, event.pointerType);
   // start momentum mode
   if (twoFingerTouch()) {

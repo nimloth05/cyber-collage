@@ -231,7 +231,13 @@ export class Agent {
     const row = this.row + deltaRow;
     const column = this.column + deltaColumn;
     const layer = this.layer + deltaLayer;
-    if (!this.isValidCoordinate(row, column, layer)) return null;
+    if (!this.isValidCoordinate(row, column, layer)) return;
+    this.removeFromAgentCube();
+    app.agentCube.pushAgent(this, row, column, layer);
+  }
+
+  teleportTo(row: number, column: number, layer = 0) {
+    if (!this.isValidCoordinate(row, column, layer)) return;
     this.removeFromAgentCube();
     app.agentCube.pushAgent(this, row, column, layer);
   }
