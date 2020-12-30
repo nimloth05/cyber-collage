@@ -75,7 +75,6 @@ export class AgentCube {
   renderer!: WebGLRenderer;
   foundationHoverShape!: LineSegments;
   foundationSurface!: Mesh;
-  selectedAgent!: AgentDescription | undefined;
   touchMomentumHandler: Function | null;
 
   constructor(rows = 9, columns = 16, layers = 1, cellSize = 20.0) {
@@ -289,8 +288,9 @@ export class AgentCube {
   }
 
   clickAt(row: number, column: number, layer = 0) {
-    if (this.selectedAgent != null) {
-      app.undoManager.execute(new AddAgentToWorldCommand(this.selectedAgent.createAgent(), new GridVector(column, row, layer)));
+    const selectedAgent = app.uiState.selectedAgentClass;
+    if (selectedAgent != null) {
+      app.undoManager.execute(new AddAgentToWorldCommand(selectedAgent.createAgent(), new GridVector(column, row, layer)));
     }
   }
 

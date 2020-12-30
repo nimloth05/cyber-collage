@@ -1,8 +1,10 @@
 <template>
   <div class="hud">
     <div style="display: flex">
-      <shape-element v-if="selectedAgent != null" :shape-ref="selectedAgent" @click="openAgentClassModal"/>
-      <empty-shape-element v-if="selectedAgent == null" @click="openAgentClassModal"/>
+      <shape-element v-if="uiState.selectedAgentClass != null" :shape-ref="uiState.selectedAgentClass"
+                     @click="openAgentClassModal"/>
+      <empty-shape-element v-if="uiState.selectedAgentClass == null"
+                           @click="openAgentClassModal"/>
       <agent-list v-if="toggle" @click="agentListClick"/>
       <button @click="undo">
         Undo
@@ -22,6 +24,7 @@ import {Options, Vue} from "vue-class-component";
 import ShapeList from "@/components/hud/ShapeList.vue";
 import AgentList from "@/components/hud/AgentList.vue";
 import EmptyShapeElement from "@/components/hud/EmptyShapeElement.vue";
+import ShapeElement from "@/components/hud/ShapeElement.vue";
 import TabHeader from "./tab/TabHeader.vue";
 import TabContainer from "./tab/TabContainer.vue";
 import Modal from "@/components/util/Modal.vue";
@@ -37,15 +40,12 @@ import {WORLD_CONTEXT_ID} from "@/model/Commands";
     TabContainer,
     Modal,
     EmptyShapeElement,
+    ShapeElement,
   },
 })
 export default class HUD extends Vue {
   toggle = false;
-
-  get selectedAgent() {
-    console.log("query selectedAgent");
-    return app.agentCube.selectedAgent;
-  }
+  uiState = app.uiState;
 
   switchToggle() {
     this.toggle = !this.toggle;
