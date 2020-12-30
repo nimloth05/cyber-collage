@@ -377,9 +377,9 @@ export class AgentCube {
       switch (app.tool()) {
         case "pen":
           // new agent
-          if (agent) {
-            row = (agent as any).row;
-            column = (agent as any).column;
+          if (agent != null) {
+            row = agent.row;
+            column = agent.column;
           }
           if (row !== this.toolRow || column !== this.toolColumn) {
             app.agentCube.pushAgent(new Agent(app.agentType()), row, column);
