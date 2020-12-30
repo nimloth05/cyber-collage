@@ -170,6 +170,9 @@ export class Agent {
   }
 
   deselect() {
+    if (this === app.agentCube.agentSelected) {
+      app.agentCube.agentSelected = null;
+    }
     this.isSelected = false;
     this.parent.scene.remove(this.selectionBox);
   }
@@ -272,6 +275,7 @@ export class Agent {
   }
 
   erase() {
+    this.deselect();
     this.removeFromAgentCube();
     this.parent.scene.remove(this.shape.mesh);
   }
