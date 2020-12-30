@@ -21,4 +21,13 @@ export class AppContext {
   undoManager = new UndoManager();
   repository = new AgentRepository();
   uiState = new UiState();
+  agentType () {
+    const e: any = document.getElementById("agent-menu");
+    return e.options[e.selectedIndex].value;
+  }
+
+  tool () {
+    const e: any = document.getElementById("tool-mode");
+    return e.options[e.selectedIndex].value;
+  }
 }
