@@ -62,6 +62,7 @@ export class AgentCube {
   grid: Array<Array<Array<Array<Agent>>>>;
   agentHovered: Agent | null;
   agentSelected: Agent | null;
+  agentDragged: Agent | null;
   raycaster: Raycaster;
   mouseMove: Vector2;
   mouseWasMoved: boolean;
@@ -95,6 +96,7 @@ export class AgentCube {
     }
     this.agentHovered = null;
     this.agentSelected = null;
+    this.agentDragged = null;
     this.raycaster = new Raycaster();
     this.mouseMove = new Vector2();
     this.mouseWasMoved = false;
@@ -307,6 +309,8 @@ export class AgentCube {
   }
 
   pushAgent(agent: Agent, row: number, column: number, layer = 0) {
+    // if (row === -1 || column === -1) return; // this should never happen
+
     if (agent.shape.mesh.parent == null) {
       this.scene.add(agent.shape.mesh);
     }
@@ -361,41 +365,38 @@ export class AgentCube {
         hit.agent = this.agentAtTop(hit.row, hit.column);
       } else {
         hit.agent = findObjectAgent(firstIntersection.object);
+        if (hit.agent) {
+          hit.row = hit.agent.row;
+          hit.column = hit.agent.column;
+        }
       }
     }
     if (hit.agent) {
-      console.log("hit", hit.agent.shapeName);
+      console.log("hit:", hit.agent.shapeName);
     } else {
-      console.log("hit", hit);
+      console.log("hit:", hit);
     }
     return hit;
   }
 
   processMouseMove() {
     if (this.mouseWasMoved) {
-      let {agent, row, column} = this.findAgentAt(this.mouseMove.x, this.mouseMove.y);
+      const {agent, row, column} = this.findAgentAt(this.mouseMove.x, this.mouseMove.y);
       switch (app.tool()) {
         case "pen":
           // new agent
-          if (agent != null) {
-            row = agent.row;
-            column = agent.column;
-          }
           if (row !== this.toolRow || column !== this.toolColumn) {
             app.agentCube.pushAgent(new Agent(app.agentType()), row, column);
+            console.log("push agent PEN move");
             this.toolRow = row;
             this.toolColumn = column;
           }
           break;
         case "arrow":
           // move agent
-          if (this.agentSelected) {
-            if (agent) {
-              row = (agent as any).row;
-              column = (agent as any).column;
-            }
+          if (this.agentDragged) {
             if (row !== this.toolRow || column !== this.toolColumn) {
-              this.agentSelected.teleportTo(row, column);
+              this.agentDragged.teleportTo(row, column);
               this.toolRow = row;
               this.toolColumn = column;
             }
@@ -416,10 +417,8 @@ export class AgentCube {
         case "eraser":
           // erase agent
           if (agent) {
-            row = (agent as any).row;
-            column = (agent as any).column;
             if (row !== this.toolRow || column !== this.toolColumn) {
-              (agent as any).erase();
+              agent.erase();
               this.toolRow = row;
               this.toolColumn = column;
             }
@@ -435,15 +434,12 @@ export class AgentCube {
 
   processMouseClick() {
     if (this.mouseWasClicked) {
-      let {agent, row, column} = this.findAgentAt(this.mouseClick.x, this.mouseClick.y);
+      const {agent, row, column} = this.findAgentAt(this.mouseClick.x, this.mouseClick.y);
       switch (app.tool()) {
         case "pen":
           // new agent
-          if (agent) {
-            row = (agent as any).row;
-            column = (agent as any).column;
-          }
           app.agentCube.pushAgent(new Agent(app.agentType()), row, column);
+          console.log("push agent PEN down");
           this.toolRow = row;
           this.toolColumn = column;
           break;
@@ -454,16 +450,20 @@ export class AgentCube {
               this.agentSelected.deselect();
               this.agentSelected = null;
             }
-            if (agent) {
-              (agent as any).select(); // TypeScript madness!! We are checking if agent is not null
+            if (agent != null) {
+              agent.select();
               this.agentSelected = agent;
             }
+          }
+          // start drag
+          if (agent) {
+            this.agentDragged = agent;
           }
           break;
         case "eraser":
           // erase agent
-          if (agent) {
-            (agent as any).erase();
+          if (agent != null) {
+            agent.erase();
           }
           break;
       }

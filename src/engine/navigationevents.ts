@@ -4,6 +4,8 @@ import {app} from "@/engine/app";
 // Helper Functions
 // ***************************************************
 
+// User Permission Functions
+
 async function promptUserforOrientationPermission() {
   if (DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission === "function") {
     const permissionState = await DeviceOrientationEvent.requestPermission();
@@ -16,6 +18,8 @@ async function promptUserforOrientationPermission() {
     }
   }
 }
+
+// HTML Element Coordinate Functions
 
 function relativeDeviceCoordinates(x: number, y: number, target: any) {
   // top left = 0, 0
@@ -66,7 +70,7 @@ function onMouseWheel(event: any) {
 // Touch Events
 // ***************************************************
 
-// Need to keep this touch event to disable default touch scrolling
+// Need to keep this touch event in addition to pointer events to disable default touch scrolling
 function handleMove(event: any) {
   event.preventDefault();
 }
@@ -148,7 +152,6 @@ function twoFingerTouch() {
 // -----------------------------------------------------------------------------
 
 let inMomentumMode = false;
-let oneOrTwoTouchAmbivalence = false;
 
 const spinnDamper = {value: 0, minValue: 0.01, dampening: 0.5, momentumDampening: 0.02};
 const zoomDamper = {value: 0, minValue: 0.1, dampening: 0.5, momentumDampening: 0.02};
@@ -203,6 +206,15 @@ function dampenedPanY(value: number) {
   return panDamperY.value;
 }
 
+// -----------------------------------------------------------------------------
+// Gesture Interpretation
+//   one touch   = set mouseMove/mouseClick values for edit operations such as add/remove/move
+//   two touches = call camera methods to implement spinn/zoom/pan
+// -----------------------------------------------------------------------------
+
+const touch1touch2Delay = 100; // [ms], typical values of actual users are < 30ms
+let inOneOrTwoTouchLimbo = false; // if true in between first and possible second touch down
+
 function isTiltingGesture() {
   // Hack: interpret two nearly vertical fingers as Tilting Gesture if first finger touched is near top
   const topMargin = 40;
@@ -225,7 +237,7 @@ function interpretPointerPath(clientX: number, clientY: number, target: any) {
                                     dampenedPanY(oldPointerPathMidpointY() - newPointerPathMidpointY()),
                                     0.2);
     }
-  } else if (!oneOrTwoTouchAmbivalence) {
+  } else if (!inOneOrTwoTouchLimbo) {
     const [x, y] = normalizedDeviceCoordinates(clientX, clientY, target);
     app.agentCube.mouseMove.x = x;
     app.agentCube.mouseMove.y = y;
@@ -242,16 +254,15 @@ function handleSingleTouchDown(x: number, y: number) {
     app.agentCube.mouseClick.x = x;
     app.agentCube.mouseClick.y = y;
     app.agentCube.mouseWasClicked = true;
+    inOneOrTwoTouchLimbo = false;
   }
-  oneOrTwoTouchAmbivalence = false;
 }
 
 function handlePointerDown(event: any) {
-  const touch1touch2Delay = 100;
-  oneOrTwoTouchAmbivalence = true;
   event.preventDefault();
   console.log("%c Pointer Down", "background: #000; color: green", event.pointerId, event.pointerType);
   if (pointerPath1.identifier === -1) {
+    inOneOrTwoTouchLimbo = true;
     pointerPath1.identifier = event.pointerId;
     pointerPath1.cordNew = relativeDeviceCoordinates(event.clientX, event.clientY, event.target);
     const [x, y] = normalizedDeviceCoordinates(event.clientX, event.clientY, event.target);
@@ -292,10 +303,9 @@ function handlePointerMove(event: any) {
 
 function handlePointerUp(event: any) {
   event.preventDefault();
-  // Evil HACK as work around to move still selected agent instead of new one
-  if (app.agentCube.agentSelected) {
-    app.agentCube.agentSelected.deselect();
-    app.agentCube.agentSelected = null;
+  // terminate drag
+  if (app.agentCube.agentDragged) {
+    app.agentCube.agentDragged = null;
   }
   console.log("%c Pointer Up", "background: #000; color: red", event.pointerId, event.pointerType);
   // start momentum mode
