@@ -7,6 +7,7 @@ import {
   AxesHelper,
   BasicShadowMap,
   BufferGeometry,
+  Color,
   DirectionalLight,
   LineBasicMaterial,
   LineSegments,
@@ -122,6 +123,7 @@ export class AgentCube {
     }
     this.container = container;
     this.scene = new Scene();
+    this.scene.background = new Color(0xaaaaaa);
 
     //  camera
     const fov = 35;
@@ -173,8 +175,9 @@ export class AgentCube {
  */
 
 // renderer
-    this.renderer = new WebGLRenderer({antialias: true, alpha: true, logarithmicDepthBuffer: false});
+    this.renderer = new WebGLRenderer({antialias: true, alpha: false, logarithmicDepthBuffer: false});
     this.renderer.sortObjects = false; // to work with disabled depth testing
+    this.renderer.setClearColor(0xff0000, 0);
     this.renderer.autoClear = true;
     this.renderer.setSize(this.container.clientWidth, this.container.clientHeight);
     this.renderer.setPixelRatio(window.devicePixelRatio);
@@ -353,7 +356,7 @@ export class AgentCube {
 
   findAgentAt(x: number, y: number, excludedClasses: Array<string> = ["SelectionBox", "FoundationHover"]): FindAgentResult {
     this.raycaster.setFromCamera(new Vector2(x, y), this.camera);
-    const intersections = this.raycaster.intersectObjects(this.scene.children, true);
+    const intersections = this.raycaster.intersectObjects(this.scene.children, false);
     console.log("intersections", intersections.map(inter => inter.object.constructor.name));
     const firstIntersection = intersections.filter(intersection => !excludedClasses.includes(intersection.object.constructor.name))[0];
     const hit: FindAgentResult = {agent: null, row: -1, column: -1};
