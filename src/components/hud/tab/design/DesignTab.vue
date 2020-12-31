@@ -1,14 +1,23 @@
 <template>
-  <label for="tool-mode"> tool: </label>
-  <select id="tool-mode" v-model="selectedToolId" name="agent-menu">
-    <option
-      v-for="toolId in tools"
-      :key="toolId"
-      :value="toolId"
-    >
-      {{ getLabel(toolId) }}
-    </option>
-  </select>
+  <div
+    v-for="tool in tools"
+    :key="tool.id"
+    :value="tool.id"
+    @click="selectedToolId = tool.id"
+    :class="selectedToolId === tool.id ? 'activeTool': ''"
+  >
+    <img :src="tool.icon"/>
+  </div>
+  <!--  <select id="tool-mode" v-model="selectedToolId" name="agent-menu">-->
+  <!--    <option-->
+  <!--      v-for="tool in tools"-->
+  <!--      :key="tool.id"-->
+  <!--      :value="tool.id"-->
+  <!--      :style="'background-image: url(/'+tool.icon+')'"-->
+  <!--    >-->
+  <!--      {{ tool.name }}-->
+  <!--    </option>-->
+  <!--  </select>-->
 </template>
 
 <script lang="ts">
@@ -29,7 +38,7 @@ export default class TabContainer extends Vue {
   selectedToolId = this.uiState.selectedTool.id;
 
   get tools() {
-    return app.designToolbar.getIds();
+    return app.designToolbar.getTools();
   }
 
   getLabel(toolId: string) {
@@ -37,3 +46,9 @@ export default class TabContainer extends Vue {
   }
 }
 </script>
+
+<style>
+.activeTool {
+  border: 1px solid red;
+}
+</style>

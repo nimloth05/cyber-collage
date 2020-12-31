@@ -6,7 +6,7 @@ import {GridVector} from "@/model/util/GridVector";
 
 export class PenTool extends AbstractAgentTool {
   id = "pen";
-  icon = "";
+  icon = "icons/material-edit.png";
   name = "Stift"; // FIXME: Translate
 
   executeClick(hitResult: FindAgentResult): void {

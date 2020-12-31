@@ -5,7 +5,7 @@ import {app} from "@/engine/app";
 
 export class ArrowTool extends AbstractAgentTool {
   id = "arrow";
-  icon = "";
+  icon = "icons/hand-pointer.png";
   name = "Verschieben"; // FIXME: Translate
 
   get agentSelected(): Agent | null {
