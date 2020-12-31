@@ -1,6 +1,7 @@
 import {FindAgentResult} from "@/engine/AgentCube";
 
 export interface Tool {
+  id: string;
   name: string;
   icon: string;
 

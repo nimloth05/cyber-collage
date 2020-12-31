@@ -25,8 +25,8 @@ import {app} from "@/engine/app";
   },
 })
 export default class TabContainer extends Vue {
-  selectedToolId = "";
   uiState = app.uiState;
+  selectedToolId = this.uiState.selectedTool.id;
 
   get tools() {
     return app.designToolbar.getIds();

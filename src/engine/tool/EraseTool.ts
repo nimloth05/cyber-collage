@@ -2,8 +2,9 @@ import {AbstractAgentTool} from "@/engine/tool/AbstractAgentTool";
 import {FindAgentResult} from "@/engine/AgentCube";
 
 export class EraseTool extends AbstractAgentTool {
+  id = "erase";
   icon = "";
-  name = "Erase";
+  name = "Löschen"; // FIXME: Translate
 
   executeClick(hitResult: FindAgentResult): void {
     // erase hitResult.agent

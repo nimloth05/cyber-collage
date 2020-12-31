@@ -1,14 +1,11 @@
+import {Dictionary, keyBy} from "lodash";
 import {PenTool} from "@/engine/tool/PenTool";
 import {ArrowTool} from "@/engine/tool/ArrowTool";
 import {EraseTool} from "@/engine/tool/EraseTool";
 import {Tool} from "@/engine/tool/Tool";
 
 export class DesignToolbar {
-  tools: Record<string, Tool> = {
-    arrow: new ArrowTool(),
-    pen: new PenTool(),
-    eraser: new EraseTool(),
-  };
+  tools: Dictionary<Tool> = keyBy([new ArrowTool(), new PenTool(), new EraseTool()], "id");
 
   getTools(): Array<Tool> {
     return Object.values(this.tools);

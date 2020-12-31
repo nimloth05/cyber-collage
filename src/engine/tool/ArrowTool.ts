@@ -4,8 +4,9 @@ import {Agent} from "@/engine/Agent";
 import {app} from "@/engine/app";
 
 export class ArrowTool extends AbstractAgentTool {
+  id = "arrow";
   icon = "";
-  name = "Arrow";
+  name = "Verschieben"; // FIXME: Translate
 
   get agentSelected(): Agent | null {
     return app.agentCube.agentSelected;
