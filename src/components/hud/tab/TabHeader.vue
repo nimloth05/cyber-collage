@@ -1,19 +1,38 @@
 <template>
   <ul class="hud-tab-list">
-<!--    <li>-->
-<!--&lt;!&ndash;      <img src="" alt="Play-Knopf" title="Spielen"/>&ndash;&gt;-->
-<!--      Play-->
-<!--    </li>-->
-    <li>
-<!--      <img src="" alt="Welt designen" title="Designen"/>-->
+    <!--    <li>-->
+    <!--&lt;!&ndash;      <img src="" alt="Play-Knopf" title="Spielen"/>&ndash;&gt;-->
+    <!--      Play-->
+    <!--    </li>-->
+    <li @click="switchTab('design')">
+      <!--      <img src="" alt="Welt designen" title="Designen"/>-->
       Design
     </li>
-    <li>
-<!--      <img src="" alt="Programmieren" title="Programmieren"/>-->
+    <li @click="switchTab('rule')">
+      <!--      <img src="" alt="Programmieren" title="Programmieren"/>-->
       Rules
     </li>
   </ul>
 </template>
+
+<script lang="ts">
+import {Options, Vue} from "vue-class-component";
+
+@Options({
+  name: "TabHeader",
+  emits: [
+    "update:modelValue",
+  ],
+  props: {
+    modelValue: String,
+  },
+})
+export default class TabHeader extends Vue {
+  switchTab(tabId: string) {
+    this.$emit("update:modelValue", tabId);
+  }
+}
+</script>
 
 <style>
 .hud-tab-list {
@@ -34,7 +53,8 @@
 .hud-tab-list li:before {
   content: '';
   position: absolute;
-  top: 0; right: 0;
+  top: 0;
+  right: 0;
   border-top: 5px solid #b5b5b5; /* white */
   border-left: 5px solid #b5b5b5;
   width: 0;
@@ -43,7 +63,8 @@
 .hud-tab-list li:after {
   content: '';
   position: absolute;
-  top: 0; left: 0;
+  top: 0;
+  left: 0;
   border-top: 5px solid #b5b5b5; /* white */
   border-right: 5px solid #b5b5b5;
   width: 0;

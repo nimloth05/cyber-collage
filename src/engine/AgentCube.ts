@@ -354,6 +354,15 @@ export class AgentCube {
     }
   }
 
+  /**
+   *
+   * Returns the first agent found at the given coordinates. If an agent is found, row, column belgon to this agent.
+   * Else, row, column represents the mapped coordinates.
+   *
+   * @param x mouse
+   * @param y mouse
+   * @param excludedClasses
+   */
   findAgentAt(x: number, y: number, excludedClasses: Array<string> = ["SelectionBox", "FoundationHover"]): FindAgentResult {
     this.raycaster.setFromCamera(new Vector2(x, y), this.camera);
     const intersections = this.raycaster.intersectObjects(this.scene.children, false);
@@ -361,6 +370,7 @@ export class AgentCube {
     const firstIntersection = intersections.filter(intersection => !excludedClasses.includes(intersection.object.constructor.name))[0];
     const hit: FindAgentResult = {agent: null, row: -1, column: -1};
     if (firstIntersection) {
+      // FIXME: This schecks if the function isFoundation is present and not if it returns true/false. Is this correct?
       if (firstIntersection.object.userData.isFoundation) {
         hit.row = Math.floor(firstIntersection.point.y / this.cellSize);
         hit.column = Math.floor(firstIntersection.point.x / this.cellSize);
@@ -384,52 +394,10 @@ export class AgentCube {
 
   processMouseMove() {
     if (this.mouseWasMoved) {
-      const {agent, row, column} = this.findAgentAt(this.mouseMove.x, this.mouseMove.y);
-      switch (app.tool()) {
-        case "pen":
-          // new agent
-          if (row !== this.toolRow || column !== this.toolColumn) {
-            app.agentCube.pushAgent(new Agent(app.agentType()), row, column);
-            console.log("push agent PEN move");
-            this.toolRow = row;
-            this.toolColumn = column;
-          }
-          break;
-        case "arrow":
-          // move agent
-          if (this.agentDragged) {
-            if (row !== this.toolRow || column !== this.toolColumn) {
-              this.agentDragged.teleportTo(row, column);
-              this.toolRow = row;
-              this.toolColumn = column;
-            }
-          }
-          /*
-          if (!agent) this.hoverAt(row, column);
-          if (agent !== this.agentHovered) {
-            if (this.agentHovered) {
-              this.agentHovered.unhover();
-              this.agentHovered = null;
-            }
-            if (agent) {
-              (agent as any).hover(); // TS!#$
-              this.agentHovered = agent;
-            }
-          } */
-          break;
-        case "eraser":
-          // erase agent
-          if (agent) {
-            if (row !== this.toolRow || column !== this.toolColumn) {
-              agent.erase();
-              this.toolRow = row;
-              this.toolColumn = column;
-            }
-          } else {
-            this.toolRow = row;
-            this.toolColumn = column;
-          }
-          break;
+      const hitResult = this.findAgentAt(this.mouseMove.x, this.mouseMove.y);
+      const tool = app.uiState.selectedTool;
+      if (tool != null) {
+        tool.executeMove(hitResult);
       }
       this.mouseWasMoved = false;
     }
@@ -437,38 +405,10 @@ export class AgentCube {
 
   processMouseClick() {
     if (this.mouseWasClicked) {
-      const {agent, row, column} = this.findAgentAt(this.mouseClick.x, this.mouseClick.y);
-      switch (app.tool()) {
-        case "pen":
-          // new agent
-          app.agentCube.pushAgent(new Agent(app.agentType()), row, column);
-          console.log("push agent PEN down");
-          this.toolRow = row;
-          this.toolColumn = column;
-          break;
-        case "arrow":
-          // select agent
-          if (agent !== this.agentSelected) {
-            if (this.agentSelected) {
-              this.agentSelected.deselect();
-              this.agentSelected = null;
-            }
-            if (agent != null) {
-              agent.select();
-              this.agentSelected = agent;
-            }
-          }
-          // start drag
-          if (agent) {
-            this.agentDragged = agent;
-          }
-          break;
-        case "eraser":
-          // erase agent
-          if (agent != null) {
-            agent.erase();
-          }
-          break;
+      const tool = app.uiState.selectedTool;
+      if (tool != null) {
+        const hitResult = this.findAgentAt(this.mouseClick.x, this.mouseClick.y);
+        tool.executeClick(hitResult);
       }
       this.mouseWasClicked = false;
     }

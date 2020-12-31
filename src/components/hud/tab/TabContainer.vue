@@ -1,20 +1,24 @@
 <template>
-
-<label for="agent-menu">agent: </label>
-<select id="agent-menu" name="agent-menu">
-  <option value="dog">dog</option>
-  <option value="cat">cat</option>
-  <option value="elephant">elephant</option>
-  <option value="bear">bear</option>
-</select>
-
-<label for="tool-mode">  tool: </label>
-<select id="tool-mode" name="agent-menu">
-  <option value="arrow">arrow</option>
-  <option value="pen">pen</option>
-  <option value="eraser">eraser</option>
-  <option value="pen rect">pen rect</option>
-  <option value="eraser rect">eraser rect</option>
-</select>
-
+  <rule-tab v-if="selectedTabId === 'rule'"/>
+  <design-tab v-if="selectedTabId === 'design'"/>
 </template>
+
+<script lang="ts">
+import {Options, Vue} from "vue-class-component";
+import DesignTab from "@/components/hud/tab/design/DesignTab.vue";
+import RuleTab from "@/components/hud/tab/rule/RuleTab.vue";
+
+@Options({
+  name: "TabContainer",
+  components: {
+    DesignTab,
+    RuleTab,
+  },
+  props: {
+    selectedTabId: String,
+  },
+  emits: [],
+})
+export default class TabContainer extends Vue {
+}
+</script>
