@@ -6,6 +6,8 @@ import {AgentRepository} from "@/engine/agent/AgentRepository";
 
 export class CreateAgentClass implements Command {
   contextId = WORLD_CONTEXT_ID;
+  timeStamp: number = new Date().valueOf();
+
   private readonly description: AgentDescription;
   private readonly agentClassRepository: AgentRepository;
 
@@ -17,5 +19,10 @@ export class CreateAgentClass implements Command {
   execute(): Command {
     this.agentClassRepository.add(this.description);
     return new DestroyAgent(this.agentClassRepository, this.description);
+  }
+
+  equals(command: Command): boolean {
+    if (!(command instanceof CreateAgentClass)) return false;
+    return this.description === command.description;
   }
 }

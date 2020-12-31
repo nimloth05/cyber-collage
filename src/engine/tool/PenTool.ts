@@ -1,6 +1,8 @@
 import {FindAgentResult} from "@/engine/AgentCube";
 import {app} from "@/engine/app";
 import {AbstractAgentTool} from "@/engine/tool/AbstractAgentTool";
+import {AddAgentToWorldCommand} from "@/model/commands/AddAgentToWorld";
+import {GridVector} from "@/model/util/GridVector";
 
 export class PenTool extends AbstractAgentTool {
   id = "pen";
@@ -13,7 +15,7 @@ export class PenTool extends AbstractAgentTool {
     this.toolColumn = hitResult.column;
     const selectedAgentClass = app.uiState.selectedAgentClass;
     if (selectedAgentClass != null) {
-      app.agentCube.pushAgent(selectedAgentClass.createAgent(), hitResult.row, hitResult.column);
+      app.undoManager.execute(new AddAgentToWorldCommand(selectedAgentClass.createAgent(), new GridVector(hitResult.column, hitResult.row, 0)));
     }
   }
 
@@ -23,7 +25,7 @@ export class PenTool extends AbstractAgentTool {
       this.toolColumn = hitResult.column;
       const selectedAgentClass = app.uiState.selectedAgentClass;
       if (selectedAgentClass != null) {
-        app.agentCube.pushAgent(selectedAgentClass.createAgent(), hitResult.row, hitResult.column);
+        app.undoManager.execute(new AddAgentToWorldCommand(selectedAgentClass.createAgent(), new GridVector(hitResult.column, hitResult.row, 0)));
       }
     }
   }

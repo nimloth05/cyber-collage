@@ -204,11 +204,13 @@ export class Agent {
     }
   }
 
+  // FIXME: This method is identical to AgentCube#removeAgent. This should be removed, it violates symmetry
   removeFromAgentCube() {
     const agents = app.agentCube.grid[this.layer][this.row][this.column];
     const index = agents.indexOf(this);
     if (index === -1) console.error(`cannot remove agent: ${this} from AgentCube`);
     agents.splice(index, 1);
+
     // adjust z values of all the agents that used to be above me
     for (let i = index; i < agents.length; i++) {
       agents[i].z -= this.depth;

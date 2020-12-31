@@ -297,7 +297,6 @@ export class AgentCube {
   clickAt(row: number, column: number, layer = 0) {
     const selectedAgent = app.uiState.selectedAgentClass;
     if (selectedAgent != null) {
-      app.undoManager.execute(new AddAgentToWorldCommand(selectedAgent.createAgent(), new GridVector(column, row, layer)));
     }
   }
 
@@ -352,6 +351,11 @@ export class AgentCube {
     if (index > -1) {
       stack.splice(index, 1);
     }
+
+    // adjust z values of all the agents that used to be above me
+    for (let i = index; i < stack.length; i++) {
+      stack[i].z -= agent.depth;
+    }
   }
 
   /**
@@ -366,7 +370,7 @@ export class AgentCube {
   findAgentAt(x: number, y: number, excludedClasses: Array<string> = ["SelectionBox", "FoundationHover"]): FindAgentResult {
     this.raycaster.setFromCamera(new Vector2(x, y), this.camera);
     const intersections = this.raycaster.intersectObjects(this.scene.children, false);
-    console.log("intersections", intersections.map(inter => inter.object.constructor.name));
+    // console.log("intersections", intersections.map(inter => inter.object.constructor.name));
     const firstIntersection = intersections.filter(intersection => !excludedClasses.includes(intersection.object.constructor.name))[0];
     const hit: FindAgentResult = {agent: null, row: -1, column: -1};
     if (firstIntersection) {
@@ -385,9 +389,9 @@ export class AgentCube {
       }
     }
     if (hit.agent) {
-      console.log("hit:", hit.agent.shapeName);
+      // console.log("hit:", hit.agent.shapeName);
     } else {
-      console.log("hit:", hit);
+      // console.log("hit:", hit);
     }
     return hit;
   }
