@@ -4,9 +4,10 @@
     :key="tool.id"
     :value="tool.id"
     @click="selectedToolId = tool.id"
-    :class="selectedToolId === tool.id ? 'activeTool': ''"
+    class="tool"
+    :class="{ 'activeTool': selectedToolId === tool.id }"
   >
-    <img :src="tool.icon"/>
+    <img class="tool-icon" :src="tool.icon" :alt="tool.name"/>
   </div>
   <!--  <select id="tool-mode" v-model="selectedToolId" name="agent-menu">-->
   <!--    <option-->
@@ -48,7 +49,20 @@ export default class TabContainer extends Vue {
 </script>
 
 <style>
+.tool {
+  display: inline-block;
+  width: 5em;
+  height: 5em;
+  margin: 1rem;
+}
+
+.tool-icon {
+  width: 100%;
+  height: 100%;
+}
+
 .activeTool {
   border: 1px solid red;
 }
+
 </style>

@@ -52,22 +52,4 @@ export default class ShapeList extends Vue {
   display: inline;
   margin: 1rem;
 }
-
-.shape-list button {
-  width: 64px;
-  height: 64px;
-  border: none;
-  margin-bottom: 0.5em;
-  font-size: 250%;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-}
-
-.shape-list button:hover {
-  box-shadow: 0 0 10px rgba(0, 200, 200, 0.5);
-}
-
-.shape-list li button {
-  border-radius: 50%
-}
-
 </style>
