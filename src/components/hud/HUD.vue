@@ -55,7 +55,6 @@ export default class HUD extends Vue {
   }
 
   undo() {
-    console.log("UndoManager");
     app.undoManager.undo(WORLD_CONTEXT_ID);
   }
 

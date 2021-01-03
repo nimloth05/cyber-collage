@@ -1,7 +1,7 @@
 <template>
   <div class="command"
-       v-for="action in actions"
-       :key="action.id">
+       v-for="(action, index) in actions.instructionObjects"
+       :key="index">
     {{ action.name }}
   </div>
   <add-command-button @click="addNewAction"/>
@@ -11,21 +11,24 @@
 import {Options, Vue} from "vue-class-component";
 import {ActionInstance} from "@/model/ActionInstance";
 import AddCommandButton from "@/components/AddCommandButton.vue";
+import {Action, ActionList} from "@/engine/Instruction";
+import {instructionDefinitions} from "@/engine/instruction-definitions";
 
 @Options({
   name: "ActionList",
   props: {
-    actions: Array,
+    actions: Object,
   },
   components: {
     AddCommandButton,
   },
 })
 export default class ActionPanel extends Vue {
-  actions!: Array<ActionInstance>;
+  actions!: ActionList;
 
   addNewAction() {
-    this.actions.push(new ActionInstance("make sound"));
+    this.actions.instructionObjects.push(new Action(instructionDefinitions[2], {}));
+    // this.actions.push(new ActionInstance("make sound"));
   }
 }
 </script>

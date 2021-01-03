@@ -1,7 +1,7 @@
 <template>
   <div class="condition"
-       v-for="(c, index) in conditions"
-       :key="c.key">
+       v-for="(c, index) in conditions.instructionObjects"
+       :key="index">
     <div>{{ c.name }}</div>
     <span class="boolean-operator" v-if="index !== conditions.length - 1"> and </span>
   </div>
@@ -12,6 +12,8 @@
 import {Options, Vue} from "vue-class-component";
 import {ConditionInstance} from "@/model/ConditionInstance";
 import AddCommandButton from "./AddCommandButton.vue";
+import {AndConditionList, Condition} from "@/engine/Instruction";
+import {instructionDefinitions} from "@/engine/instruction-definitions";
 
 @Options({
   name: "ConditionList",
@@ -22,12 +24,12 @@ import AddCommandButton from "./AddCommandButton.vue";
     conditions: Array,
   },
 })
-export default class Condition extends Vue {
-  conditions!: Array<ConditionInstance>;
+export default class ConditionPanel extends Vue {
+  conditions!: AndConditionList;
 
   addNewCondition() {
-    console.log("addNewCondition");
-    this.conditions.push(new ConditionInstance("new condition"));
+    // show ui for selecting a particular condition
+    this.conditions.instructionObjects.push(new Condition(instructionDefinitions[0], {}));
   }
 }
 </script>

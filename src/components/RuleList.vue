@@ -2,7 +2,7 @@
   <div class="rules">
     <rule-panel
       v-for="(rule, index) in rules"
-      :key="rule.id"
+      :key="index"
       :rule="rule"
       :ruleIndex="index"
       :noOfRules="rules.length">
@@ -21,6 +21,7 @@ import {ConditionInstance} from "@/model/ConditionInstance";
 import {ActionInstance} from "@/model/ActionInstance";
 import RulePanel from "@/components/RulePanel.vue";
 import AddCommandButton from "./AddCommandButton.vue";
+import {Rule} from "@/engine/Instruction";
 
 @Options({
   name: "RuleList",
@@ -30,15 +31,15 @@ import AddCommandButton from "./AddCommandButton.vue";
   },
 })
 export default class RuleList extends Vue {
-  rules = [
-    new RuleInstance(
-      "rule2",
-      [
-        new ConditionInstance("see a dog"),
-        new ConditionInstance("the dog barks"),
-      ], [
-        new ActionInstance("pet dog"),
-      ]),
+  rules: Array<Rule> = [
+    // new RuleInstance(
+    //   "rule2",
+    //   [
+    //     new ConditionInstance("see a dog"),
+    //     new ConditionInstance("the dog barks"),
+    //   ], [
+    //     new ActionInstance("pet dog"),
+    //   ]),
     // new RuleInstance(
     //   "rule1",
     //   [
@@ -51,7 +52,8 @@ export default class RuleList extends Vue {
   ];
 
   addRule() {
-    this.rules.push(new RuleInstance("rule3", [], []));
+    // this.rules.push(new RuleInstance("rule3", [], []));
+    this.rules.push(new Rule());
   }
 }
 </script>

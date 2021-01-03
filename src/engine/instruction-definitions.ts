@@ -1,15 +1,6 @@
 import {InstructionDeclaration} from "@/model/InstructionDeclaration";
-import {
-  Action,
-  ActionList,
-  AndConditionList,
-  Behavior,
-  Condition,
-  MethodList,
-  Rule,
-  RuleList,
-} from "@/engine/Instruction";
-import {DirectionValue, FormulaValue, MethodNameValue, ShapeNameValue, SoundValue} from "@/engine/instruction-value";
+import {Action, ActionList, Condition} from "@/engine/Instruction";
+import {DirectionValue, FormulaValue, ShapeNameValue, SoundValue} from "@/engine/instruction-value";
 
 // ***************************************************
 // I N S T R U C T I O N   D E F I N I T I O N S
@@ -78,54 +69,54 @@ export const instructionDefinitions: Array<InstructionDeclaration> = [
       return `I move to the ${direction.explain}`;
     },
   },
-  // FIXME: Why is rule a instruction?
-  {
-    name: "rule",
-    class: Rule,
-    parameters: {
-      conditions: AndConditionList,
-      actions: ActionList,
-    },
-    code(instruction) {
-      const {conditions, actions} = instruction.parameterObjects;
-      return `if (${conditions.expand()}) \r\n    {${actions.expand()}}\r\n`;
-    },
-    icon: "rule.png",
-    explanation({conditions, actions}) {
-      return "if all the conditions are true then I run my actions";
-    },
-  },
-  {
-    name: "method",
-    class: Action,
-    parameters: {
-      name: MethodNameValue,
-      rules: RuleList,
-    },
-    code(instruction) {
-      const {name, rules} = instruction.parameterObjects;
-      return `\r\n${name.value}() {\r\n${rules.expand()}}`;
-    },
-    icon: "method.png",
-    explanation(instruction) {
-      return "I check my rules from top to bottom";
-    },
-  },
-  {
-    name: "behavior",
-    class: Behavior,
-    parameters: {
-      methods: MethodList,
-    },
-    code(instruction) {
-      const {methods} = instruction.parameterObjects;
-      return `${methods.expand()}`;
-    },
-    icon: "behavior.png",
-    explanation(instruction) {
-      return "I have a number of methods";
-    },
-  },
+  // // FIXME: Why is rule a instruction?
+  // {
+  //   name: "rule",
+  //   class: Rule,
+  //   parameters: {
+  //     conditions: AndConditionList,
+  //     actions: ActionList,
+  //   },
+  //   code(instruction) {
+  //     const {conditions, actions} = instruction.parameterObjects;
+  //     return `if (${conditions.expand()}) \r\n    {${actions.expand()}}\r\n`;
+  //   },
+  //   icon: "rule.png",
+  //   explanation({conditions, actions}) {
+  //     return "if all the conditions are true then I run my actions";
+  //   },
+  // },
+  // {
+  //   name: "method",
+  //   class: Action,
+  //   parameters: {
+  //     name: MethodNameValue,
+  //     rules: RuleList,
+  //   },
+  //   code(instruction) {
+  //     const {name, rules} = instruction.parameterObjects;
+  //     return `\r\n${name.value}() {\r\n${rules.expand()}}`;
+  //   },
+  //   icon: "method.png",
+  //   explanation(instruction) {
+  //     return "I check my rules from top to bottom";
+  //   },
+  // },
+  // {
+  //   name: "behavior",
+  //   class: Behavior,
+  //   parameters: {
+  //     methods: MethodList,
+  //   },
+  //   code(instruction) {
+  //     const {methods} = instruction.parameterObjects;
+  //     return `${methods.expand()}`;
+  //   },
+  //   icon: "behavior.png",
+  //   explanation(instruction) {
+  //     return "I have a number of methods";
+  //   },
+  // },
   {
     name: "repeat",
     class: Action,
@@ -149,4 +140,8 @@ export class InstructionDefinitions {
     if (!definition) console.trace(`cannot find definition ${name} `);
     return definition;
   }
+}
+
+export function isCondition(declaration: InstructionDeclaration) {
+  return declaration.class === Condition;
 }

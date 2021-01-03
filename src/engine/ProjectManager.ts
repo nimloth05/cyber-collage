@@ -56,7 +56,7 @@ export class ProjectManager {
           .map(async (promise: Promise<Response>) => {
             const response = await promise;
             const text = await response.text();
-            return Instruction.deserialize(text).expand();
+            return Instruction.deserialize(text).compile();
           }),
       );
     // this.defineClasses();
