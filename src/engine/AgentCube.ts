@@ -386,7 +386,9 @@ export class AgentCube {
 
    processMouseMove() {
     if (this.mouseWasMoved) {
+      this.mouseWasMoved = false;
       const {agent, row, column} = this.findAgentAt(this.mouseMove.x, this.mouseMove.y, this.agentDragged);
+      if (row === -1 || column === -1) return; // out of this world
       switch (app.tool()) {
         case "pen":
           // new agent
@@ -406,6 +408,7 @@ export class AgentCube {
               this.toolColumn = column;
             }
           }
+          // Hovering: does not work on touch interfaces
           /*
           if (!agent) this.hoverAt(row, column);
           if (agent !== this.agentHovered) {
@@ -433,13 +436,14 @@ export class AgentCube {
           }
           break;
       }
-      this.mouseWasMoved = false;
     }
   }
 
   processMouseClick() {
     if (this.mouseWasClicked) {
+      this.mouseWasClicked = false;
       const {agent, row, column} = this.findAgentAt(this.mouseClick.x, this.mouseClick.y);
+      if (row === -1 || column === -1) return; // out of this world
       switch (app.tool()) {
         case "pen":
           // new agent
@@ -472,7 +476,6 @@ export class AgentCube {
           }
           break;
       }
-      this.mouseWasClicked = false;
     }
   }
 
