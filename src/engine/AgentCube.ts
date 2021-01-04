@@ -137,11 +137,11 @@ export class AgentCube {
     // this.camera.lookAt(0, 0, 0);
 
     // lights
-    const ambientLight = new AmbientLight(0xffffff, 0.5);
+    const ambientLight = new AmbientLight(0xffffff, 0.3);
     this.scene.add(ambientLight);
 
-    const spotLight = new DirectionalLight(0xffffff, 1.0);
-    spotLight.position.set(100, -100, 100);
+    const spotLight = new DirectionalLight(0xffffff, 1.2);
+    spotLight.position.set(50, -100, 300);
     this.scene.add(spotLight.target);
 
     // spotLight.target.position.set(50, 50, -4);
@@ -354,11 +354,13 @@ export class AgentCube {
     }
   }
 
-  findAgentAt(x: number, y: number, excludedClasses: Array<string> = ["SelectionBox", "FoundationHover"]): FindAgentResult {
+  findAgentAt(x: number, y: number, excludedAgent: any = null, excludedClasses: Array<string> = ["SelectionBox", "FoundationHover"]): FindAgentResult {
     this.raycaster.setFromCamera(new Vector2(x, y), this.camera);
-    const intersections = this.raycaster.intersectObjects(this.scene.children, false);
+    const intersections = this.raycaster.intersectObjects(this.scene.children, true);
     console.log("intersections", intersections.map(inter => inter.object.constructor.name));
-    const firstIntersection = intersections.filter(intersection => !excludedClasses.includes(intersection.object.constructor.name))[0];
+    // console.log("intersections", intersections.map(inter => findObjectAgent(inter.object)));
+    const firstIntersection = intersections.filter(intersection => !(excludedClasses.includes(intersection.object.constructor.name) ||
+                                                                     (excludedAgent && excludedAgent === findObjectAgent(intersection.object))))[0];
     const hit: FindAgentResult = {agent: null, row: -1, column: -1};
     if (firstIntersection) {
       if (firstIntersection.object.userData.isFoundation) {
@@ -382,9 +384,9 @@ export class AgentCube {
     return hit;
   }
 
-  processMouseMove() {
+   processMouseMove() {
     if (this.mouseWasMoved) {
-      const {agent, row, column} = this.findAgentAt(this.mouseMove.x, this.mouseMove.y);
+      const {agent, row, column} = this.findAgentAt(this.mouseMove.x, this.mouseMove.y, this.agentDragged);
       switch (app.tool()) {
         case "pen":
           // new agent

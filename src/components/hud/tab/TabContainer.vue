@@ -6,6 +6,10 @@
   <option value="cat">cat</option>
   <option value="elephant">elephant</option>
   <option value="bear">bear</option>
+  <option value="cobble_wall">cobble_wall</option>
+  <option value="agentcube">agentcube</option>
+  <option value="cow">cow</option>
+  <option value="cow_no_tipping">cow_no_tipping</option>
 </select>
 
 <label for="tool-mode">  tool: </label>

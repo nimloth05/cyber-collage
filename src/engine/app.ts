@@ -60,7 +60,7 @@ export async function init() {
 //    for (let column = 0; column < app.agentCube.columns; column++)
 //        app.agentCube.pushAgent(new ChickenAgent(), row, column);
 
-  for (let i = 0; i < 500; i++) {
+  for (let i = 0; i < 1000; i++) {
     const agent = new ChickenAgent(oneOf(shapeNames));
     app.agentCube.pushAgent(
       agent,
