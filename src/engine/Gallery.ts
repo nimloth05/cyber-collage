@@ -78,7 +78,7 @@ export class Gallery {
             });
           },
           () => ({}), // xhr => console.log("shape " + name + " " + (xhr.loaded / xhr.total * 100) + '% loaded'),
-          err => console.error(`Cannot load shape: ${name} e: `, err),
+          err => console.error(`Cannot load shape: ${shapeName} error: `, err),
         );
       });
     }
