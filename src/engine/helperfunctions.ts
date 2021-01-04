@@ -48,6 +48,7 @@ export function centerMeshGeometryOnGround(mesh: Object3D) {
     }
   });
   console.log("END mesh processing");
+  mesh.updateMatrixWorld();
 }
 
 export function normalizeGeometry(mesh: Object3D, size = 1.0) {
@@ -57,6 +58,7 @@ export function normalizeGeometry(mesh: Object3D, size = 1.0) {
   mesh.scale.x = scale;
   mesh.scale.y = scale;
   mesh.scale.z = scale;
+  mesh.updateMatrixWorld();
 }
 
 export function rotateX(x: number, y: number, z: number, angle: number): Vector3 {
