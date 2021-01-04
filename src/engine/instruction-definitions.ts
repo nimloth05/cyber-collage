@@ -1,12 +1,12 @@
 import {InstructionDeclaration} from "@/model/InstructionDeclaration";
-import {Action, ActionList, Condition} from "@/engine/Instruction";
+import {Action, ActionList, Condition, Instruction} from "@/engine/Instruction";
 import {DirectionValue, FormulaValue, ShapeNameValue, SoundValue} from "@/engine/instruction-value";
 
 // ***************************************************
 // I N S T R U C T I O N   D E F I N I T I O N S
 // ***************************************************
 
-export const instructionDefinitions: Array<InstructionDeclaration> = [
+export const instructionDefinitions: Array<any> = [
   // Conditions
   {
     name: "see",
@@ -15,12 +15,13 @@ export const instructionDefinitions: Array<InstructionDeclaration> = [
       direction: DirectionValue,
       shape: ShapeNameValue,
     },
-    code(instruction) {
+    code(instruction: any) {
       const {shape, direction} = instruction.parameterObjects;
+      console.log("shape", shape);
       return `this.see('${shape.value}', ${direction.value[0]}, ${direction.value[1]})`;
     },
     icon: "see.png",
-    explanation({shape, direction}) {
+    explanation({shape, direction}: any) {
       return `True if I see to ${direction.explain} an ${shape.explain}.`;
     },
   },
@@ -30,7 +31,7 @@ export const instructionDefinitions: Array<InstructionDeclaration> = [
     parameters: {
       chance: FormulaValue,
     },
-    code(instruction) {
+    code(instruction: Instruction) {
       return `this.percentChance(${instruction.parameterObjects.chance.value})`;
     },
     icon: "percentChance.png",
@@ -45,12 +46,12 @@ export const instructionDefinitions: Array<InstructionDeclaration> = [
     parameters: {
       direction: DirectionValue,
     },
-    code(instruction) {
+    code(instruction: Instruction) {
       const {direction} = instruction.parameterObjects;
       return `this.move(${direction.value[0]}, ${direction.value[1]})`;
     },
     icon: "move.png",
-    explanation({direction}) {
+    explanation({direction}: any) {
       return `I move to the ${direction.explain}`;
     },
   },
@@ -60,12 +61,12 @@ export const instructionDefinitions: Array<InstructionDeclaration> = [
     parameters: {
       sound: SoundValue,
     },
-    code(instruction) {
+    code(instruction: Instruction) {
       const {sound} = instruction.parameterObjects;
       return `this.playSound('${sound.value}')`;
     },
     icon: "move.png",
-    explanation({direction}) {
+    explanation({direction}: any) {
       return `I move to the ${direction.explain}`;
     },
   },
@@ -124,7 +125,7 @@ export const instructionDefinitions: Array<InstructionDeclaration> = [
       times: FormulaValue,
       actions: ActionList,
     },
-    code(instruction) {
+    code(instruction: Instruction) {
       const {times, actions} = instruction.parameterObjects;
       return `for (let i = 0; i < ${times.value}) {${actions.expand()}};`;
     },
@@ -143,5 +144,6 @@ export class InstructionDefinitions {
 }
 
 export function isCondition(declaration: InstructionDeclaration) {
-  return declaration.class === Condition;
+  // return declaration.class === Condition;
+  return true;
 }

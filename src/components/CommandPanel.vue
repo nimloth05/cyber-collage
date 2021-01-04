@@ -1,17 +1,17 @@
 <template>
   <div>
-    <rule-list/>
+    <rule-list-panel/>
   </div>
 </template>
 
 <script lang="ts">
-import RuleList from "./RuleList.vue";
+import RuleListPanel from "./hud/tab/rule/RuleListPanel.vue";
 import {Options, Vue} from "vue-class-component";
 
 @Options({
   name: "CommandPanel",
   components: {
-    RuleList,
+    RuleListPanel,
   },
 })
 export default class CommandPanel extends Vue {

@@ -2,18 +2,8 @@
 // V A L U E   E D I T O R
 //* **************************************************
 
+import * as uuid from "uuid";
 import {InstructionDeclaration, Parameters} from "@/model/InstructionDeclaration";
-import {ProjectManager} from "@/engine/ProjectManager";
-import {InstructionDefinitions} from "@/engine/instruction-definitions";
-
-function createInstruction(name: string, parameters: any): Instruction {
-  // console.log("createInstruction name: ", name, "parameters: ", parameters);
-  const definiton = InstructionDefinitions.findDefinition(name);
-  // eslint-disable-next-line
-  // @ts-ignore
-  // eslint-disable-next-line
-  return new definiton.class(definiton, parameters);
-}
 
 export interface ASTNode {
   explanation: string;
@@ -47,19 +37,13 @@ export class Instruction implements ASTNode {
     }
   }
 
-  static deserialize(jsString: string) {
-    // a serialization string is an array [<nameString>, <parameterProperties>]
-    const [name, parameters] = JSON.parse(jsString);
-    return createInstruction(name, parameters);
-  }
-
   serialize() {
     // write as 2 element array: [<nameString>, <parameterProperties>]
     return `["${this.declaration.name}", ${JSON.stringify(this.parameters, null, 2)}]`;
   }
 
   compile() {
-    return InstructionDefinitions.findDefinition(this.declaration.name)!.code(this);
+    return this.declaration.code(this);
   }
 
   execute() {
@@ -83,11 +67,20 @@ export class Action extends Instruction {
 }
 
 abstract class ASTNodeList implements ASTNode {
+  id = uuid.v4(); // FIXME: This is just a test
   instructionObjects: Array<ASTNode>;
 
   constructor(instructionDefs: Array<ASTNode>) {
     this.instructionObjects = instructionDefs;
     // this.instructionObjects = instructionDefs.map((idef: any) => createInstruction(idef[0], idef[1]));
+  }
+
+  get length() {
+    return this.instructionObjects.length;
+  }
+
+  add(node: ASTNode) {
+    this.instructionObjects.push(node);
   }
 
   abstract compile(): string
@@ -104,10 +97,6 @@ export class Behavior {
 // ***************************************************
 
 export class AndConditionList extends ASTNodeList {
-  get length() {
-    return this.instructionObjects.length;
-  }
-
   compile(): string {
     // "<c1> && <c2> && ... <cn>"
     const conditions = this.instructionObjects;
@@ -137,6 +126,7 @@ export class ActionList extends ASTNodeList {
 }
 
 export class Rule implements ASTNode {
+  id = uuid.v4(); // FIXME For testing
   conditions: ASTNodeList = new AndConditionList([]);
   actions: ASTNodeList = new ActionList([]);
 
@@ -190,19 +180,19 @@ export class MethodList extends ASTNodeList {
 
 const instructionString = "[\"see\", { \"direction\": [0, 1], \"shape\": \"dog\" }]";
 
-// console.log(Instruction.deserialize(instructionString));
+// console.log(deserializeInstruction(instructionString));
 
-// console.log(Instruction.deserialize(instructionString).serialize());
+// console.log(deserializeInstruction(instructionString).serialize());
 
-// console.log(Instruction.deserialize(Instruction.deserialize(instructionString).serialize()));
+// console.log(deserializeInstruction(deserializeInstruction(instructionString).serialize()));
 
-// console.log(Instruction.deserialize(instructionString).expand());
+// console.log(deserializeInstruction(instructionString).expand());
 
-// const seeInstruction = Instruction.deserialize(instructionString);
+// const seeInstruction = deserializeInstruction(instructionString);
 
 // console.log(seeInstruction);
 
-// console.log(Instruction.deserialize("[\"move\", {\"direction\": [0, 1]}]"));
+// console.log(deserializeInstruction("[\"move\", {\"direction\": [0, 1]}]"));
 
 console.time("deserialize");
 // const repeatInstruction = Instruction.deserialize("[\"repeat\", {\"times\": 10, \"actions\": [[\"move\", {\"direction\": [0, 1]}], [\"move\", {\"direction\": [-1, 1]}]]}]");

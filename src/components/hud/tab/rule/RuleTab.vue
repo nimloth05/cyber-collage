@@ -1,6 +1,6 @@
 <template>
   <div>
-    <rule-list/>
+    <rule-list-panel/>
   </div>
   <!--  <div class="container">-->
   <!--    <div class="row">-->
@@ -17,13 +17,13 @@
 </template>
 
 <script lang="ts">
-import RuleList from "@/components/RuleList.vue";
+import RuleListPanel from "@/components/hud/tab/rule/RuleListPanel.vue";
 import {Options, Vue} from "vue-class-component";
 
 @Options({
   name: "RuleTab",
   components: {
-    RuleList,
+    RuleListPanel,
   },
 })
 export default class RuleTab extends Vue {

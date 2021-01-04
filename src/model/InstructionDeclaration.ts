@@ -13,7 +13,7 @@ export type Parameters = Record<string, ParameterType>;
 
 export interface InstructionDeclaration {
   name: string;
-  class: ConstructableInstruction;
+  // class: ConstructableInstruction;
   icon: string;
   parameters: Parameters;
   explanation: (instruction: any) => string;
