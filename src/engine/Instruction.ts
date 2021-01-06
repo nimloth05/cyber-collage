@@ -32,7 +32,6 @@ export class Instruction implements ASTNode {
     Object.assign(this.parameterObjects, this.parameters);
     for (const parameter in this.parameterObjects) {
       // console.log(definition.parameters[parameter]);
-      // FIXME: Makes no sense: Why copy an object and then replace every property of it with a new value?
       this.parameterObjects[parameter] = new declaration.parameters[parameter](parameters[parameter]);
     }
   }

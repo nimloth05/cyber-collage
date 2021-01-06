@@ -70,7 +70,6 @@ export const instructionDefinitions: Array<any> = [
       return `I move to the ${direction.explain}`;
     },
   },
-  // // FIXME: Why is rule a instruction?
   // {
   //   name: "rule",
   //   class: Rule,
@@ -141,9 +140,4 @@ export class InstructionDefinitions {
     if (!definition) console.trace(`cannot find definition ${name} `);
     return definition;
   }
-}
-
-export function isCondition(declaration: InstructionDeclaration) {
-  // return declaration.class === Condition;
-  return true;
 }
