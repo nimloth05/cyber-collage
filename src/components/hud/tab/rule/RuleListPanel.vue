@@ -18,7 +18,8 @@
 import {Options, Vue} from "vue-class-component";
 import RulePanel from "@/components/hud/tab/rule/RulePanel.vue";
 import AddCommandButton from "../../../AddCommandButton.vue";
-import {Rule, RuleList} from "@/engine/Instruction";
+import {Method, Rule, RuleList} from "@/engine/Instruction";
+import {app} from "@/engine/app";
 
 @Options({
   name: "RuleListPanel",
@@ -29,6 +30,15 @@ import {Rule, RuleList} from "@/engine/Instruction";
 })
 export default class RuleListPanel extends Vue {
   rules: RuleList = new RuleList([]);
+
+  data() {
+    console.log("state", app.uiState.selectedAgentClass);
+    console.log("xx", (app.uiState.selectedAgentClass?.methods.getChild(0) as Method).rules);
+    return {
+      rules: (app.uiState.selectedAgentClass?.methods.getChild(0) as Method).rules,
+    };
+  }
+
   // rules: Array<Rule> = [
   // new RuleInstance(
   //   "rule2",

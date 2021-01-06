@@ -2,7 +2,7 @@ import {AgentCube} from "@/engine/AgentCube";
 import {UndoManager} from "@/model/UndoManager";
 import {Gallery} from "@/engine/Gallery";
 import {AgentRepository} from "@/engine/agent/AgentRepository";
-import {AgentDescription} from "@/engine/agent/AgentDescription";
+import {AgentClass} from "@/engine/agent/AgentClass";
 import {Tool} from "@/engine/tool/Tool";
 import {DesignToolbar} from "@/components/hud/tab/design/DesignToolbar";
 import {PenTool} from "@/engine/tool/PenTool";
@@ -11,7 +11,7 @@ import {PenTool} from "@/engine/tool/PenTool";
  * Represents global UI state. This class is used as a bridge between Vue (UI framework) and the engine.
  */
 export class UiState {
-  selectedAgentClass?: AgentDescription;
+  selectedAgentClass?: AgentClass;
   selectedTool: Tool = new PenTool();
 }
 

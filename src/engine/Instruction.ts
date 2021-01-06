@@ -85,6 +85,10 @@ abstract class ASTNodeList implements ASTNode {
   abstract compile(): string
 
   explanation = "SHOULD BE OVERRIDDEN BY SUBCLASSES";
+
+  getChild(index: number): ASTNode {
+    return this.instructionObjects[index];
+  }
 }
 
 export class Behavior {
@@ -156,17 +160,33 @@ export class RuleList extends ASTNodeList {
   }
 }
 
+export class Method implements ASTNode {
+  private _name = "whileRunning";
+  rules = new RuleList([]);
+  explanation = `I'm method ${this.name}`;
+
+  set name(value: string) {
+    // FIXME: Implement assertions that name is a valid JS method name
+    this._name = value;
+  }
+
+  get name(): string {
+    return this._name;
+  }
+
+  compile(): string {
+    return this.rules.compile();
+  }
+}
+
 export class MethodList extends ASTNodeList {
   compile(): string {
     // <methodName1>() {<rules>}
     const methods = this.instructionObjects;
-    let code = "";
-    // FIXME: use reduce here
-    methods.forEach((method: any) => {
-      // FIXME: Newline or semi?
-      code += `${method.expand()}`;
-    });
-    return code;
+
+    return methods
+      .map(it => it.compile())
+      .join("\n");
   }
 }
 

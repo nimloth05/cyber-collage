@@ -27,7 +27,7 @@ import {foundationGridColor, selectionBoxColor} from "@/engine/globals.ts";
 import {app} from "@/engine/app";
 import {findObjectAgent} from "@/engine/helperfunctions.ts";
 import {Agent} from "@/engine/Agent";
-import {AgentDescription} from "@/engine/agent/AgentDescription";
+import {AgentClass} from "@/engine/agent/AgentClass";
 import {AddAgentToWorldCommand} from "@/model/commands/AddAgentToWorld";
 import {GridVector} from "@/model/util/GridVector";
 

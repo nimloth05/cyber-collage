@@ -47,6 +47,7 @@ export default class NewAgentModal extends Vue {
   show() {
     // Since we have lazy init of the gallery we cannot initialize the field during construction phase
     this.shapeList = Object.values(app.gallery!.shapes).map(shape => ({shape}));
+    this.agentName = "";
     this.modalInstance.show();
   }
 

@@ -5,7 +5,7 @@
 
 <script lang="ts">
 import {Options, Vue} from "vue-class-component";
-import {AgentDescription} from "@/engine/agent/AgentDescription";
+import {AgentClass} from "@/engine/agent/AgentClass";
 import {app} from "@/engine/app";
 import {Disposable, Disposables} from "@/model/util/Disposable";
 import ShapeList from "@/components/hud/ShapeList.vue";
@@ -25,15 +25,15 @@ import {Shape} from "@/engine/Shape";
 })
 export default class AddAgentShapeList extends Vue {
   private disposable: Disposable = new Disposables();
-  agentClasses: Array<AgentDescription> = [];
+  agentClasses: Array<AgentClass> = [];
   uiState = app.uiState;
 
   created() {
     this.disposable = app.undoManager.addListener(() => {
-      this.agentClasses = [...app.repository.descriptions];
+      this.agentClasses = [...app.repository.agentClasses];
     });
 
-    this.agentClasses = [...app.repository.descriptions];
+    this.agentClasses = [...app.repository.agentClasses];
   }
 
   createAgent() {
@@ -44,14 +44,14 @@ export default class AddAgentShapeList extends Vue {
     console.log("agent created");
     const shape = app.gallery?.findShape(params.shape.id);
     if (shape != null) {
-      const desc = new AgentDescription(shape, params.name);
+      const desc = new AgentClass(shape, params.name);
       app.undoManager.execute(new CreateAgentClass(app.repository, desc));
       this.uiState.selectedAgentClass = desc;
     }
     this.$emit("agent-clicked");
   }
 
-  agentSelected(description: AgentDescription) {
+  agentSelected(description: AgentClass) {
     this.uiState.selectedAgentClass = description;
     this.$emit("agent-clicked");
     this.$forceUpdate();

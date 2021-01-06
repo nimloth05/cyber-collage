@@ -1,9 +1,18 @@
 import {Agent} from "@/engine/Agent";
 import {Shape, ShapeRef} from "@/engine/Shape";
+import {Method, MethodList} from "@/engine/Instruction";
 
-export class AgentDescription implements ShapeRef {
+export class AgentClass implements ShapeRef {
+  static createMethodList(): MethodList {
+    const result = new MethodList([]);
+    result.add(new Method());
+    return result;
+  }
+
   shape: Shape;
   private name: string;
+
+  methods = AgentClass.createMethodList();
 
   constructor(shape: Shape, name: string) {
     this.shape = shape;
@@ -13,4 +22,5 @@ export class AgentDescription implements ShapeRef {
   createAgent(): Agent {
     return new Agent(this.shape.id);
   }
+
 }
