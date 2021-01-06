@@ -68,10 +68,10 @@ export default class HUD extends Vue {
 <style>
 .hud {
   position: relative;
-  /*top: calc(100% - 300px);*/
-  top: 500px;
-  bottom: 300px;
-  height: 400px;
+  top: calc(100% - 300px);
+  /*top: 500px;*/
+  /*bottom: 300px;*/
+  height: 300px;
   /*background-color: #d3d3d3;*/
   background-color: #b5b5b5;
 }
