@@ -5,7 +5,7 @@
       :key="shape.shape.id">
       <shape-element :shape-ref="shape" @click="shapeClicked(shape)"/>
     </li>
-    <li>
+    <li v-if="showPlusButton">
       <empty-shape-element @click="plusClicked"/>
     </li>
   </ul>
@@ -25,13 +25,19 @@ import EmptyShapeElement from "@/components/hud/EmptyShapeElement.vue";
   },
   emits: [
     "shape-selected",
+    "plus",
   ],
   props: {
     shapes: Array,
+    showPlusButton: {
+      type: Boolean,
+      default: () => true,
+    },
   },
 })
 export default class ShapeList extends Vue {
   shapes: Array<ShapeRef> = [];
+  showPlusButton = true;
 
   shapeClicked(shape: ShapeRef): void {
     this.$emit("shape-selected", shape);

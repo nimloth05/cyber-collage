@@ -6,6 +6,8 @@ import {app} from "@/engine/app";
 
 // User Permission Functions
 
+const MISSING_IDENTIFIERT = -1;
+
 async function promptUserforOrientationPermission() {
   if (DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission === "function") {
     const permissionState = await DeviceOrientationEvent.requestPermission();
@@ -81,17 +83,17 @@ function handleMove(event: any) {
 // https://developer.mozilla.org/en-US/docs/Web/API/Pointer_events/Using_Pointer_Events
 // https://mobiforge.com/design-development/html5-pointer-events-api-combining-touch-mouse-and-pen
 
-const pointerPath1 = {identifier: -1, cordNew: [0, 0], cordOld: [0, 0]};
-const pointerPath2 = {identifier: -1, cordNew: [0, 0], cordOld: [0, 0]};
+const pointerPath1 = {identifier: MISSING_IDENTIFIERT, cordNew: [0, 0], cordOld: [0, 0]};
+const pointerPath2 = {identifier: MISSING_IDENTIFIERT, cordNew: [0, 0], cordOld: [0, 0]};
 
 function newPointerPathDistance() {
   return Math.sqrt((pointerPath1.cordNew[0] - pointerPath2.cordNew[0]) ** 2 +
-                   (pointerPath1.cordNew[1] - pointerPath2.cordNew[1]) ** 2);
+    (pointerPath1.cordNew[1] - pointerPath2.cordNew[1]) ** 2);
 }
 
 function oldPointerPathDistance() {
   return Math.sqrt((pointerPath1.cordOld[0] - pointerPath2.cordOld[0]) ** 2 +
-                   (pointerPath1.cordOld[1] - pointerPath2.cordOld[1]) ** 2);
+    (pointerPath1.cordOld[1] - pointerPath2.cordOld[1]) ** 2);
 }
 
 function newPointerPathMidpointX() {
@@ -124,7 +126,7 @@ function pointsToAngle(x1: number, y1: number, x2: number, y2: number) {
     if (dx > 0) {
       return Math.atan(dy / dx) * 180 / Math.PI;
     } else {
-    return 180 + Math.atan(dy / dx) * 180 / Math.PI;
+      return 180 + Math.atan(dy / dx) * 180 / Math.PI;
     }
   }
 }
@@ -158,7 +160,7 @@ const zoomDamper = {value: 0, minValue: 0.1, dampening: 0.5, momentumDampening: 
 const panDamperX = {value: 0, minValue: 0.1, dampening: 0.5, momentumDampening: 0.02};
 const panDamperY = {value: 0, minValue: 0.1, dampening: 0.5, momentumDampening: 0.02};
 
-function currentDampening (damper: any) {
+function currentDampening(damper: any) {
   if (inMomentumMode) {
     return damper.momentumDampening;
   } else {
@@ -260,14 +262,14 @@ function handleSingleTouchDown(x: number, y: number) {
 
 function handlePointerDown(event: any) {
   event.preventDefault();
-  console.log("%c Pointer Down", "background: #000; color: green", event.pointerId, event.pointerType);
-  if (pointerPath1.identifier === -1) {
+  console.log("%c Pointer Down", "background: #000; color: green", event.pointerId, event.pointerType, pointerPath1.identifier, pointerPath2.identifier);
+  if (pointerPath1.identifier === MISSING_IDENTIFIERT) {
     inOneOrTwoTouchLimbo = true;
     pointerPath1.identifier = event.pointerId;
     pointerPath1.cordNew = relativeDeviceCoordinates(event.clientX, event.clientY, event.target);
     const [x, y] = normalizedDeviceCoordinates(event.clientX, event.clientY, event.target);
     setTimeout(handleSingleTouchDown, touch1touch2Delay, x, y);
-  } else if (pointerPath2.identifier === -1) {
+  } else if (pointerPath2.identifier === MISSING_IDENTIFIERT) {
     pointerPath2.identifier = event.pointerId;
     pointerPath2.cordNew = relativeDeviceCoordinates(event.clientX, event.clientY, event.target);
   }
@@ -301,13 +303,27 @@ function handlePointerMove(event: any) {
   }
 }
 
+function resetPaths(reason: string): void {
+  console.log(`reset path information, reason: '${reason}'`);
+  pointerPath1.identifier = MISSING_IDENTIFIERT;
+  pointerPath2.identifier = MISSING_IDENTIFIERT;
+}
+
+function resetPath(event: PointerEvent, reason: string): void {
+  if (pointerPath1.identifier === event.pointerId) {
+    pointerPath1.identifier = MISSING_IDENTIFIERT;
+  } else if (pointerPath2.identifier === event.pointerId) {
+    pointerPath2.identifier = MISSING_IDENTIFIERT;
+  }
+}
+
 function handlePointerUp(event: any) {
   event.preventDefault();
   // terminate drag
   if (app.agentCube.agentDragged) {
     app.agentCube.agentDragged = null;
   }
-  console.log("%c Pointer Up", "background: #000; color: red", event.pointerId, event.pointerType);
+  console.log("%c Pointer Up", "background: #000; color: red", event.pointerId, event.pointerType, pointerPath1.identifier, pointerPath2.identifier);
   // start momentum mode
   if (twoFingerTouch()) {
     inMomentumMode = true;
@@ -315,11 +331,12 @@ function handlePointerUp(event: any) {
   }
   // reset path id to mark end of touch
   if (pointerPath1.identifier === event.pointerId) {
-    pointerPath1.identifier = -1;
+    pointerPath1.identifier = MISSING_IDENTIFIERT;
   } else if (pointerPath2.identifier === event.pointerId) {
-    pointerPath2.identifier = -1;
+    pointerPath2.identifier = MISSING_IDENTIFIERT;
   } else {
-    console.error(`Pointer Id ${event.pointerId} not found in pointer path tables. > 2 touches?`);
+    console.error(`Pointer Id ${event.pointerId} not found in pointer path tables. > 2 touches?`, pointerPath1.identifier, pointerPath2.identifier);
+    resetPaths("error in PointerUp");
   }
 }
 
@@ -371,6 +388,10 @@ export function registerListeners() {
   div.addEventListener("pointerdown", handlePointerDown, false);
   div.addEventListener("pointermove", handlePointerMove, false);
   div.addEventListener("pointerup", handlePointerUp, false);
+
+  // FIXME: Find better solution
+  div.addEventListener("pointerout", (event: any) => resetPath(event, "pointerout"), false);
+  div.addEventListener("pointerleave", (event: any) => resetPath(event, "pointerleave"), false);
 
   // touch momentum handler
   app.agentCube.touchMomentumHandler = handleTouchMomentum;
