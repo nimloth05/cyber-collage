@@ -6,7 +6,7 @@ import {app} from "@/engine/app";
 
 // User Permission Functions
 
-const MISSING_IDENTIFIERT = -1;
+const MISSING_IDENTIFIER = -1;
 
 async function promptUserforOrientationPermission() {
   if (DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission === "function") {
@@ -83,8 +83,8 @@ function handleMove(event: any) {
 // https://developer.mozilla.org/en-US/docs/Web/API/Pointer_events/Using_Pointer_Events
 // https://mobiforge.com/design-development/html5-pointer-events-api-combining-touch-mouse-and-pen
 
-const pointerPath1 = {identifier: MISSING_IDENTIFIERT, cordNew: [0, 0], cordOld: [0, 0]};
-const pointerPath2 = {identifier: MISSING_IDENTIFIERT, cordNew: [0, 0], cordOld: [0, 0]};
+const pointerPath1 = {identifier: MISSING_IDENTIFIER, cordNew: [0, 0], cordOld: [0, 0]};
+const pointerPath2 = {identifier: MISSING_IDENTIFIER, cordNew: [0, 0], cordOld: [0, 0]};
 
 function newPointerPathDistance() {
   return Math.sqrt((pointerPath1.cordNew[0] - pointerPath2.cordNew[0]) ** 2 +
@@ -263,13 +263,13 @@ function handleSingleTouchDown(x: number, y: number) {
 function handlePointerDown(event: any) {
   event.preventDefault();
   console.log("%c Pointer Down", "background: #000; color: green", event.pointerId, event.pointerType, pointerPath1.identifier, pointerPath2.identifier);
-  if (pointerPath1.identifier === MISSING_IDENTIFIERT) {
+  if (pointerPath1.identifier === MISSING_IDENTIFIER) {
     inOneOrTwoTouchLimbo = true;
     pointerPath1.identifier = event.pointerId;
     pointerPath1.cordNew = relativeDeviceCoordinates(event.clientX, event.clientY, event.target);
     const [x, y] = normalizedDeviceCoordinates(event.clientX, event.clientY, event.target);
     setTimeout(handleSingleTouchDown, touch1touch2Delay, x, y);
-  } else if (pointerPath2.identifier === MISSING_IDENTIFIERT) {
+  } else if (pointerPath2.identifier === MISSING_IDENTIFIER) {
     pointerPath2.identifier = event.pointerId;
     pointerPath2.cordNew = relativeDeviceCoordinates(event.clientX, event.clientY, event.target);
   }
@@ -305,15 +305,15 @@ function handlePointerMove(event: any) {
 
 function resetPaths(reason: string): void {
   console.log(`reset path information, reason: '${reason}'`);
-  pointerPath1.identifier = MISSING_IDENTIFIERT;
-  pointerPath2.identifier = MISSING_IDENTIFIERT;
+  pointerPath1.identifier = MISSING_IDENTIFIER;
+  pointerPath2.identifier = MISSING_IDENTIFIER;
 }
 
 function resetPath(event: PointerEvent, reason: string): void {
   if (pointerPath1.identifier === event.pointerId) {
-    pointerPath1.identifier = MISSING_IDENTIFIERT;
+    pointerPath1.identifier = MISSING_IDENTIFIER;
   } else if (pointerPath2.identifier === event.pointerId) {
-    pointerPath2.identifier = MISSING_IDENTIFIERT;
+    pointerPath2.identifier = MISSING_IDENTIFIER;
   }
 }
 
@@ -331,9 +331,9 @@ function handlePointerUp(event: any) {
   }
   // reset path id to mark end of touch
   if (pointerPath1.identifier === event.pointerId) {
-    pointerPath1.identifier = MISSING_IDENTIFIERT;
+    pointerPath1.identifier = MISSING_IDENTIFIER;
   } else if (pointerPath2.identifier === event.pointerId) {
-    pointerPath2.identifier = MISSING_IDENTIFIERT;
+    pointerPath2.identifier = MISSING_IDENTIFIER;
   } else {
     console.error(`Pointer Id ${event.pointerId} not found in pointer path tables. > 2 touches?`, pointerPath1.identifier, pointerPath2.identifier);
     resetPaths("error in PointerUp");
