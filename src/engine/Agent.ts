@@ -7,6 +7,7 @@ import {Box3, BoxHelper, Vector3} from "three";
 import {hoverBoxColor, selectionBoxColor} from "@/engine/globals";
 import {Shape} from "@/engine/Shape";
 import {AgentCube} from "@/engine/AgentCube";
+import {AgentClass} from "@/engine/agent/AgentClass";
 
 class SelectionBox extends BoxHelper {
 
@@ -28,8 +29,9 @@ export class Agent {
   isHovered = false;
   rotationSpeed: Vector3 = new Vector3();
   parent!: AgentCube;
+  readonly agentClass: AgentClass;
 
-  constructor(shapeName: string) {
+  constructor(shapeName: string, agentClass: AgentClass) {
     if (this.app.gallery == null) {
       throw new Error("Gallery not ready, system cannot be used");
     }
@@ -38,6 +40,8 @@ export class Agent {
     this.column = 0;
     this.layer = 0;
     this.shape = this.app.gallery.createShapeForAgent(shapeName);
+
+    this.agentClass = agentClass;
 
     // define shape as mesh and add clone of mesh to scene
     // NEED to check if this clone copies the geometry which is SHOULD NOT

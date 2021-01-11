@@ -5,6 +5,7 @@
 import {Gallery} from "@/engine/Gallery.ts";
 import {registerListeners} from "@/engine/navigationevents";
 import {AppContext} from "@/engine/AppContext";
+import {SaveTool} from "@/engine/tool/SaveTool";
 
 // ***************************************************
 // T E S T I N G
@@ -51,11 +52,13 @@ export async function init() {
     app.agentCube.threeResize();
   });
 
-// app.agentCube.broadcast("whenCreatingNewAgent");
-
   registerListeners();
+
+  SaveTool.loadState();
+
   console.log("App init complete, start render cycle");
   animate();
+
 }
 
 // app.agentCube.draw();

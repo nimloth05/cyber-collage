@@ -10,15 +10,15 @@ export class AgentClass implements ShapeRef {
   }
 
   shape: Shape;
-  private name: string;
-  private readonly AgentClass: any;
+  readonly name: string;
+  private readonly AgentType: any;
 
   methods = AgentClass.createMethodList();
 
   constructor(shape: Shape, name: string) {
     this.shape = shape;
     this.name = name;
-    this.AgentClass = this.generateAgentClass(name);
+    this.AgentType = this.generateAgentClass(name);
   }
 
   private generateAgentClass(name: string): any {
@@ -27,7 +27,7 @@ export class AgentClass implements ShapeRef {
   }
 
   createAgent(): Agent {
-    return new this.AgentClass(this.shape.id);
+    return new this.AgentType(this.shape.id, this);
   }
 
   compile() {
@@ -41,9 +41,9 @@ export class AgentClass implements ShapeRef {
       .forEach(([name, functionObject]) => {
         // eslint-disable-next-line
         // @ts-ignore
-        this.AgentClass.prototype[name] = functionObject;
+        this.AgentType.prototype[name] = functionObject;
       });
 
-    console.log("agentClass", this.AgentClass.prototype);
+    console.log("agentClass", this.AgentType.prototype);
   }
 }

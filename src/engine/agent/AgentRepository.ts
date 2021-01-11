@@ -19,6 +19,11 @@ export class AgentRepository {
     return this.agents;
   }
 
+  getClass(name: string): AgentClass {
+    // FIXME: Change to Map
+    return this.agentClasses.find(it => it.name === name)!;
+  }
+
   compile() {
     this.agents.forEach(it => it.compile());
   }

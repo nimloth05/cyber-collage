@@ -76,7 +76,7 @@ export class AgentCube {
   touchMomentumHandler: Function | null;
   toolRow: number;
   toolColumn: number;
-  private agentList: Array<Agent> = [];
+  agentList: Array<Agent> = [];
 
   constructor(rows = 9, columns = 16, layers = 1, cellSize = 20.0) {
     this.rows = rows;
