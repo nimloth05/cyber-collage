@@ -30,12 +30,11 @@ import {app} from "@/engine/app";
 })
 export default class RuleListPanel extends Vue {
   rules: RuleList = new RuleList([]);
+  uiState = app.uiState;
 
   data() {
-    console.log("state", app.uiState.selectedAgentClass);
-    console.log("xx", (app.uiState.selectedAgentClass?.methods.getChild(0) as Method).rules);
     return {
-      rules: (app.uiState.selectedAgentClass?.methods.getChild(0) as Method).rules,
+      rules: (this.uiState.selectedAgentClass?.methods.getChild(0) as Method).rules,
     };
   }
 
