@@ -27,9 +27,7 @@ import {foundationGridColor, selectionBoxColor} from "@/engine/globals.ts";
 import {app} from "@/engine/app";
 import {findObjectAgent} from "@/engine/helperfunctions.ts";
 import {Agent} from "@/engine/Agent";
-import {AgentClass} from "@/engine/agent/AgentClass";
-import {AddAgentToWorldCommand} from "@/model/commands/AddAgentToWorld";
-import {GridVector} from "@/model/util/GridVector";
+import {removeFromArray} from "@/util/util";
 
 // --------------------------------------
 // Scene Edit Objects Classes
@@ -78,6 +76,7 @@ export class AgentCube {
   touchMomentumHandler: Function | null;
   toolRow: number;
   toolColumn: number;
+  private agentList: Array<Agent> = [];
 
   constructor(rows = 9, columns = 16, layers = 1, cellSize = 20.0) {
     this.rows = rows;
@@ -205,14 +204,8 @@ export class AgentCube {
   }
 
   broadcast(methodName: string) {
-    this.grid.forEach((layer) => {
-      layer.forEach((row) => {
-        row.forEach((column) => {
-          column.forEach((agent: any) => {
-            agent[methodName]();
-          });
-        });
-      });
+    this.agentList.forEach((agent: any) => {
+      agent[methodName]();
     });
   }
 
@@ -294,12 +287,6 @@ export class AgentCube {
     this.broadcast("draw");
   }
 
-  clickAt(row: number, column: number, layer = 0) {
-    const selectedAgent = app.uiState.selectedAgentClass;
-    if (selectedAgent != null) {
-    }
-  }
-
   hoverAt(row: number, column: number, layer = 0) {
     this.foundationHoverShape.position.x = column * this.cellSize;
     this.foundationHoverShape.position.y = row * this.cellSize;
@@ -338,6 +325,7 @@ export class AgentCube {
     agent.parent = this;
     // update stack
     agents.push(agent);
+    this.agentList.push(agent);
   }
 
   removeAgent(agent: Agent, removeFromScene = false) {
@@ -347,10 +335,9 @@ export class AgentCube {
     }
 
     const stack = this.grid[agent.layer][agent.row][agent.column];
-    const index = stack.indexOf(agent);
-    if (index > -1) {
-      stack.splice(index, 1);
-    }
+    const index = removeFromArray(stack, agent);
+
+    removeFromArray(this.agentList, agent);
 
     // adjust z values of all the agents that used to be above me
     for (let i = index; i < stack.length; i++) {
@@ -434,10 +421,13 @@ export class AgentCube {
     // console.timeEnd("render");
   }
 
-  animate() {
-    requestAnimationFrame(app.agentCube.animate);
-    this.renderer.render(this.scene, this.camera);
-  }
+  // animate() {
+  //   setTimeout(() => {
+  //     console.log("animate");
+  //     this.renderer.render(this.scene, this.camera);
+  //     requestAnimationFrame(app.agentCube.animate);
+  //   }, 1000);
+  // }
 
   addToScene(object3D: Object3D) {
     this.scene.add(object3D);

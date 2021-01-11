@@ -14,6 +14,7 @@ import AddCommandButton from "@/components/AddCommandButton.vue";
 import {Action, ActionList} from "@/engine/Instruction";
 import {InstructionDeclaration} from "@/model/InstructionDeclaration";
 import ActionModal from "@/components/hud/tab/rule/ActionModal.vue";
+import {DirectionValue} from "@/engine/instruction-value";
 
 @Options({
   name: "ActionList",
@@ -33,7 +34,9 @@ export default class ActionPanel extends Vue {
   }
 
   _actionSelected(decl: InstructionDeclaration): void {
-    this.actions.instructionObjects.push(new Action(decl, {}));
+    this.actions.instructionObjects.push(new Action(decl, {
+      direction: new DirectionValue([-1, 0]),
+    }));
   }
 }
 </script>

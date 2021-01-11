@@ -40,7 +40,7 @@ export default class ConditionPanel extends Vue {
   _conditionSelected(conditionDecl: InstructionDeclaration): void {
     this.conditions.add(new Condition(conditionDecl, {
       shape: new ShapeNameValue("cat"),
-      direction: new DirectionValue("north"),
+      direction: new DirectionValue([-1, 1]),
     }));
   }
 }

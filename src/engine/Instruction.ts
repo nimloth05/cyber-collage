@@ -26,14 +26,15 @@ export class Instruction implements ASTNode {
 
   constructor(declaration: InstructionDeclaration, parameters: Record<string, any>) {
     this.declaration = declaration;
-    this.parameters = parameters; // properties {<parameter>: <value>}
+    this.parameters = Object.assign({}, parameters); // shallow clone
+    this.parameterObjects = parameters; // properties {<parameter>: <value>}
 
     // create parameter objects
-    Object.assign(this.parameterObjects, this.parameters);
-    for (const parameter in this.parameterObjects) {
-      // console.log(definition.parameters[parameter]);
-      this.parameterObjects[parameter] = new declaration.parameters[parameter](parameters[parameter]);
-    }
+    // Object.assign(this.parameterObjects, this.parameters);
+    // for (const parameter in this.parameterObjects) {
+    //   // console.log(definition.parameters[parameter]);
+    //   this.parameterObjects[parameter] = new declaration.parameters[parameter](parameters[parameter]);
+    // }
   }
 
   serialize() {
@@ -65,11 +66,11 @@ export class Action extends Instruction {
 
 }
 
-abstract class ASTNodeList implements ASTNode {
+abstract class ASTNodeList<T extends ASTNode> implements ASTNode {
   id = uuid.v4(); // FIXME: This is just a test
-  instructionObjects: Array<ASTNode>;
+  instructionObjects: Array<T>;
 
-  constructor(instructionDefs: Array<ASTNode>) {
+  constructor(instructionDefs: Array<T>) {
     this.instructionObjects = instructionDefs;
     // this.instructionObjects = instructionDefs.map((idef: any) => createInstruction(idef[0], idef[1]));
   }
@@ -78,7 +79,7 @@ abstract class ASTNodeList implements ASTNode {
     return this.instructionObjects.length;
   }
 
-  add(node: ASTNode) {
+  add(node: T) {
     this.instructionObjects.push(node);
   }
 
@@ -99,7 +100,7 @@ export class Behavior {
 // I N S T R U C T I O N   L I S T
 // ***************************************************
 
-export class AndConditionList extends ASTNodeList {
+export class AndConditionList extends ASTNodeList<Condition> {
   compile(): string {
     // "<c1> && <c2> && ... <cn>"
     const conditions = this.instructionObjects;
@@ -116,31 +117,36 @@ export class AndConditionList extends ASTNodeList {
   }
 }
 
-export class ActionList extends ASTNodeList {
+export class ActionList extends ASTNodeList<Action> {
   compile(): string {
     // {<a1>; <a2>; ... <an>}
-    let code = "";
-    // FIXME: use reduce here
-    this.instructionObjects.forEach((action: any) => {
-      code += `${action.expand()}; `;
-    });
-    return code;
+
+    return this.instructionObjects
+      .map(it => it.compile())
+      .join(";\n");
+
+    // let code = "";
+    // // FIXME: use reduce here
+    // this.instructionObjects.forEach((action: any) => {
+    //   code += `${action.compile()}; `;
+    // });
+    // return code;
   }
 }
 
 export class Rule implements ASTNode {
   id = uuid.v4(); // FIXME For testing
-  conditions: ASTNodeList = new AndConditionList([]);
-  actions: ASTNodeList = new ActionList([]);
+  conditions: ASTNodeList<Condition> = new AndConditionList([]);
+  actions: ASTNodeList<Action> = new ActionList([]);
 
   compile(): string {
     return `if (${this.conditions.compile()}) { \r\n ${this.actions.compile()} \r\n}\r\n`;
   }
 
-  explanation = "Prüfe alle Bedingungen. if true dann execute actions";
+  explanation = "Sind alle Bedingungen wahr führe aktionen aus.";
 }
 
-export class RuleList extends ASTNodeList {
+export class RuleList extends ASTNodeList<Rule> {
   compile(): string {
     // if <conditions1> <actions2>
     // else if <conditions1> <actions2>
@@ -161,7 +167,7 @@ export class RuleList extends ASTNodeList {
 }
 
 export class Method implements ASTNode {
-  private _name = "whileRunning";
+  private _name = "step";
   rules = new RuleList([]);
   explanation = `I'm method ${this.name}`;
 
@@ -175,11 +181,11 @@ export class Method implements ASTNode {
   }
 
   compile(): string {
-    return this.rules.compile();
+    return `${this.rules.compile()}`;
   }
 }
 
-export class MethodList extends ASTNodeList {
+export class MethodList extends ASTNodeList<Method> {
   compile(): string {
     // <methodName1>() {<rules>}
     const methods = this.instructionObjects;

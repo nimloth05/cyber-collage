@@ -1,14 +1,16 @@
 <template>
-  <div v-if="hasSelectedAgent" class="rules">
-    <rule-panel
-      v-for="(rule, index) in rules.instructionObjects"
-      :key="rule.id"
-      :rule="rule"
-      :ruleIndex="index"
-      :noOfRules="rules.length">
-    </rule-panel>
-    <div>
-      <add-command-button @click="addRule"/>
+  <div v-if="hasSelectedAgent" class="rules-container">
+    <div style="height: 100%; overflow: auto">
+      <rule-panel
+        v-for="(rule, index) in rules.instructionObjects"
+        :key="rule.id"
+        :rule="rule"
+        :ruleIndex="index"
+        :noOfRules="rules.length">
+      </rule-panel>
+      <div>
+        <add-command-button @click="addRule"/>
+      </div>
     </div>
   </div>
   <div v-else>
@@ -34,11 +36,6 @@ import {app} from "@/engine/app";
 export default class RuleListPanel extends Vue {
   uiState = app.uiState;
 
-  // data() {
-  //   return {
-  //   };
-  // }
-
   get rules() {
     if (!this.hasSelectedAgent) {
       return new RuleList([]);
@@ -56,8 +53,12 @@ export default class RuleListPanel extends Vue {
     }
     // this.rules.push(new RuleInstance("rule3", [], []));
     this.rules.add(new Rule());
-
-    console.log("code:", this.rules.compile());
   }
 }
 </script>
+
+<style>
+.rules-container {
+  height: 100%;
+}
+</style>

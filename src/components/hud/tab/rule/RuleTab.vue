@@ -1,24 +1,15 @@
 <template>
-  <div>
+  <div class="h-100">
+    <button @click="compile">Compile</button>
     <rule-list-panel/>
   </div>
-  <!--  <div class="container">-->
-  <!--    <div class="row">-->
-  <!--      <div class="col-12">-->
-  <!--        while running-->
-  <!--      </div>-->
-  <!--    </div>-->
-  <!--    <div class="row">-->
-  <!--      <div class="col-1">-->
-  <!--        Wenn-->
-  <!--      </div>-->
-  <!--    </div>-->
-  <!--  </div>-->
+
 </template>
 
 <script lang="ts">
 import RuleListPanel from "@/components/hud/tab/rule/RuleListPanel.vue";
 import {Options, Vue} from "vue-class-component";
+import {app} from "@/engine/app";
 
 @Options({
   name: "RuleTab",
@@ -27,5 +18,8 @@ import {Options, Vue} from "vue-class-component";
   },
 })
 export default class RuleTab extends Vue {
+  compile() {
+    app.repository.compile();
+  }
 }
 </script>

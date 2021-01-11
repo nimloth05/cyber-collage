@@ -18,4 +18,8 @@ export class AgentRepository {
     // FIXME: Pass out array?
     return this.agents;
   }
+
+  compile() {
+    this.agents.forEach(it => it.compile());
+  }
 }

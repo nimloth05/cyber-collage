@@ -1,13 +1,5 @@
-import {Instruction} from "@/engine/Instruction";
-
 export type CommandInstance = any;
 
-export enum CommandType {
-  CONDITION,
-  ACTION
-}
-
-export type ConstructableInstruction = { new(declaration: InstructionDeclaration, parameters: Record<string, any>): Instruction };
 export type ParameterType = { new(...args: any[]): any };
 export type Parameters = Record<string, ParameterType>;
 

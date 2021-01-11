@@ -144,7 +144,7 @@ export class Agent {
 
   step() { // Step your behavior
     // console.log(`stepping agent: ${this.shapeName} @[${this.row}, ${this.column}]`);
-    this.rotateBy(this.rotationSpeed.x);
+    // this.rotateBy(this.rotationSpeed.x);
   }
 
   mouseClick() {
@@ -204,17 +204,8 @@ export class Agent {
     }
   }
 
-  // FIXME: This method is identical to AgentCube#removeAgent. This should be removed, it violates symmetry
   removeFromAgentCube() {
-    const agents = app.agentCube.grid[this.layer][this.row][this.column];
-    const index = agents.indexOf(this);
-    if (index === -1) console.error(`cannot remove agent: ${this} from AgentCube`);
-    agents.splice(index, 1);
-
-    // adjust z values of all the agents that used to be above me
-    for (let i = index; i < agents.length; i++) {
-      agents[i].z -= this.depth;
-    }
+    this.app.agentCube.removeAgent(this, false);
   }
 
   // C O N D I T I O N S
