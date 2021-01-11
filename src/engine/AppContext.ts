@@ -20,11 +20,9 @@ export class UiState {
  */
 export class AppContext {
   name = "Cyber Collage";
-  agentCube = new AgentCube(100, 100);
+  agentCube = new AgentCube(20, 20);
   gallery?: Gallery;
   undoManager = new UndoManager();
   repository = new AgentRepository();
   uiState = new UiState();
-  // FIXME: Move this
-  designToolbar = new DesignToolbar();
 }

@@ -132,7 +132,7 @@ export class AgentCube {
     const far = 8000;
 
     this.camera = new AgentCamera(fov, aspect, near, far);
-    this.camera.aim(200, -400, 600, 200, 400, 0);
+    this.camera.aim(200, -100, 300, 200, 100, 0);
     // this.camera.position.set(300, 400, 500);
     // this.camera.lookAt(0, 0, 0);
 

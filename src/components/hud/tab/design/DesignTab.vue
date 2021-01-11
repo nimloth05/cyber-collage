@@ -24,26 +24,28 @@
 <script lang="ts">
 import {Options, Vue} from "vue-class-component";
 import {app} from "@/engine/app";
+import {DesignToolbar} from "@/components/hud/tab/design/DesignToolbar";
 
 @Options({
   name: "DesignTab",
   emits: [],
   watch: {
     selectedToolId(): void {
-      this.uiState.selectedTool = app.designToolbar.getTool(this.selectedToolId);
+      this.uiState.selectedTool = this.toolbar.getTool(this.selectedToolId);
     },
   },
 })
 export default class TabContainer extends Vue {
+  toolbar = new DesignToolbar();
   uiState = app.uiState;
   selectedToolId = this.uiState.selectedTool.id;
 
   get tools() {
-    return app.designToolbar.getTools();
+    return this.toolbar.getTools();
   }
 
   getLabel(toolId: string) {
-    return app.designToolbar.getTool(toolId).name;
+    return this.toolbar.getTool(toolId).name;
   }
 }
 </script>

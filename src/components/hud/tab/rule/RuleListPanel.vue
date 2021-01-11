@@ -1,5 +1,5 @@
 <template>
-  <div class="rules">
+  <div v-if="hasSelectedAgent" class="rules">
     <rule-panel
       v-for="(rule, index) in rules.instructionObjects"
       :key="rule.id"
@@ -10,6 +10,9 @@
     <div>
       <add-command-button @click="addRule"/>
     </div>
+  </div>
+  <div v-else>
+    Bitte wähle eine Agenten-Klasse
   </div>
 </template>
 
@@ -29,36 +32,28 @@ import {app} from "@/engine/app";
   },
 })
 export default class RuleListPanel extends Vue {
-  rules: RuleList = new RuleList([]);
   uiState = app.uiState;
 
-  data() {
-    return {
-      rules: (this.uiState.selectedAgentClass?.methods.getChild(0) as Method).rules,
-    };
+  // data() {
+  //   return {
+  //   };
+  // }
+
+  get rules() {
+    if (!this.hasSelectedAgent) {
+      return new RuleList([]);
+    }
+    return (this.uiState.selectedAgentClass?.methods.getChild(0) as Method).rules;
   }
 
-  // rules: Array<Rule> = [
-  // new RuleInstance(
-  //   "rule2",
-  //   [
-  //     new ConditionInstance("see a dog"),
-  //     new ConditionInstance("the dog barks"),
-  //   ], [
-  //     new ActionInstance("pet dog"),
-  //   ]),
-  // new RuleInstance(
-  //   "rule1",
-  //   [
-  //     new ConditionInstance("see a frog"),
-  //     new ConditionInstance("the frog is red"),
-  //   ], [
-  //     new ActionInstance("move left"),
-  //     new ActionInstance("move right"),
-  //   ]),
-  // ];
+  get hasSelectedAgent(): boolean {
+    return this.uiState.selectedAgentClass != null;
+  }
 
   addRule() {
+    if (!this.hasSelectedAgent) {
+      return;
+    }
     // this.rules.push(new RuleInstance("rule3", [], []));
     this.rules.add(new Rule());
 
