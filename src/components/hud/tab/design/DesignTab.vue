@@ -3,7 +3,7 @@
     v-for="tool in tools"
     :key="tool.id"
     :value="tool.id"
-    @click="selectedToolId = tool.id"
+    @click="selectTool(tool.id)"
     class="tool"
     :class="{ 'activeTool': selectedToolId === tool.id }"
   >
@@ -29,16 +29,18 @@ import {DesignToolbar} from "@/components/hud/tab/design/DesignToolbar";
 @Options({
   name: "DesignTab",
   emits: [],
-  watch: {
-    selectedToolId(): void {
-      this.uiState.selectedTool = this.toolbar.getTool(this.selectedToolId);
-    },
-  },
+  // watch: {
+  //   selectedToolId(newValue: string, oldValue: string): void {
+  //     this.uiState.selectedTool = this.toolbar.getTool(newValue);
+  //     this.uiState.selectedTool.selected(previousId);
+  //   },
+  // },
 })
 export default class TabContainer extends Vue {
-  toolbar = new DesignToolbar();
   uiState = app.uiState;
-  selectedToolId = this.uiState.selectedTool.id;
+  toolbar = app.toolbar;
+
+  // selectedToolId = this.uiState.selectedTool.id;
 
   get tools() {
     return this.toolbar.getTools();
@@ -46,6 +48,16 @@ export default class TabContainer extends Vue {
 
   getLabel(toolId: string) {
     return this.toolbar.getTool(toolId).name;
+  }
+
+  get selectedToolId(): string {
+    return this.uiState.selectedTool.id;
+  }
+
+  selectTool(id: string) {
+    const previousId = this.selectedToolId;
+    this.uiState.selectedTool = this.toolbar.getTool(id);
+    this.uiState.selectedTool.selected(previousId);
   }
 }
 </script>

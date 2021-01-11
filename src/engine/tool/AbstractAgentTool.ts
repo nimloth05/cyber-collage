@@ -12,4 +12,8 @@ export abstract class AbstractAgentTool implements Tool {
   abstract executeClick(hitResult: FindAgentResult): void;
 
   abstract executeMove(hitResult: FindAgentResult): void;
+
+  selected(previousSelectedToolId: string): void {
+    // Not empty
+  }
 }

@@ -4,8 +4,8 @@ import {Gallery} from "@/engine/Gallery";
 import {AgentRepository} from "@/engine/agent/AgentRepository";
 import {AgentClass} from "@/engine/agent/AgentClass";
 import {Tool} from "@/engine/tool/Tool";
-import {DesignToolbar} from "@/components/hud/tab/design/DesignToolbar";
 import {PenTool} from "@/engine/tool/PenTool";
+import {DesignToolbar} from "@/components/hud/tab/design/DesignToolbar";
 
 /**
  * Represents global UI state. This class is used as a bridge between Vue (UI framework) and the engine.
@@ -25,4 +25,5 @@ export class AppContext {
   undoManager = new UndoManager();
   repository = new AgentRepository();
   uiState = new UiState();
+  toolbar = new DesignToolbar();
 }
