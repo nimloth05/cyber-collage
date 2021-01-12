@@ -400,7 +400,7 @@ export class AgentCube {
     if (this.mouseWasMoved) {
       this.mouseWasMoved = false;
 
-      const hitResult = this.findAgentAt(this.mouseMove.x, this.mouseMove.y);
+      const hitResult = this.findAgentAt(this.mouseMove.x, this.mouseMove.y, this.agentDragged);
       if (hitResult.row === -1 || hitResult.column === -1) return;
       const tool = app.uiState.selectedTool;
       if (tool != null) {
