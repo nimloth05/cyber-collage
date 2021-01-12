@@ -6,10 +6,10 @@ import {Dictionary, keyBy} from "lodash";
 import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
 import {LoadingManager, Mesh} from "three";
 import {ProgressListener} from "@/engine/promise-util";
-import {centerMeshGeometryOnGround, normalizeGeometry} from "@/engine/helperfunctions";
+import {centerAndNormalizeShape, centerMeshGeometryOnGround, normalizeGeometry} from "@/engine/helperfunctions";
 import {Shape} from "@/engine/Shape";
 
-export const shapeNames = ["Sheep", "Rabbit", "Pig", "Penguin", "Panda", "Monkey", "Ostrich", "Lion", "Hippo", "Giraffe", "Elephant", "Dog", "Frog", "Deer", "Cat", "Chicken", "Crocodile", "Cow", "Cow_no_tipping", "Rooster", "Bear", "cobble_wall", "AgentCube"];
+export const shapeNames = ["Sheep", "Rabbit", "Pig", "Penguin", "Panda", "Monkey", "Ostrich", "Lion", "Hippo", "Giraffe", "Elephant", "Dog", "Frog", "Deer", "Cat", "Chicken", "Crocodile", "Cow", "Cow_no_tipping", "Rooster", "Bear", "cobble_wall", "AgentCube", "mmm"];
 
 export class Gallery {
   shapes: Dictionary<Shape>;
@@ -58,8 +58,9 @@ export class Gallery {
           path + shapeFile,
           gltf => {
             const shape = gltf.scene;
-            centerMeshGeometryOnGround(shape);
-            normalizeGeometry(shape, cellSize);
+            centerAndNormalizeShape(shape);
+            // centerMeshGeometryOnGround(shape);
+            normalizeGeometry(shape, cellSize, shapeName);
 
             // shadows
             shape.traverse(child => {
