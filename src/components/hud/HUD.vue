@@ -1,21 +1,23 @@
 <template>
   <div class="hud">
     <div style="display: flex">
-      <shape-element v-if="uiState.selectedAgentClass != null" :shape-ref="uiState.selectedAgentClass"
-                     @click="openAgentClassModal"/>
+      <shape-element
+        v-if="uiState.selectedAgentClass != null"
+        :shape-ref="uiState.selectedAgentClass"
+        @click="openAgentClassModal"
+      />
       <empty-shape-element v-if="uiState.selectedAgentClass == null"
                            @click="openAgentClassModal"/>
-      <agent-list v-if="toggle" @click="agentListClick"/>
       <button @click="undo">
         Undo
       </button>
       <button @click="redo">
         Redo
       </button>
-      <tab-header/>
+      <tab-header v-model="selectedTab"/>
     </div>
     <modal ref="agentClassModal"/>
-    <tab-container/>
+    <tab-container :selected-tab-id="selectedTab"/>
   </div>
 </template>
 
@@ -46,15 +48,7 @@ import {WORLD_CONTEXT_ID} from "@/model/Commands";
 export default class HUD extends Vue {
   toggle = false;
   uiState = app.uiState;
-
-  switchToggle() {
-    this.toggle = !this.toggle;
-    console.log("button clicked, current toggle state", this.toggle);
-  }
-
-  agentListClick() {
-    this.toggle = false;
-  }
+  selectedTab = "design";
 
   openAgentClassModal() {
     (this.$refs.agentClassModal as Modal).show();
@@ -74,8 +68,10 @@ export default class HUD extends Vue {
 <style>
 .hud {
   position: relative;
-  top: calc(100% - 200px);
-  height: 200px;
+  top: calc(100% - 300px);
+  /*top: 500px;*/
+  /*bottom: 300px;*/
+  height: 300px;
   /*background-color: #d3d3d3;*/
   background-color: #b5b5b5;
 }

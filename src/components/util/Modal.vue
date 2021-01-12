@@ -30,9 +30,6 @@ import AgentList from "@/components/hud/AgentList.vue";
 
 @Options({
   name: "Modal",
-  props: {
-    actions: Array,
-  },
   components: {
     AddCommandButton,
     AgentList,
