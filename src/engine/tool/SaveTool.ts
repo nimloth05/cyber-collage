@@ -51,13 +51,19 @@ export class SaveTool implements Tool {
       }));
     }
 
-    function getWorldData(): any {
-      return SaveTool.app().agentCube.agentList.map(it => ({
-        layer: it.layer,
-        row: it.row,
-        column: it.column,
-        agentClass: it.agentClass.name,
-      }));
+    function getWorldData(): Array<any> {
+      const result: Array<any> = [];
+      SaveTool.app().agentCube.broadcastGeometrically(it => {
+        const obj = {
+          layer: it.layer,
+          row: it.row,
+          column: it.column,
+          agentClass: it.agentClass.name,
+        };
+        result.push(obj);
+      });
+
+      return result;
     }
 
     const obj = {

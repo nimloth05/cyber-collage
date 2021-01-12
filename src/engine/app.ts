@@ -58,7 +58,6 @@ export async function init() {
 
   console.log("App init complete, start render cycle");
   animate();
-
 }
 
 // app.agentCube.draw();

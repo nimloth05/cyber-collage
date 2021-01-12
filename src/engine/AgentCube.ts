@@ -204,8 +204,24 @@ export class AgentCube {
   }
 
   broadcast(methodName: string) {
+    // FIXME: Was passiert, wenn ein Agent ein anderer löscht und diese Liste dann mutiert wird während der Execution
     this.agentList.forEach((agent: any) => {
-      agent[methodName]();
+      const method = agent[methodName];
+      if (method != null) {
+        agent[methodName]();
+      }
+    });
+  }
+
+  broadcastGeometrically(handler: (agent: Agent) => void) {
+    this.grid.forEach((layer) => {
+      layer.forEach((row) => {
+        row.forEach((column) => {
+          column.forEach((agent: any) => {
+            handler(agent);
+          });
+        });
+      });
     });
   }
 

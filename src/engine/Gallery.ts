@@ -9,7 +9,27 @@ import {ProgressListener} from "@/engine/promise-util";
 import {centerMeshGeometryOnGround, normalizeGeometry} from "@/engine/helperfunctions";
 import {Shape} from "@/engine/Shape";
 
-export const shapeNames = ["Sheep", "Rabbit", "Pig", "Penguin", "Panda", "Monkey", "Ostrich", "Lion", "Hippo", "Giraffe", "Elephant", "Dog", "Frog", "Deer", "Cat", "Chicken", "Crocodile", "Cow", "Rooster", "Bear", "cobble_wall"];
+export const shapeNames = [
+  "Sheep",
+  "Rabbit",
+  "Pig",
+  "Penguin",
+  "Panda",
+  "Monkey",
+  "Ostrich",
+  "Lion",
+  "Hippo",
+  "Giraffe",
+  "Elephant",
+  "Dog",
+  "Frog",
+  "Deer",
+  "Cat",
+  "Chicken",
+  "Crocodile",
+  "Cow",
+  "Rooster",
+  "Bear"];
 
 export class Gallery {
   shapes: Dictionary<Shape>;
