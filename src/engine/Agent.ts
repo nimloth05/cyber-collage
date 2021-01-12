@@ -135,7 +135,7 @@ export class Agent {
     this.rotationSpeed.y = 0.1 * (Math.random() - 0.5);
     this.rotationSpeed.z = 0.1 * (Math.random() - 0.5);
     // default rotation
-    this.roateTo(Math.PI * -0.5, Math.PI * 1.0, 0);
+    // this.roateTo(Math.PI * -0.5, Math.PI * 1.0, 0);
   }
 
   draw() {
@@ -167,6 +167,9 @@ export class Agent {
     this.isSelected = true;
     this.parent.addToScene(this.selectionBox);
     this.selectionBox.update();
+    // debugging!!
+    console.log("selection box", this.selectionBox);
+    this.selectionBox.geometry.computeBoundingBox();
   }
 
   deselect() {
