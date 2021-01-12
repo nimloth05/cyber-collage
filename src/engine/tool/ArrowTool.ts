@@ -34,18 +34,21 @@ export class ArrowTool extends AbstractAgentTool {
     }
     // start drag
     if (hitResult.agent != null) {
-      app.agentCube.agentSelected = hitResult.agent;
+      app.agentCube.agentDragged = hitResult.agent;
     }
   }
 
   executeMove(hitResult: FindAgentResult): void {
-    if (this.agentDragged) {
+    const agentDragged = app.agentCube.agentDragged;
+
+    if (agentDragged != null) {
       if (hitResult.row !== this.toolRow || hitResult.column !== this.toolColumn) {
-        this.agentDragged.teleportTo(hitResult.row, hitResult.column);
+        agentDragged.teleportTo(hitResult.row, hitResult.column);
         this.toolRow = hitResult.row;
         this.toolColumn = hitResult.column;
       }
     }
+    // Hovering: does not work on touch interfaces
     /*
     if (!agent) this.hoverAt(row, column);
     if (agent !== this.agentHovered) {

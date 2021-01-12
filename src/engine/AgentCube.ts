@@ -358,16 +358,17 @@ export class AgentCube {
     }
   }
 
-  /**   * Returns the first agent found at the given coordinates. If an agent is found, row, column belgon to this agent.
-   * Else, row, column represents the mapped coordinates. 
-   * */
+  /**
+   * Returns the first agent found at the given coordinates. If an agent is found, row, column belongs to this agent.
+   * Else, row, column represents the mapped coordinates.
+   */
   findAgentAt(x: number, y: number, excludedAgent: any = null, excludedClasses: Array<string> = ["SelectionBox", "FoundationHover"]): FindAgentResult {
     this.raycaster.setFromCamera(new Vector2(x, y), this.camera);
     const intersections = this.raycaster.intersectObjects(this.scene.children, true);
     console.log("intersections", intersections.map(inter => inter.object.constructor.name));
     // console.log("intersections", intersections.map(inter => findObjectAgent(inter.object)));
     const firstIntersection = intersections.filter(intersection => !(excludedClasses.includes(intersection.object.constructor.name) ||
-                                                                     (excludedAgent && excludedAgent === findObjectAgent(intersection.object))))[0];
+      (excludedAgent && excludedAgent === findObjectAgent(intersection.object))))[0];
     const hit: FindAgentResult = {agent: null, row: -1, column: -1};
     if (firstIntersection) {
       // FIXME: This schecks if the function isFoundation is present and not if it returns true/false. Is this correct?
@@ -392,9 +393,12 @@ export class AgentCube {
     return hit;
   }
 
-   processMouseMove() {
+  processMouseMove() {
     if (this.mouseWasMoved) {
+      this.mouseWasMoved = false;
+
       const hitResult = this.findAgentAt(this.mouseMove.x, this.mouseMove.y);
+      if (hitResult.row === -1 || hitResult.column === -1) return;
       const tool = app.uiState.selectedTool;
       if (tool != null) {
         tool.executeMove(hitResult);
@@ -404,6 +408,8 @@ export class AgentCube {
 
   processMouseClick() {
     if (this.mouseWasClicked) {
+      this.mouseWasClicked = false;
+
       const tool = app.uiState.selectedTool;
       if (tool != null) {
         const hitResult = this.findAgentAt(this.mouseClick.x, this.mouseClick.y);
