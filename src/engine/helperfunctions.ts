@@ -68,11 +68,11 @@ export function centerAndNormalizeShape(mesh: Object3D) {
   geometry.center();
   geometry.computeBoundingBox();
   // most glTF models appear to oriented like a pig laying down on the x axis, looking towards minus x, and feet -y
-  geometry.rotateX(Math.PI * 0.5);
-  // geometry.rotateY(Math.PI * 0.5);
+  geometry.rotateX(Math.PI * 1);
+  geometry.rotateY(Math.PI * 0.5);
   // geometry.translate(0, -box.max.y, 0);
   geometry.translate(0, 0, box.max.z);
-  // geometry.translate(0, -10, 0);
+  geometry.translate(0, -box.max.y, 0);
   mesh.updateMatrixWorld();
 }
 
