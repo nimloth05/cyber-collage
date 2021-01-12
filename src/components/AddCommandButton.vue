@@ -15,7 +15,6 @@ import {Options, Vue} from "vue-class-component";
 })
 export default class AddCommandButton extends Vue {
   click() {
-    console.log("emit click");
     this.$emit("click");
   }
 }

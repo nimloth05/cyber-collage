@@ -4,13 +4,12 @@
     <!--&lt;!&ndash;      <img src="" alt="Play-Knopf" title="Spielen"/>&ndash;&gt;-->
     <!--      Play-->
     <!--    </li>-->
-    <li @click="switchTab('design')">
-      <!--      <img src="" alt="Welt designen" title="Designen"/>-->
-      Design
+    <li :class="{selected: currentTab === 'design'}" @click="switchTab('design')">
+      <img src="icons/tab/world.svg" width="64" height="64" alt="Design-Icon"/>
     </li>
-    <li @click="switchTab('rule')">
+    <li :class="{selected: currentTab === 'rule'}" @click="switchTab('rule')">
       <!--      <img src="" alt="Programmieren" title="Programmieren"/>-->
-      Rules
+      <img src="icons/tab/rules.svg" width="64" height="64" alt="Regeln-Icon"/>
     </li>
   </ul>
 </template>
@@ -28,7 +27,10 @@ import {Options, Vue} from "vue-class-component";
   },
 })
 export default class TabHeader extends Vue {
+  currentTab = "design";
+
   switchTab(tabId: string) {
+    this.currentTab = tabId;
     this.$emit("update:modelValue", tabId);
   }
 }
@@ -45,7 +47,7 @@ export default class TabHeader extends Vue {
 .hud-tab-list li {
   padding: 0.5em;
   text-align: center;
-  height: 2em;
+  height: 5em;
   background: #b5b5b5;
   position: relative;
 }
@@ -68,6 +70,15 @@ export default class TabHeader extends Vue {
   border-top: 5px solid #b5b5b5; /* white */
   border-right: 5px solid #b5b5b5;
   width: 0;
+}
+
+.hud-tab-list li.selected {
+  background-color: gray;
+}
+
+.hud-tab-list li.selected:before {
+  border-top-color: #b5b5b5; /* white */
+  border-left-color: gray;
 }
 
 .hud-tab-list li:hover {

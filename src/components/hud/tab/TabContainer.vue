@@ -1,6 +1,8 @@
 <template>
-  <rule-tab v-if="selectedTabId === 'rule'"/>
-  <design-tab v-if="selectedTabId === 'design'"/>
+  <div class="tab-container">
+    <rule-tab v-if="selectedTabId === 'rule'"/>
+    <design-tab v-if="selectedTabId === 'design'"/>
+  </div>
 </template>
 
 <script lang="ts">
@@ -22,3 +24,10 @@ import RuleTab from "@/components/hud/tab/rule/RuleTab.vue";
 export default class TabContainer extends Vue {
 }
 </script>
+
+<style>
+.tab-container {
+  height: 200px;
+  overflow: auto;
+}
+</style>

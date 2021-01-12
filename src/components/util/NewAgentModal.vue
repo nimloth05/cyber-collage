@@ -3,7 +3,9 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-body">
-          <input v-model="agentName" placeholder="Agenten-Klassennamen"/>
+          <div class="mb-4">
+            <input v-model="agentName" placeholder="Agenten-Klassennamen"/>
+          </div>
           <shape-list :show-plus-button="false" :shapes="shapeList" @shape-selected="shapeSelected"/>
         </div>
       </div>
@@ -47,6 +49,7 @@ export default class NewAgentModal extends Vue {
   show() {
     // Since we have lazy init of the gallery we cannot initialize the field during construction phase
     this.shapeList = Object.values(app.gallery!.shapes).map(shape => ({shape}));
+    this.agentName = "";
     this.modalInstance.show();
   }
 

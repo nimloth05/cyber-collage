@@ -1,21 +1,30 @@
-import {AgentDescription} from "@/engine/agent/AgentDescription";
+import {AgentClass} from "@/engine/agent/AgentClass";
 
 export class AgentRepository {
-  private agents: Array<AgentDescription> = [];
+  private agents: Array<AgentClass> = [];
 
-  add(description: AgentDescription) {
-    this.agents.push(description);
+  add(agentClass: AgentClass) {
+    this.agents.push(agentClass);
   }
 
-  remove(description: AgentDescription) {
+  remove(description: AgentClass) {
     const index = this.agents.indexOf(description);
     if (index != null) {
       this.agents.splice(index, 1);
     }
   }
 
-  get descriptions() {
+  get agentClasses() {
     // FIXME: Pass out array?
     return this.agents;
+  }
+
+  getClass(name: string): AgentClass {
+    // FIXME: Change to Map
+    return this.agentClasses.find(it => it.name === name)!;
+  }
+
+  compile() {
+    this.agents.forEach(it => it.compile());
   }
 }

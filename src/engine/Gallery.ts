@@ -9,7 +9,8 @@ import {ProgressListener} from "@/engine/promise-util";
 import {centerAndNormalizeShape, normalizeGeometry} from "@/engine/helperfunctions";
 import {Shape} from "@/engine/Shape";
 
-export const shapeNames = ["Sheep",
+export const shapeNames = [
+  "Sheep",
   "Rabbit",
   "Pig",
   "Penguin",

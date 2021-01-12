@@ -3,6 +3,7 @@
 // ***************************************************
 
 import {Instruction} from "@/engine/Instruction";
+import {deserializeInstruction} from "@/engine/instruction-util";
 
 const projectManifestFileName = "project.json";
 const behaviorFileName = "behavior.json";
@@ -56,7 +57,7 @@ export class ProjectManager {
           .map(async (promise: Promise<Response>) => {
             const response = await promise;
             const text = await response.text();
-            return Instruction.deserialize(text).expand();
+            return deserializeInstruction(text).compile();
           }),
       );
     // this.defineClasses();

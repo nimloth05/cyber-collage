@@ -7,6 +7,7 @@ import {Box3, BoxHelper, Vector3} from "three";
 import {hoverBoxColor, selectionBoxColor} from "@/engine/globals";
 import {Shape} from "@/engine/Shape";
 import {AgentCube} from "@/engine/AgentCube";
+import {AgentClass} from "@/engine/agent/AgentClass";
 
 class SelectionBox extends BoxHelper {
 
@@ -28,8 +29,9 @@ export class Agent {
   isHovered = false;
   rotationSpeed: Vector3 = new Vector3();
   parent!: AgentCube;
+  readonly agentClass: AgentClass;
 
-  constructor(shapeName: string) {
+  constructor(shapeName: string, agentClass: AgentClass) {
     if (this.app.gallery == null) {
       throw new Error("Gallery not ready, system cannot be used");
     }
@@ -38,6 +40,8 @@ export class Agent {
     this.column = 0;
     this.layer = 0;
     this.shape = this.app.gallery.createShapeForAgent(shapeName);
+
+    this.agentClass = agentClass;
 
     // define shape as mesh and add clone of mesh to scene
     // NEED to check if this clone copies the geometry which is SHOULD NOT
@@ -144,7 +148,7 @@ export class Agent {
 
   step() { // Step your behavior
     // console.log(`stepping agent: ${this.shapeName} @[${this.row}, ${this.column}]`);
-    this.rotateBy(this.rotationSpeed.x);
+    // this.rotateBy(this.rotationSpeed.x);
   }
 
   mouseClick() {
@@ -207,17 +211,8 @@ export class Agent {
     }
   }
 
-  // FIXME: This method is identical to AgentCube#removeAgent. This should be removed, it violates symmetry
   removeFromAgentCube() {
-    const agents = app.agentCube.grid[this.layer][this.row][this.column];
-    const index = agents.indexOf(this);
-    if (index === -1) console.error(`cannot remove agent: ${this} from AgentCube`);
-    agents.splice(index, 1);
-
-    // adjust z values of all the agents that used to be above me
-    for (let i = index; i < agents.length; i++) {
-      agents[i].z -= this.depth;
-    }
+    this.app.agentCube.removeAgent(this, false);
   }
 
   // C O N D I T I O N S
