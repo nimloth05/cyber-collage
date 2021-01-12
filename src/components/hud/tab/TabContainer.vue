@@ -10,6 +10,7 @@
   <option value="agentcube">agentcube</option>
   <option value="cow">cow</option>
   <option value="cow_no_tipping">cow_no_tipping</option>
+  <option value="mmm">mmm</option>
 </select>
 
 <label for="tool-mode">  tool: </label>
