@@ -130,10 +130,10 @@ export class Agent {
     if (this.isSelected) this.selectionBox.update();
   }
 
-  whenCreatingNewAgent() {
+  whenCreatingNewAgent() { /*
     this.rotationSpeed.x = 0.1 * (Math.random() - 0.5);
     this.rotationSpeed.y = 0.1 * (Math.random() - 0.5);
-    this.rotationSpeed.z = 0.1 * (Math.random() - 0.5);
+    this.rotationSpeed.z = 0.1 * (Math.random() - 0.5); */
     // default rotation
     // this.roateTo(Math.PI * -0.5, Math.PI * 1.0, 0);
   }
