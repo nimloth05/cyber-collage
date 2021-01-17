@@ -29,6 +29,25 @@ import {findObjectAgent} from "@/engine/helperfunctions.ts";
 import {Agent} from "@/engine/Agent";
 import {removeFromArray} from "@/util/util";
 
+export class GameLoop {
+  running = false;
+
+  play() {
+    this.running = true;
+  }
+
+  stop() {
+    this.running = false;
+  }
+
+  update() {
+    if (!this.running) {
+      return;
+    }
+    app.agentCube.broadcast("step");
+  }
+}
+
 // --------------------------------------
 // Scene Edit Objects Classes
 // --------------------------------------
@@ -204,7 +223,6 @@ export class AgentCube {
   }
 
   broadcast(methodName: string) {
-    // FIXME: Was passiert, wenn ein Agent ein anderer löscht und diese Liste dann mutiert wird während der Execution
     this.agentList.forEach((agent: any) => {
       const method = agent[methodName];
       if (method != null) {

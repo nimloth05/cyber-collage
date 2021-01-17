@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="46" height="48" viewBox="0 0 46 48">
+  <g id="Gruppe_633" data-name="Gruppe 633" transform="translate(-219 -652)">
+    <g id="Rechteck_274" data-name="Rechteck 274" transform="translate(219 652)" fill="#ff4751" stroke="#ff4751" stroke-linejoin="bevel" stroke-width="20">
+      <rect width="46" height="48" stroke="none"/>
+      <rect x="10" y="10" width="26" height="28" fill="none"/>
+    </g>
+    <path id="Icon_metro-checkmark" data-name="Icon metro-checkmark" d="M21.927,5.784,7.6,19.967l3.574,3.739L25.511,9.369Z" transform="translate(226.429 660.917)" fill="#fff"/>
+    <path id="Icon_metro-checkmark-2" data-name="Icon metro-checkmark" d="M21.927,5.784,7.6,19.967l3.574,3.739L25.511,9.369Z" transform="translate(257.73 659.107) rotate(90)" fill="#fff"/>
+  </g>
+</svg>

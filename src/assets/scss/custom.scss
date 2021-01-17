@@ -1,0 +1,22 @@
+@import "~bootstrap/scss/bootstrap";
+
+.play-bar {
+  margin: 10px auto 0;
+  display: flex;
+  justify-content: center;
+}
+
+/**
+ * Small screen
+ */
+.hud-toolbar-button {
+  width: 32px;
+  height: 32px;
+}
+
+@include media-breakpoint-up(lg) {
+  .hud-toolbar-button {
+    width: 64px;
+    height: 64px;
+  }
+}

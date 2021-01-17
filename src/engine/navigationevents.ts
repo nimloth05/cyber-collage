@@ -230,7 +230,7 @@ function isTiltingGesture() {
 
 function interpretPointerPath(clientX: number, clientY: number, target: any) {
   if (twoFingerTouch()) {
-    // console.log("angle =", newPointerPathAngle());
+    console.log("angle =", newPointerPathAngle());
     if (isTiltingGesture()) {
       app.agentCube.camera.trackSpinn(0, dampenedZoom(oldPointerPathDistance() - newPointerPathDistance()), Math.PI / 180);
     } else {

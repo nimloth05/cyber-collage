@@ -18,7 +18,7 @@ export const app = new AppContext();
 
 function animate() {
   requestAnimationFrame(animate);
-  app.agentCube.step();
+  app.gameLoop.update();
   app.agentCube.render();
 }
 
