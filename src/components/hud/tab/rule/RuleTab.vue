@@ -1,5 +1,5 @@
 <template>
-  <div class="h-100">
+  <div class="rule-tab-content">
     <button @click="compile">Compile</button>
     <rule-list-panel/>
   </div>

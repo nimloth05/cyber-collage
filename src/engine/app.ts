@@ -22,6 +22,30 @@ function animate() {
   app.agentCube.render();
 }
 
+export function requestFullScreen() {
+  const elem: any = document.documentElement;
+  if (elem.requestFullscreen) {
+    elem.requestFullscreen();
+  } else if (elem.webkitRequestFullscreen) { /* Safari */
+    elem.webkitRequestFullscreen();
+  } else if (elem.msRequestFullscreen) { /* IE11 */
+    elem.msRequestFullscreen();
+  }
+}
+
+export function exitFullscreen() {
+  const doc: any = document;
+  if (doc.exitFullscreen) {
+    doc.exitFullscreen();
+  } else if (doc.webkitExitFullscreen) {
+    doc.webkitExitFullscreen();
+  } else if (doc.mozCancelFullScreen) {
+    doc.mozCancelFullScreen();
+  } else if (doc.msExitFullscreen) {
+    doc.msExitFullscreen();
+  }
+}
+
 export async function init() {
   app.agentCube.init3DSystem();
 

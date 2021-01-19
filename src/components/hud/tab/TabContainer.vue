@@ -26,8 +26,4 @@ export default class TabContainer extends Vue {
 </script>
 
 <style>
-.tab-container {
-  height: 200px;
-  overflow: auto;
-}
 </style>

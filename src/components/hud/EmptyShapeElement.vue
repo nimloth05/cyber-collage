@@ -1,7 +1,7 @@
 <template>
   <button
     @click="plusClicked"
-    class="shape-element-button"
+    class="shape-element-button sizeable-ui-element"
   >
     +
   </button>

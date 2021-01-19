@@ -1,6 +1,6 @@
 <template>
   <div v-if="hasSelectedAgent" class="rules-container">
-    <div style="height: 100%; overflow: auto">
+    <div>
       <rule-panel
         v-for="(rule, index) in rules.instructionObjects"
         :key="rule.id"
@@ -56,9 +56,3 @@ export default class RuleListPanel extends Vue {
   }
 }
 </script>
-
-<style>
-.rules-container {
-  height: 100%;
-}
-</style>

@@ -1,25 +1,30 @@
 <template>
-  <div class="hud-overlay">
-    <div class="m-auto">
-      <div class="play-bar">
-        <b-buton @click="toggleState" class="hud-toolbar-button">
-          <img v-if="!isRunning" style="width: 100%; height: 100%" src="icons/play/play.svg" alt="Spiel Starten"/>
-          <img v-if="isRunning" style="width: 100%; height: 100%" src="icons/play/pause.svg" alt="stop"/>
-        </b-buton>
-      </div>
-    </div>
+  <undo-redo-toolbar/>
+  <div class="play-bar">
+    <button @click="toggleState" class="btn sizeable-ui-element hud-toolbar-button">
+      <img v-if="!isRunning" src="icons/play/play.svg" alt="Spiel Starten"/>
+      <img v-if="isRunning" src="icons/play/pause.svg" alt="stop"/>
+    </button>
+    <button v-if="isRunning" @click="stop" class="btn sizeable-ui-element hud-toolbar-button">
+      <img src="icons/play/stop.svg" alt="stop"/>
+    </button>
   </div>
+  <aux-toolbar/>
 </template>
 
 <script lang="ts">
 import {Options, Vue} from "vue-class-component";
 import HUD from "@/components/hud/HUD.vue";
+import UndoRedoToolbar from "@/components/hud/UndoRedoToolbar.vue";
+import AuxToolbar from "@/components/hud/AuxToolbar.vue";
 import {app} from "@/engine/app";
 
 @Options({
   name: "HUDTop",
   components: {
     HUD,
+    UndoRedoToolbar,
+    AuxToolbar,
   },
 })
 export default class HUDTop extends Vue {
@@ -34,10 +39,3 @@ export default class HUDTop extends Vue {
   }
 }
 </script>
-
-<style lang="scss">
-.hud-overlay {
-  position: relative;
-  height: 20px;
-}
-</style>
