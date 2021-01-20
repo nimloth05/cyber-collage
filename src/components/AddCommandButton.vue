@@ -24,7 +24,6 @@ export default class AddCommandButton extends Vue {
 .add-operation {
   display: inline-block;
   padding: 0;
-  margin-left: 1.5rem;
   border-radius: 50%;
   border: 1px solid white;
   text-decoration: none;

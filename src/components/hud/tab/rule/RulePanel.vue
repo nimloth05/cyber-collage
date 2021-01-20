@@ -1,10 +1,10 @@
 <template>
   <div class="rule">
     <div class="ifStatement">
-      <span class="ifKeyword">{{ getIfLabel() }}</span>
+      <div class="if-keyword">{{ getIfLabel() }}</div>
       <condition-list :conditions="rule.conditions"/>
     </div>
-    <div>then</div>
+    <div class="then-keyword">then</div>
     <action-list :actions="rule.actions"/>
   </div>
 </template>

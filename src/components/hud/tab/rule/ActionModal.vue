@@ -3,15 +3,16 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-body">
-          <ul>
-            <li
-              v-for="declarations in declarations"
-              :key="declarations.name"
-              @click="_actionSelected(declarations)"
-            >
-              {{ declarations.name }}
-            </li>
-          </ul>
+          <button
+            class="btn sizeable-ui-element instruction-declaration-button"
+            v-for="declarations in declarations"
+            :key="declarations.name"
+            @click="_actionSelected(declarations)"
+          >
+            <img v-if="declarations.icon != null" class="tool-icon" :src="declarations.icon"
+                 :alt="declarations.name"/>
+            <span v-if="declarations.icon == null">{{ declarations.name }}</span>
+          </button>
         </div>
       </div>
     </div>

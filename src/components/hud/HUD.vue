@@ -5,12 +5,15 @@
   >
     <div style="display: flex">
       <shape-element
+        id="current-agent"
         v-if="selectedAgentClass != null"
         :shape-ref="selectedAgentClass"
         @click="openAgentClassModal"
       />
-      <empty-shape-element v-if="selectedAgentClass == null"
-                           @click="openAgentClassModal"/>
+      <empty-shape-element
+        id="current-agent"
+        v-if="selectedAgentClass == null"
+        @click="openAgentClassModal"/>
       <tab-header v-model="selectedTab"/>
     </div>
     <modal ref="agentClassModal"/>

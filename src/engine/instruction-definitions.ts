@@ -50,7 +50,7 @@ export const instructionDefinitions: Array<any> = [
       const {direction} = instruction.parameterObjects;
       return `this.move(${direction.value[0]}, ${direction.value[1]})`;
     },
-    icon: "move.png",
+    icon: "icons/instructions/actions/move.svg",
     explanation({direction}: any) {
       return `I move to the ${direction.explain}`;
     },
@@ -65,7 +65,7 @@ export const instructionDefinitions: Array<any> = [
       const {sound} = instruction.parameterObjects;
       return `this.playSound('${sound.value}')`;
     },
-    icon: "move.png",
+    icon: "icons/instructions/actions/play-sound.svg",
     explanation({direction}: any) {
       return `I move to the ${direction.explain}`;
     },
@@ -118,19 +118,32 @@ export const instructionDefinitions: Array<any> = [
   //   },
   // },
   {
-    name: "repeat",
+    name: "erase",
     class: Action,
     parameters: {
-      times: FormulaValue,
-      actions: ActionList,
+      direction: DirectionValue,
     },
     code(instruction: Instruction) {
-      const {times, actions} = instruction.parameterObjects;
-      return `for (let i = 0; i < ${times.value}) {${actions.expand()}};`;
+      // empty code
     },
-    icon: "repeat.png",
-    explanation: () => "I execute all actions first to last",
+    icon: "icons/instructions/actions/delete.svg",
+    explanation: () => "Ich lösche ein Agent",
   },
+
+  // {
+  //   name: "repeat",
+  //   class: Action,
+  //   parameters: {
+  //     times: FormulaValue,
+  //     actions: ActionList,
+  //   },
+  //   code(instruction: Instruction) {
+  //     const {times, actions} = instruction.parameterObjects;
+  //     return `for (let i = 0; i < ${times.value}) {${actions.expand()}};`;
+  //   },
+  //   icon: "repeat.png",
+  //   explanation: () => "I execute all actions first to last",
+  // },
 ];
 
 // FIXME: Use hashMap (lodash keyBy) here
