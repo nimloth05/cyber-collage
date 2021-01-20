@@ -46,6 +46,17 @@ export class GameLoop {
     }
     app.agentCube.broadcast("step");
   }
+
+  /**
+   * Launches the animation and game loop.
+   */
+  run() {
+    requestAnimationFrame(() => {
+      this.run();
+    });
+    this.update();
+    app.agentCube.render();
+  }
 }
 
 // --------------------------------------

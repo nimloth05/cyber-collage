@@ -9,7 +9,6 @@
 
 <script lang="ts">
 import {Options, Vue} from "vue-class-component";
-import {exitFullscreen, requestFullScreen} from "@/engine/app";
 
 @Options({
   name: "AuxToolbar",
@@ -20,11 +19,35 @@ export default class AuxToolbar extends Vue {
 
   fullScreen() {
     if (!this.isFullscreen) {
-      requestFullScreen();
+      AuxToolbar.requestFullscreen();
     } else {
-      exitFullscreen();
+      AuxToolbar.exitFullscreen();
     }
     this.isFullscreen = !this.isFullscreen;
+  }
+
+  private static requestFullscreen(): void {
+    const elem: any = document.documentElement;
+    if (elem.requestFullscreen) {
+      elem.requestFullscreen();
+    } else if (elem.webkitRequestFullscreen) { /* Safari */
+      elem.webkitRequestFullscreen();
+    } else if (elem.msRequestFullscreen) { /* IE10 */
+      elem.msRequestFullscreen();
+    }
+  }
+
+  private static exitFullscreen(): void {
+    const doc: any = document;
+    if (doc.exitFullscreen) {
+      doc.exitFullscreen();
+    } else if (doc.webkitExitFullscreen) {
+      doc.webkitExitFullscreen();
+    } else if (doc.mozCancelFullScreen) {
+      doc.mozCancelFullScreen();
+    } else if (doc.msExitFullscreen) {
+      doc.msExitFullscreen();
+    }
   }
 }
 </script>

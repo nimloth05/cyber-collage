@@ -14,37 +14,7 @@ import {SaveTool} from "@/engine/tool/SaveTool";
 export const app = new AppContext();
 
 // FIXME: Global scope pollution
-(window as any).app = app; // need to be able to tinker with this
-
-function animate() {
-  requestAnimationFrame(animate);
-  app.gameLoop.update();
-  app.agentCube.render();
-}
-
-export function requestFullScreen() {
-  const elem: any = document.documentElement;
-  if (elem.requestFullscreen) {
-    elem.requestFullscreen();
-  } else if (elem.webkitRequestFullscreen) { /* Safari */
-    elem.webkitRequestFullscreen();
-  } else if (elem.msRequestFullscreen) { /* IE11 */
-    elem.msRequestFullscreen();
-  }
-}
-
-export function exitFullscreen() {
-  const doc: any = document;
-  if (doc.exitFullscreen) {
-    doc.exitFullscreen();
-  } else if (doc.webkitExitFullscreen) {
-    doc.webkitExitFullscreen();
-  } else if (doc.mozCancelFullScreen) {
-    doc.mozCancelFullScreen();
-  } else if (doc.msExitFullscreen) {
-    doc.msExitFullscreen();
-  }
-}
+// (window as any).app = app; // need to be able to tinker with this
 
 export async function init() {
   app.agentCube.init3DSystem();
@@ -81,7 +51,7 @@ export async function init() {
   SaveTool.loadState();
 
   console.log("App init complete, start render cycle");
-  animate();
+  app.gameLoop.run();
 }
 
 // app.agentCube.draw();
