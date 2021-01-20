@@ -1,18 +1,17 @@
 import {Command} from "@/model/Command";
 import {GridVector} from "@/model/util/GridVector";
 import {app} from "@/engine/app";
-import {WORLD_CONTEXT_ID} from "@/model/Commands";
 import {RemoveAgentFromWorld} from "@/model/commands/RemoveAgentFromWorld";
 import {AgentClass} from "@/engine/agent/AgentClass";
 import {Agent} from "@/engine/Agent";
+import {AbstractCommand} from "@/model/commands/AbstractCommand";
 
-export class AddAgentToWorldCommand implements Command {
-  contextId = WORLD_CONTEXT_ID;
-  timeStamp: number = new Date().valueOf();
+export class AddAgentToWorldCommand extends AbstractCommand {
   private readonly agent: AgentClass | Agent;
   private readonly position: GridVector;
 
   constructor(description: AgentClass | Agent, position: GridVector) {
+    super();
     this.agent = description;
     this.position = position;
   }

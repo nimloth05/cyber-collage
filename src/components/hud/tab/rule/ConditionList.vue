@@ -12,10 +12,12 @@
 <script lang="ts">
 import {Options, Vue} from "vue-class-component";
 import AddCommandButton from "../../../AddCommandButton.vue";
-import {AndConditionList, Condition} from "@/engine/Instruction";
+import {AndConditionList, Condition, Rule} from "@/engine/Instruction";
 import {InstructionDeclaration} from "@/model/InstructionDeclaration";
 import ConditionModal from "@/components/hud/tab/rule/ConditionModal.vue";
 import {DirectionValue, ShapeNameValue} from "@/engine/instruction-value";
+import {app} from "@/engine/app";
+import {AddASTNodeCommand} from "@/model/commands/instruction/AddASTNodeCommand";
 
 @Options({
   name: "ConditionList",
@@ -38,10 +40,11 @@ export default class ConditionPanel extends Vue {
   }
 
   _conditionSelected(conditionDecl: InstructionDeclaration): void {
-    this.conditions.add(new Condition(conditionDecl, {
+    const condition = new Condition(conditionDecl, {
       shape: new ShapeNameValue("cat"),
       direction: new DirectionValue([-1, 1]),
-    }));
+    });
+    app.undoManager.execute(new AddASTNodeCommand<Condition>(this.conditions, condition));
   }
 }
 </script>

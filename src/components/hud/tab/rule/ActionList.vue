@@ -11,10 +11,12 @@
 <script lang="ts">
 import {Options, Vue} from "vue-class-component";
 import AddCommandButton from "@/components/AddCommandButton.vue";
-import {Action, ActionList} from "@/engine/Instruction";
+import {Action, ActionList, Condition} from "@/engine/Instruction";
 import {InstructionDeclaration} from "@/model/InstructionDeclaration";
 import ActionModal from "@/components/hud/tab/rule/ActionModal.vue";
 import {DirectionValue} from "@/engine/instruction-value";
+import {app} from "@/engine/app";
+import {AddASTNodeCommand} from "@/model/commands/instruction/AddASTNodeCommand";
 
 @Options({
   name: "ActionList",
@@ -34,9 +36,10 @@ export default class ActionPanel extends Vue {
   }
 
   _actionSelected(decl: InstructionDeclaration): void {
-    this.actions.instructionObjects.push(new Action(decl, {
+    const action = new Action(decl, {
       direction: new DirectionValue([-1, 0]),
-    }));
+    });
+    app.undoManager.execute(new AddASTNodeCommand<Action>(this.actions, action));
   }
 }
 </script>

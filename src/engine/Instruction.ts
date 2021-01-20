@@ -66,7 +66,7 @@ export class Action extends Instruction {
 
 }
 
-abstract class ASTNodeList<T extends ASTNode> implements ASTNode {
+export abstract class ASTNodeList<T extends ASTNode> implements ASTNode {
   id = uuid.v4(); // FIXME: This is just a test
   instructionObjects: Array<T>;
 

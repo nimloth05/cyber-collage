@@ -25,6 +25,8 @@ import RulePanel from "@/components/hud/tab/rule/RulePanel.vue";
 import AddCommandButton from "../../../AddCommandButton.vue";
 import {Method, Rule, RuleList} from "@/engine/Instruction";
 import {app} from "@/engine/app";
+import {AddRuleCommand} from "@/model/commands/instruction/AddRuleCommand";
+import {AddASTNodeCommand} from "@/model/commands/instruction/AddASTNodeCommand";
 
 @Options({
   name: "RuleListPanel",
@@ -35,6 +37,10 @@ import {app} from "@/engine/app";
 })
 export default class RuleListPanel extends Vue {
   uiState = app.uiState;
+
+  get method() {
+    return (this.uiState.selectedAgentClass?.methods.getChild(0) as Method);
+  }
 
   get rules() {
     if (!this.hasSelectedAgent) {
@@ -52,7 +58,8 @@ export default class RuleListPanel extends Vue {
       return;
     }
     // this.rules.push(new RuleInstance("rule3", [], []));
-    this.rules.add(new Rule());
+    // this.rules.add(new Rule());
+    app.undoManager.execute(new AddASTNodeCommand<Rule>(this.method.rules, new Rule()));
   }
 }
 </script>

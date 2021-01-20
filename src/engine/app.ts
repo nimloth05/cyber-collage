@@ -53,6 +53,11 @@ export async function init() {
 
   SaveTool.loadState();
 
+  app.undoManager.addListener(() => {
+    app.repository.compile();
+  });
+  app.repository.compile();
+
   console.log("App init complete, start render cycle");
   app.gameLoop.run();
 

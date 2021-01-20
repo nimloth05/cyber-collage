@@ -1,6 +1,5 @@
 <template>
   <div class="rule-tab-content">
-    <button @click="compile">Compile</button>
     <rule-list-panel/>
   </div>
 
@@ -10,6 +9,7 @@
 import RuleListPanel from "@/components/hud/tab/rule/RuleListPanel.vue";
 import {Options, Vue} from "vue-class-component";
 import {app} from "@/engine/app";
+import {Disposable, Disposables} from "@/model/util/Disposable";
 
 @Options({
   name: "RuleTab",
@@ -18,8 +18,5 @@ import {app} from "@/engine/app";
   },
 })
 export default class RuleTab extends Vue {
-  compile() {
-    app.repository.compile();
-  }
 }
 </script>
