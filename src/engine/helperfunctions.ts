@@ -70,8 +70,7 @@ export function centerAndNormalizeShape(mesh: Object3D) {
   // most glTF models appear to oriented like a pig laying down on the x axis, looking towards minus x, and feet -y
   geometry.rotateX(Math.PI * 1);
   geometry.rotateY(Math.PI * 0.5);
-  // geometry.translate(0, -box.max.y, 0);
-  geometry.translate(0, 0, box.max.z);
+  // geometry.translate(0, 0, box.max.z);
   geometry.translate(0, -box.max.y, 0);
   mesh.updateMatrixWorld();
 }
@@ -79,7 +78,7 @@ export function centerAndNormalizeShape(mesh: Object3D) {
 export function normalizeGeometry(mesh: Object3D, size = 1.0, name: string) {
   const box = new Box3();
   box.setFromObject(mesh);
-  if (name === "Cow_no_tipping") console.log("normalizing cube", box.min.y, box);
+  // if (name === "Cow_no_tipping") console.log("normalizing cube", box.min.y, box);
   const scale = size / Math.max(box.max.x - box.min.x, box.max.y - box.min.y);
   mesh.scale.x = scale;
   mesh.scale.y = scale;
