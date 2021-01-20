@@ -8,6 +8,7 @@ import {hoverBoxColor, selectionBoxColor} from "@/engine/globals";
 import {Shape} from "@/engine/Shape";
 import {AgentCube} from "@/engine/AgentCube";
 import {AgentClass} from "@/engine/agent/AgentClass";
+import {GridVector} from "@/model/util/GridVector";
 
 class SelectionBox extends BoxHelper {
 
@@ -245,10 +246,10 @@ export class Agent {
     app.agentCube.pushAgent(this, row, column, layer);
   }
 
-  teleportTo(row: number, column: number, layer = 0) {
-    if (!this.isValidCoordinate(row, column, layer)) return;
-    this.removeFromAgentCube();
-    app.agentCube.pushAgent(this, row, column, layer);
+  teleportTo(position: GridVector) {
+    if (!this.isValidCoordinate(position.row, position.column, position.layer)) return;
+    this.app.agentCube.removeAgent(this, false);
+    this.app.agentCube.pushAgent(this, position.row, position.column, position.layer);
   }
 
   moveRandom() {
@@ -278,5 +279,9 @@ export class Agent {
     this.deselect();
     this.removeFromAgentCube();
     this.parent.scene.remove(this.shape.mesh);
+  }
+
+  getPosition(): GridVector {
+    return new GridVector(this.column, this.row, this.layer);
   }
 }

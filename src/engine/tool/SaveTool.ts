@@ -2,6 +2,7 @@ import {Tool} from "@/engine/tool/Tool";
 import {app} from "@/engine/app";
 import {AppContext} from "@/engine/AppContext";
 import {AgentClass} from "@/engine/agent/AgentClass";
+import {UndoManager} from "@/model/UndoManager";
 
 export class SaveTool implements Tool {
   static loadState(): void {
@@ -44,6 +45,17 @@ export class SaveTool implements Tool {
   }
 
   selected(previousSelectedToolId: string): void {
+    SaveTool.saveState();
+    app.uiState.selectedTool = app.toolbar.getTool(previousSelectedToolId);
+  }
+
+  static registerListener(undoManager: UndoManager) {
+    undoManager.addListener(() => {
+      SaveTool.saveState();
+    });
+  }
+
+  private static saveState() {
     function getClassStore(): any {
       return SaveTool.app().repository.agentClasses.map((it) => ({
         name: it.name,
@@ -72,6 +84,5 @@ export class SaveTool implements Tool {
     };
     console.log("dump world to local store", obj);
     localStorage.setItem("project", JSON.stringify(obj));
-    app.uiState.selectedTool = app.toolbar.getTool(previousSelectedToolId);
   }
 }

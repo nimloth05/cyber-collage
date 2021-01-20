@@ -2,6 +2,9 @@ import {AbstractAgentTool} from "@/engine/tool/AbstractAgentTool";
 import {FindAgentResult} from "@/engine/AgentCube";
 import {Agent} from "@/engine/Agent";
 import {app} from "@/engine/app";
+import {AddAgentToWorldCommand} from "@/model/commands/AddAgentToWorld";
+import {GridVector} from "@/model/util/GridVector";
+import {TeleportCommand} from "@/model/commands/TeleportCommand";
 
 export class ArrowTool extends AbstractAgentTool {
   id = "arrow";
@@ -43,7 +46,7 @@ export class ArrowTool extends AbstractAgentTool {
 
     if (agentDragged != null) {
       if (hitResult.row !== this.toolRow || hitResult.column !== this.toolColumn) {
-        agentDragged.teleportTo(hitResult.row, hitResult.column);
+        app.undoManager.execute(new TeleportCommand(agentDragged, new GridVector(hitResult.column, hitResult.row)));
         this.toolRow = hitResult.row;
         this.toolColumn = hitResult.column;
       }
