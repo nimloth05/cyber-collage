@@ -1,5 +1,8 @@
 <template>
-  <div class="hud">
+  <div
+    class="hud"
+    :class="{'hud-small': isDesignTabActive, 'hud-big': !isDesignTabActive}"
+  >
     <div style="display: flex">
       <shape-element
         v-if="selectedAgentClass != null"
@@ -49,6 +52,10 @@ export default class HUD extends Vue {
 
   openAgentClassModal() {
     (this.$refs.agentClassModal as Modal).show();
+  }
+
+  get isDesignTabActive() {
+    return this.selectedTab === "design";
   }
 }
 </script>

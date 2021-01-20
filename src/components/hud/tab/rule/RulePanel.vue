@@ -48,15 +48,4 @@ export default class RulePanel extends Vue {
 </script>
 
 <style lang="less">
-.rule {
-  background-color: lightgray;
-  margin: 0 0 10px;
-  width: 50%;
-  border-radius: 10px;
-  padding: 1rem;
-}
-
-.ifKeyword {
-  padding-right: 1rem;
-}
 </style>
