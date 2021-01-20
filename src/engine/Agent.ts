@@ -247,7 +247,9 @@ export class Agent {
   }
 
   teleportTo(position: GridVector) {
-    if (!this.isValidCoordinate(position.row, position.column, position.layer)) return;
+    if (!this.isValidCoordinate(position.row, position.column, position.layer)) {
+      return;
+    }
     this.app.agentCube.removeAgent(this, false);
     this.app.agentCube.pushAgent(this, position.row, position.column, position.layer);
   }

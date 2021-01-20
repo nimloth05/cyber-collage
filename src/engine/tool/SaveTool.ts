@@ -4,6 +4,10 @@ import {AppContext} from "@/engine/AppContext";
 import {AgentClass} from "@/engine/agent/AgentClass";
 import {UndoManager} from "@/model/UndoManager";
 
+type ClassStoreEntry = { name: string; shapeId: string };
+type WorldEntry = { agentClass: string; column: number; row: number; layer: number };
+type ProjectData = { classStore: Array<ClassStoreEntry>; worldData: Array<WorldEntry> };
+
 export class SaveTool implements Tool {
   static loadState(): void {
     const data = localStorage.getItem("project");
@@ -15,16 +19,24 @@ export class SaveTool implements Tool {
       return;
     }
 
-    const obj = JSON.parse(data);
+    const obj: ProjectData = JSON.parse(data);
+    const gallery = SaveTool.app().gallery;
+    if (gallery == null) {
+      return;
+    }
 
-    obj.classStore.forEach((it: any) => {
-      const shape = SaveTool.app().gallery!.findShape(it.shapeId)!;
-      SaveTool.app().repository.add(new AgentClass(shape, it.name));
+    obj.classStore.forEach((it: ClassStoreEntry) => {
+      const shape = gallery.findShape(it.shapeId);
+      if (shape != null) {
+        SaveTool.app().repository.add(new AgentClass(shape, it.name));
+      } else {
+        console.warn(`Could not find shape: ${it.shapeId}`);
+      }
     });
 
-    obj.worldData.forEach((it: any) => {
+    obj.worldData.forEach((it: WorldEntry) => {
       const agent = SaveTool.app().repository.getClass(it.agentClass).createAgent();
-      SaveTool.app().agentCube.pushAgent(agent, parseInt(it.row), parseInt(it.column), parseInt(it.layer));
+      SaveTool.app().agentCube.pushAgent(agent, parseInt(it.row as never), parseInt(it.column as never), parseInt(it.layer as never));
     });
   }
 
@@ -56,15 +68,15 @@ export class SaveTool implements Tool {
   }
 
   private static saveState() {
-    function getClassStore(): any {
+    function getClassStore(): Array<ClassStoreEntry> {
       return SaveTool.app().repository.agentClasses.map((it) => ({
         name: it.name,
         shapeId: it.shape.id,
       }));
     }
 
-    function getWorldData(): Array<any> {
-      const result: Array<any> = [];
+    function getWorldData(): Array<WorldEntry> {
+      const result: Array<WorldEntry> = [];
       SaveTool.app().agentCube.broadcastGeometrically(it => {
         const obj = {
           layer: it.layer,
@@ -82,7 +94,6 @@ export class SaveTool implements Tool {
       classStore: getClassStore(),
       worldData: getWorldData(),
     };
-    console.log("dump world to local store", obj);
     localStorage.setItem("project", JSON.stringify(obj));
   }
 }

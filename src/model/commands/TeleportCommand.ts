@@ -13,16 +13,18 @@ export class TeleportCommand implements Command {
   constructor(agent: Agent, position: GridVector) {
     this.agent = agent;
     this.position = position;
-  }
-
-  equals(command: Command): boolean {
-    if (!(command instanceof TeleportCommand)) return false;
-    return this.agent === command.agent && this.position.equals(command.position);
+    console.log(`creating TeleportCommand: ${this.position}`);
   }
 
   execute(): Command {
     const previousPosition = this.agent.getPosition();
     this.agent.teleportTo(this.position);
+    console.log(`teleporting agent from ${previousPosition} to new ${this.position} (agent.getPosition: ${this.agent.getPosition()})`);
     return new TeleportCommand(this.agent, previousPosition);
+  }
+
+  equals(command: Command): boolean {
+    if (!(command instanceof TeleportCommand)) return false;
+    return this.agent === command.agent && this.position.equals(command.position);
   }
 }

@@ -13,21 +13,24 @@ export class UndoManager {
   private listeners: ListenerList<UndoListener> = new ListenerList();
 
   execute(command: Command): void {
-    const stack = UndoManager.getStack(command.contextId, this.undoStack);
+    const undoStack = UndoManager.getStack(command.contextId, this.undoStack);
 
     const undoCommand = command.execute();
-    if (stack.length > 0) {
+    if (undoStack.length > 0) {
       // check for merging process
-      const lastCommand = stack[stack.length - 1];
+      const lastCommand = undoStack[undoStack.length - 1];
       if ((command.timeStamp - lastCommand.timeStamp) < MERGE_THRESHOLD) {
-        stack.pop();
-        // FIXME: Improve this (Check if previous command is composite command)
-        stack.push(new CompositeCommand(lastCommand.contextId, [lastCommand, undoCommand]));
+        if (lastCommand instanceof CompositeCommand) {
+          lastCommand.pushCommand(undoCommand);
+        } else {
+          undoStack.pop();
+          undoStack.push(new CompositeCommand(lastCommand.contextId, [lastCommand, undoCommand]));
+        }
       } else {
-        stack.push(undoCommand);
+        undoStack.push(undoCommand);
       }
     } else {
-      stack.push(undoCommand);
+      undoStack.push(undoCommand);
     }
     const redoContextStack = UndoManager.getStack(command.contextId, this.redoStack);
     redoContextStack.splice(0, redoContextStack.length);
@@ -36,7 +39,6 @@ export class UndoManager {
 
   undo(contextId: UndoContextId): void {
     const command = UndoManager.getStack(contextId, this.undoStack).pop();
-    console.log("execute undo command", command);
     if (command != null) {
       UndoManager.getStack(contextId, this.redoStack).push(command.execute());
       this.listeners.notify();

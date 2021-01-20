@@ -9,4 +9,8 @@ export class GridVector {
     if (!(obj instanceof GridVector)) return false;
     return this.layer === obj.layer && this.row === obj.row && this.column === obj.column;
   }
+
+  toString(): string {
+    return `[${this.column}, ${this.row}, ${this.layer}]`;
+  }
 }
