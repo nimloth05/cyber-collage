@@ -31,5 +31,6 @@ export class CompositeCommand implements Command {
 
   pushCommand(command: Command): void {
     this.commands.push(command);
+    this.timeStamp = new Date().valueOf();
   }
 }
