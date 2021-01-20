@@ -7,11 +7,11 @@
 import {Options, Vue} from "vue-class-component";
 import {AgentClass} from "@/engine/agent/AgentClass";
 import {app} from "@/engine/app";
-import {Disposable, Disposables} from "@/model/util/Disposable";
 import ShapeList from "@/components/hud/ShapeList.vue";
 import {CreateAgentClass} from "@/model/commands/CreateAgentClass";
 import NewAgentModal from "@/components/util/NewAgentModal.vue";
 import {Shape} from "@/engine/Shape";
+import {AgentRepository} from "@/engine/agent/AgentRepository";
 
 @Options({
   name: "AgentList",
@@ -24,16 +24,12 @@ import {Shape} from "@/engine/Shape";
   ],
 })
 export default class AddAgentShapeList extends Vue {
-  private disposable: Disposable = new Disposables();
-  agentClasses: Array<AgentClass> = [];
+  repo: AgentRepository = app.repository;
   uiState = app.uiState;
 
-  created() {
-    this.disposable = app.undoManager.addListener(() => {
-      this.agentClasses = [...app.repository.agentClasses];
-    });
-
-    this.agentClasses = [...app.repository.agentClasses];
+  get agentClasses(): Array<AgentClass> {
+    console.log("get agentClass() => this.repo", this.repo);
+    return this.repo.agentClasses;
   }
 
   createAgent() {
@@ -41,11 +37,10 @@ export default class AddAgentShapeList extends Vue {
   }
 
   agentCrated(params: { shape: Shape; name: string }) {
-    console.log("agent created");
     const shape = app.gallery?.findShape(params.shape.id);
     if (shape != null) {
       const desc = new AgentClass(shape, params.name);
-      app.undoManager.execute(new CreateAgentClass(app.repository, desc));
+      app.undoManager.execute(new CreateAgentClass(this.repo, desc));
       this.uiState.selectedAgentClass = desc;
     }
     this.$emit("agent-clicked");
@@ -54,12 +49,6 @@ export default class AddAgentShapeList extends Vue {
   agentSelected(description: AgentClass) {
     this.uiState.selectedAgentClass = description;
     this.$emit("agent-clicked");
-    this.$forceUpdate();
-  }
-
-  unmounted() {
-    console.log("component destroyed");
-    this.disposable.dispose();
   }
 }
 </script>

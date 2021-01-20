@@ -1,3 +1,4 @@
+import {ref} from "vue";
 import {Tool} from "@/engine/tool/Tool";
 import {app} from "@/engine/app";
 import {AppContext} from "@/engine/AppContext";
@@ -25,19 +26,26 @@ export class SaveTool implements Tool {
       return;
     }
 
+    // Access vue proxy, so we can update the array and all the corresponding components update themself
+    const agentClassArray = ref(SaveTool.app().repository.agentClasses);
     obj.classStore.forEach((it: ClassStoreEntry) => {
       const shape = gallery.findShape(it.shapeId);
       if (shape != null) {
-        SaveTool.app().repository.add(new AgentClass(shape, it.name));
+        agentClassArray.value.push(new AgentClass(shape, it.name));
       } else {
         console.warn(`Could not find shape: ${it.shapeId}`);
       }
     });
 
+    console.log("classes in repo", SaveTool.app().repository.agentClasses);
+
     obj.worldData.forEach((it: WorldEntry) => {
       const agent = SaveTool.app().repository.getClass(it.agentClass).createAgent();
       SaveTool.app().agentCube.pushAgent(agent, parseInt(it.row as never), parseInt(it.column as never), parseInt(it.layer as never));
     });
+
+    const uiStateData = ref(app.uiState);
+    uiStateData.value.selectedAgentClass = app.repository.agentClasses[0];
   }
 
   static app(): AppContext {

@@ -2,6 +2,7 @@
 // A P P
 // ***************************************************
 
+import Vue from "vue";
 import {Gallery} from "@/engine/Gallery.ts";
 import {registerListeners} from "@/engine/navigationevents";
 import {AppContext} from "@/engine/AppContext";
@@ -54,6 +55,8 @@ export async function init() {
 
   console.log("App init complete, start render cycle");
   app.gameLoop.run();
+
+  // Vue.forceUpdate();
 }
 
 // app.agentCube.draw();

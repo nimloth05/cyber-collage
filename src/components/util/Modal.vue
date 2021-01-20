@@ -3,7 +3,7 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-body">
-          <agent-list @agent-clicked="hide"/>
+          <agent-list ref="agentList" @agent-clicked="hide"/>
         </div>
       </div>
     </div>
@@ -24,7 +24,6 @@
 <script lang="ts">
 import {Modal as BModal} from "bootstrap";
 import {Options, Vue} from "vue-class-component";
-import {ActionInstance} from "@/model/ActionInstance";
 import AddCommandButton from "@/components/AddCommandButton.vue";
 import AgentList from "@/components/hud/AgentList.vue";
 
@@ -36,8 +35,6 @@ import AgentList from "@/components/hud/AgentList.vue";
   },
 })
 export default class Modal extends Vue {
-  actions!: Array<ActionInstance>;
-
   private _instance?: BModal;
 
   get modalInstance() {

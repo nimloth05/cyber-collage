@@ -5,10 +5,10 @@
       :key="shape.shape.id">
       <shape-element :shape-ref="shape" @click="shapeClicked(shape)"/>
     </li>
-    <li v-if="showPlusButton">
-      <empty-shape-element @click="plusClicked"/>
-    </li>
   </ul>
+  <div class="text-end">
+    <empty-shape-element v-if="showPlusButton" @click="plusClicked"/>
+  </div>
 </template>
 
 <script lang="ts">

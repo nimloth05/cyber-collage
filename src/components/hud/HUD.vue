@@ -2,11 +2,11 @@
   <div class="hud">
     <div style="display: flex">
       <shape-element
-        v-if="uiState.selectedAgentClass != null"
-        :shape-ref="uiState.selectedAgentClass"
+        v-if="selectedAgentClass != null"
+        :shape-ref="selectedAgentClass"
         @click="openAgentClassModal"
       />
-      <empty-shape-element v-if="uiState.selectedAgentClass == null"
+      <empty-shape-element v-if="selectedAgentClass == null"
                            @click="openAgentClassModal"/>
       <tab-header v-model="selectedTab"/>
     </div>
@@ -42,6 +42,10 @@ export default class HUD extends Vue {
   toggle = false;
   uiState = app.uiState;
   selectedTab = "design";
+
+  get selectedAgentClass() {
+    return this.uiState.selectedAgentClass;
+  }
 
   openAgentClassModal() {
     (this.$refs.agentClassModal as Modal).show();
