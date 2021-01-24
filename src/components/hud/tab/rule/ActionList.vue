@@ -4,6 +4,7 @@
     :key="index"
     :declaration="action.declaration"
     :argument-resolver="_argumentResolver(action)"
+    @arg-changed="e => _updateArgument(action, e)"
   />
   <add-command-button @click="addNewAction"/>
   <action-modal :id="actions.id" ref="actionModal" @selected="_actionSelected"/>
@@ -19,6 +20,7 @@ import {DirectionValue, InstructionValue} from "@/engine/instruction-value";
 import {app} from "@/engine/app";
 import {AddASTNodeCommand} from "@/model/commands/instruction/AddASTNodeCommand";
 import InstructionRenderer from "@/components/hud/tab/rule/InstructionRenderer.vue";
+import {ChangeInstructionValueCommand} from "@/model/commands/instruction/ChangeInstructionValueCommand";
 
 @Options({
   name: "ActionList",
@@ -53,6 +55,11 @@ export default class ActionPanel extends Vue {
     return (name: string): InstructionValue | undefined => {
       return action.getArgumentValue(name);
     };
+  }
+
+  _updateArgument(action: Action, e: any): void {
+    const {name, value} = e;
+    app.undoManager.execute(new ChangeInstructionValueCommand(action, name, value));
   }
 }
 </script>

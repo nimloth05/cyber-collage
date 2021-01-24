@@ -8,6 +8,7 @@
       :key="name"
       :param="paramType"
       :argument="getArgumentValue(name, paramType)"
+      @arg-changed="v => setArgumentValue(name, v)"
     />
   </button>
 </template>
@@ -27,6 +28,7 @@ import {InstructionValue} from "@/engine/instruction-value";
   },
   emits: [
     "click",
+    "arg-changed",
   ],
   components: {
     ParameterRenderer,
@@ -47,6 +49,11 @@ export default class InstructionRenderer extends Vue {
       return new InstructionValue("");
     }
     return this.argumentResolver(name, type);
+  }
+
+  setArgumentValue(name: string, value: InstructionValue): void {
+    console.log("instruction renderer, received arg-changed, passed it along", {name, value});
+    this.$emit("arg-changed", {name, value});
   }
 }
 </script>

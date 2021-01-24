@@ -36,6 +36,14 @@ export class Instruction implements ASTNode {
     return this.args[name];
   }
 
+  setArgumentValue(name: string, value: InstructionValue) {
+    if (value == null) {
+      throw new Error(`tried to set ${name} to undefined|null`);
+    }
+    this.args[name] = value;
+    console.log("this updated", this, value);
+  }
+
   get name() {
     return this.declaration.name;
   }

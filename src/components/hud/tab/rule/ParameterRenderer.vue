@@ -14,6 +14,9 @@ import {DirectionValue, InstructionValue} from "@/engine/instruction-value";
     param: /* ParameterType */ Function,
     argument: InstructionValue,
   },
+  emits: [
+    "arg-changed",
+  ],
 })
 export default class ParameterRenderer extends Vue {
   param!: Function;
@@ -33,18 +36,25 @@ export default class ParameterRenderer extends Vue {
   }
 
   changeDirectionValue() {
-    console.log("change direction value");
     const directionValue = this.argument as DirectionValue;
+    let newValue: DirectionValue | undefined;
     if (directionValue.test[0] === 1 && directionValue.test[1] === 0) {
-      directionValue.test = [0, 1]; // next is right
+      // directionValue.test = ; // next is right
+      newValue = new DirectionValue([0, 1]);
     } else if (directionValue.test[0] === 0 && directionValue.test[1] === 1) {
-      directionValue.test = [-1, 0]; // next is down
+      // directionValue.test = [-1, 0]; // next is down
+      newValue = new DirectionValue([-1, 0]);
     } else if (directionValue.test[0] === -1 && directionValue.test[1] === 0) {
-      directionValue.test = [0, -1]; // next is left
+      // directionValue.test = [0, -1]; // next is left
+      newValue = new DirectionValue([0, -1]);
     } else if (directionValue.test[0] === 0 && directionValue.test[1] === -1) {
-      directionValue.test = [1, 0]; // next is up
+      // directionValue.test = [1, 0]; // next is up
+      newValue = new DirectionValue([1, 0]);
     }
-    // this.$emit("update:modelValue", value);
+
+    if (newValue !== undefined) {
+      this.$emit("arg-changed", newValue);
+    }
   }
 
   getDirectionValueImage(): string {
