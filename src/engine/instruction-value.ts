@@ -3,6 +3,7 @@ export class InstructionValue {
 
   constructor(value: any) {
     if (value) this.value = value;
+    this.test = value;
   }
 
   get value() {
@@ -10,6 +11,15 @@ export class InstructionValue {
   }
 
   set value(value) {
+    this._value = value;
+    this.test = value;
+  }
+
+  get test() {
+    return this._value;
+  }
+
+  set test(value) {
     this._value = value;
   }
 

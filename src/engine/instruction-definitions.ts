@@ -1,5 +1,4 @@
-import {InstructionDeclaration} from "@/model/InstructionDeclaration";
-import {Action, ActionList, Condition, Instruction} from "@/engine/Instruction";
+import {Action, Condition, Instruction} from "@/engine/Instruction";
 import {DirectionValue, FormulaValue, ShapeNameValue, SoundValue} from "@/engine/instruction-value";
 
 // ***************************************************
@@ -15,8 +14,8 @@ export const instructionDefinitions: Array<any> = [
       direction: DirectionValue,
       shape: ShapeNameValue,
     },
-    code(instruction: any) {
-      const {shape, direction} = instruction.parameterObjects;
+    code(instruction: Instruction) {
+      const {shape, direction} = instruction.args;
       console.log("shape", shape);
       return `this.see('${shape.value}', ${direction.value[0]}, ${direction.value[1]})`;
     },
@@ -32,7 +31,7 @@ export const instructionDefinitions: Array<any> = [
       chance: FormulaValue,
     },
     code(instruction: Instruction) {
-      return `this.percentChance(${instruction.parameterObjects.chance.value})`;
+      return `this.percentChance(${instruction.args.chance.value})`;
     },
     icon: "percentChance.png",
     // explanation: () => `True with a ${chance.explain} percent chance.`,
@@ -47,7 +46,7 @@ export const instructionDefinitions: Array<any> = [
       direction: DirectionValue,
     },
     code(instruction: Instruction) {
-      const {direction} = instruction.parameterObjects;
+      const {direction} = instruction.args;
       return `this.move(${direction.value[0]}, ${direction.value[1]})`;
     },
     icon: "icons/instructions/actions/move.svg",
@@ -62,7 +61,7 @@ export const instructionDefinitions: Array<any> = [
       sound: SoundValue,
     },
     code(instruction: Instruction) {
-      const {sound} = instruction.parameterObjects;
+      const {sound} = instruction.args;
       return `this.playSound('${sound.value}')`;
     },
     icon: "icons/instructions/actions/play-sound.svg",
@@ -124,7 +123,7 @@ export const instructionDefinitions: Array<any> = [
       direction: DirectionValue,
     },
     code(instruction: Instruction) {
-      // empty code
+      return "";
     },
     icon: "icons/instructions/actions/delete.svg",
     explanation: () => "Ich lösche ein Agent",

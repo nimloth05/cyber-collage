@@ -3,16 +3,16 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-body">
-          <button
-            class="btn sizeable-ui-element instruction-declaration-button"
-            v-for="declarations in declarations"
-            :key="declarations.name"
-            @click="_actionSelected(declarations)"
-          >
-            <img v-if="declarations.icon != null" class="tool-icon" :src="declarations.icon"
-                 :alt="declarations.name"/>
-            <span v-if="declarations.icon == null">{{ declarations.name }}</span>
-          </button>
+          <instruction-renderer
+            v-for="declaration in declarations"
+            :key="declaration.name"
+            @click="_actionSelected(declaration)"
+            :declaration="declaration"
+            :argument-resolver="_getDefaultValue"
+          />
+          <!--            <img v-if="declarations.icon != null" class="tool-icon" :src="declarations.icon"-->
+          <!--                 :alt="declarations.name"/>-->
+          <!--            <span v-if="declarations.icon == null">{{ declarations.name }}</span>-->
         </div>
       </div>
     </div>
@@ -24,9 +24,14 @@ import {instructionDefinitions} from "@/engine/instruction-definitions";
 import {Action} from "@/engine/Instruction";
 import {InstructionDeclaration} from "@/model/InstructionDeclaration";
 import {Modal} from "bootstrap";
+import InstructionRenderer from "@/components/hud/tab/rule/InstructionRenderer.vue";
+import {InstructionValue} from "@/engine/instruction-value";
 
 @Options({
   name: "ActionModal",
+  components: {
+    InstructionRenderer,
+  },
   emits: [
     "selected",
   ],
@@ -51,6 +56,10 @@ export default class ActionModal extends Vue {
   _actionSelected(conditionDecl: InstructionDeclaration) {
     this.$emit("selected", conditionDecl);
     this.hide();
+  }
+
+  _getDefaultValue(name: string): InstructionValue {
+    return new InstructionValue(name);
   }
 }
 </script>

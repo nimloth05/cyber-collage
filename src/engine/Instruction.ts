@@ -3,7 +3,8 @@
 //* **************************************************
 
 import * as uuid from "uuid";
-import {InstructionDeclaration, Parameters} from "@/model/InstructionDeclaration";
+import {Arguments, InstructionDeclaration} from "@/model/InstructionDeclaration";
+import {InstructionValue} from "@/engine/instruction-value";
 
 export interface ASTNode {
   explanation: string;
@@ -17,18 +18,11 @@ export interface ASTNode {
 
 export class Instruction implements ASTNode {
   declaration: InstructionDeclaration;
-  parameters: Parameters
-  parameterObjects: any = {};
+  args: Arguments;
 
-  get name() {
-    return this.declaration.name;
-  }
-
-  constructor(declaration: InstructionDeclaration, parameters: Record<string, any>) {
+  constructor(declaration: InstructionDeclaration, args: Arguments) {
     this.declaration = declaration;
-    this.parameters = Object.assign({}, parameters); // shallow clone
-    this.parameterObjects = parameters; // properties {<parameter>: <value>}
-
+    this.args = args;
     // create parameter objects
     // Object.assign(this.parameterObjects, this.parameters);
     // for (const parameter in this.parameterObjects) {
@@ -37,9 +31,18 @@ export class Instruction implements ASTNode {
     // }
   }
 
+  getArgumentValue(name: string): InstructionValue | undefined {
+    console.log("instruction args", this.args);
+    return this.args[name];
+  }
+
+  get name() {
+    return this.declaration.name;
+  }
+
   serialize() {
     // write as 2 element array: [<nameString>, <parameterProperties>]
-    return `["${this.declaration.name}", ${JSON.stringify(this.parameters, null, 2)}]`;
+    return `["${this.declaration.name}", ${JSON.stringify(this.declaration.parameters, null, 2)}]`;
   }
 
   compile() {
