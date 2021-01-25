@@ -1,10 +1,10 @@
 <template>
   <div class="undo-bar">
     <button @click="undo" class="btn sizeable-ui-element hud-toolbar-button">
-      <img src="icons/undo/undo.svg" alt="Rückgängig"/>
+      <img src="img/undo/undo.svg" alt="Rückgängig"/>
     </button>
     <button @click="redo" class="btn sizeable-ui-element hud-toolbar-button">
-      <img src="icons/undo/redo.svg" alt="Wiederholen"/>
+      <img src="img/undo/redo.svg" alt="Wiederholen"/>
     </button>
   </div>
 </template>

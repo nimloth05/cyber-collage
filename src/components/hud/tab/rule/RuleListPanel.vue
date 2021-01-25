@@ -25,7 +25,6 @@ import RulePanel from "@/components/hud/tab/rule/RulePanel.vue";
 import AddCommandButton from "../../../AddCommandButton.vue";
 import {Method, Rule, RuleList} from "@/engine/Instruction";
 import {app} from "@/engine/app";
-import {AddRuleCommand} from "@/model/commands/instruction/AddRuleCommand";
 import {AddASTNodeCommand} from "@/model/commands/instruction/AddASTNodeCommand";
 
 @Options({

@@ -50,7 +50,7 @@ export class SaveTool implements Tool {
     return app;
   }
 
-  icon = "icons/tab/save.svg";
+  icon = "img/tab/save.svg";
   id = "save";
   name = "Speichern"
 

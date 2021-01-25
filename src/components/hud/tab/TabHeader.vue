@@ -7,13 +7,13 @@
     <li
       class="sizeable-ui-element"
       :class="{selected: currentTab === 'design'}" @click="switchTab('design')">
-      <img src="icons/tab/world.svg" class="tool-icon" alt="Design-Icon"/>
+      <img src="img/tab/world.svg" class="tool-icon" alt="Design-Icon"/>
     </li>
     <li
       class="sizeable-ui-element"
       :class="{selected: currentTab === 'rule'}" @click="switchTab('rule')">
       <!--      <img src="" alt="Programmieren" title="Programmieren"/>-->
-      <img src="icons/tab/rules.svg" class="tool-icon" alt="Regeln-Icon"/>
+      <img src="img/tab/rules.svg" class="tool-icon" alt="Regeln-Icon"/>
     </li>
   </ul>
 </template>

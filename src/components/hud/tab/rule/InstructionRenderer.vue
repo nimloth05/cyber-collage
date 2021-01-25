@@ -9,6 +9,8 @@
         :key="name"
         :param="paramType"
         :argument="getArgumentValue(name, paramType)"
+        :id="getEditorId(name)"
+        :read-only="readOnly"
         @arg-changed="v => setArgumentValue(name, v)"
       />
     </div>
@@ -27,6 +29,7 @@ import {InstructionValue} from "@/engine/instruction-value";
   props: {
     declaration: /* InstructionDeclaration */ Object,
     argumentResolver: Function,
+    readOnly: Boolean,
   },
   emits: [
     "click",
@@ -39,23 +42,28 @@ import {InstructionValue} from "@/engine/instruction-value";
 export default class InstructionRenderer extends Vue {
   declaration!: InstructionDeclaration;
   argumentResolver!: (name: string, type: ParameterType) => InstructionValue;
+  readOnly = true;
 
   get parameters(): Array<[string, ParameterType]> {
-    console.log("get parameters(): this.declaration", this.declaration);
     return Object.entries(this.declaration.parameters);
   }
 
   getArgumentValue(name: string, type: ParameterType): InstructionValue {
-    console.log("this.argumentResolver", this.argumentResolver);
     if (this.argumentResolver === null) {
-      return new InstructionValue("");
+      throw new Error("ArgumentResolver not provided");
     }
     return this.argumentResolver(name, type);
   }
 
   setArgumentValue(name: string, value: InstructionValue): void {
-    console.log("instruction renderer, received arg-changed, passed it along", {name, value});
     this.$emit("arg-changed", {name, value});
+  }
+
+  getEditorId(name: string): string {
+    if (this.$el === null) {
+      return `${name}-param-renderer`;
+    }
+    return `${this.$el.getAttribute("id")}-${name}-param-renderer`;
   }
 }
 </script>

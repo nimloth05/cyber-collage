@@ -3,13 +3,15 @@
     <div class="if-block">
       <div class="if-keyword">{{ getIfLabel() }}</div>
       <div class="conditions">
-        <condition-list :conditions="rule.conditions"/>
+        <condition-list
+          :conditions="rule.conditions"/>
       </div>
     </div>
     <div class="then-block">
       <div class="then-keyword">Dann</div>
       <div class="actions">
-        <action-list :actions="rule.actions"/>
+        <action-list
+          :actions="rule.actions"/>
       </div>
     </div>
   </div>

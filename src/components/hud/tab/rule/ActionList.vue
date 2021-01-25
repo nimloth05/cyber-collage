@@ -4,6 +4,8 @@
     :key="index"
     :declaration="action.declaration"
     :argument-resolver="_argumentResolver(action)"
+    :id="actions.id + '-instruction-' + index"
+    :read-only="false"
     @arg-changed="e => _updateArgument(action, e)"
   />
   <add-command-button @click="addNewAction"/>
@@ -43,12 +45,13 @@ export default class ActionPanel extends Vue {
   actions!: ActionList;
 
   addNewAction() {
-    (this.$refs.actionModal as ActionModal).show();
+    (this.$refs.actionModal as any).show();
   }
 
   _actionSelected(decl: InstructionDeclaration): void {
     const action = new Action(decl, {
-      direction: new DirectionValue([-1, 0]),
+      // FIXME: Remove default values
+      direction: new DirectionValue(0, 1),
     });
     app.undoManager.execute(new AddASTNodeCommand<Action>(this.actions, action));
   }

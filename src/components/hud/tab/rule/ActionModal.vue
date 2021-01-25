@@ -1,5 +1,5 @@
 <template>
-  <div class="modal fade" id="$el.getAttribute('id')" tabindex="-1" aria-labelledby="action-modal" aria-hidden="true">
+  <div class="modal fade instruction-modal" tabindex="-1" aria-labelledby="action-modal" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-body">
@@ -9,6 +9,7 @@
             @click="_actionSelected(declaration)"
             :declaration="declaration"
             :argument-resolver="_getDefaultValue"
+            :read-only="true"
           />
           <!--            <img v-if="declarations.icon != null" class="tool-icon" :src="declarations.icon"-->
           <!--                 :alt="declarations.name"/>-->
@@ -23,7 +24,7 @@ import {Options, Vue} from "vue-class-component";
 import {InstructionDeclaration} from "@/model/InstructionDeclaration";
 import {Modal} from "bootstrap";
 import InstructionRenderer from "@/components/hud/tab/rule/InstructionRenderer.vue";
-import {InstructionValue} from "@/engine/instruction-value";
+import {DirectionValue, InstructionValue, ShapeNameValue} from "@/engine/instruction-value";
 
 @Options({
   name: "ActionModal",
@@ -60,8 +61,12 @@ export default class ActionModal extends Vue {
     this.hide();
   }
 
-  _getDefaultValue(name: string): InstructionValue {
-    return new InstructionValue(name);
+  _getDefaultValue(name: string, type: Function): InstructionValue {
+    console.log("defaultValue", type);
+    if (type.name === ShapeNameValue.name) {
+      return new ShapeNameValue("cat");
+    }
+    return new DirectionValue(0, 1);
   }
 }
 </script>

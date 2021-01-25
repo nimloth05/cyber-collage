@@ -16,7 +16,7 @@
         @click="openAgentClassModal"/>
       <tab-header v-model="selectedTab"/>
     </div>
-    <modal ref="agentClassModal"/>
+    <agent-class-modal ref="agentClassModal"/>
     <tab-container :selected-tab-id="selectedTab"/>
   </div>
 </template>
@@ -29,8 +29,9 @@ import EmptyShapeElement from "@/components/hud/EmptyShapeElement.vue";
 import ShapeElement from "@/components/hud/ShapeElement.vue";
 import TabHeader from "./tab/TabHeader.vue";
 import TabContainer from "./tab/TabContainer.vue";
-import Modal from "@/components/util/Modal.vue";
+import AgentClassModal from "@/components/util/AgentClassModal.vue";
 import {app} from "@/engine/app";
+import ShapeModal from "@/components/util/ShapeModal.vue";
 
 @Options({
   name: "HUD",
@@ -39,9 +40,10 @@ import {app} from "@/engine/app";
     AgentList,
     TabHeader,
     TabContainer,
-    Modal,
     EmptyShapeElement,
     ShapeElement,
+    AgentClassModal,
+    ShapeModal,
   },
 })
 export default class HUD extends Vue {
@@ -54,7 +56,7 @@ export default class HUD extends Vue {
   }
 
   openAgentClassModal() {
-    (this.$refs.agentClassModal as Modal).show();
+    (this.$refs.agentClassModal as AgentClassModal).show();
   }
 
   get isDesignTabActive() {

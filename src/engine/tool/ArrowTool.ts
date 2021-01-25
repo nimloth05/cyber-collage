@@ -7,7 +7,7 @@ import {TeleportCommand} from "@/model/commands/TeleportCommand";
 
 export class ArrowTool extends AbstractAgentTool {
   id = "arrow";
-  icon = "icons/tab/hand-pointer.svg";
+  icon = "img/tab/hand-pointer.svg";
   name = "Verschieben"; // FIXME: Translate
 
   get agentSelected(): Agent | null {

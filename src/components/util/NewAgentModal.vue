@@ -1,5 +1,5 @@
 <template>
-  <div class="modal fade" id="new-agent-modal" tabindex="-1" aria-labelledby="new-agent-modal" aria-hidden="true">
+  <div class="modal fade new-agent-modal" id="new-agent-modal" tabindex="-1" aria-labelledby="new-agent-modal" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-body">

@@ -2,11 +2,11 @@
   <undo-redo-toolbar/>
   <div class="play-bar">
     <button @click="toggleState" class="btn sizeable-ui-element hud-toolbar-button">
-      <img v-if="!isRunning" src="icons/play/play.svg" alt="Spiel Starten"/>
-      <img v-if="isRunning" src="icons/play/pause.svg" alt="stop"/>
+      <img v-if="!isRunning" src="img/play/play.svg" alt="Spiel Starten"/>
+      <img v-if="isRunning" src="img/play/pause.svg" alt="stop"/>
     </button>
     <button v-if="isRunning" @click="stop" class="btn sizeable-ui-element hud-toolbar-button">
-      <img src="icons/play/stop.svg" alt="stop"/>
+      <img src="img/play/stop.svg" alt="stop"/>
     </button>
   </div>
   <aux-toolbar/>

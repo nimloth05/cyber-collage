@@ -1,5 +1,5 @@
 import {Action, Condition, Instruction} from "@/engine/Instruction";
-import {DirectionValue, FormulaValue, ShapeNameValue, SoundValue} from "@/engine/instruction-value";
+import {DirectionValue, FormulaValue, ShapeNameValue} from "@/engine/instruction-value";
 
 // ***************************************************
 // I N S T R U C T I O N   D E F I N I T I O N S
@@ -15,11 +15,11 @@ export const instructionDefinitions: Array<any> = [
       shape: ShapeNameValue,
     },
     code(instruction: Instruction) {
-      const {shape, direction} = instruction.args;
-      console.log("shape", shape);
-      return `this.see('${shape.value}', ${direction.value[0]}, ${direction.value[1]})`;
+      const shape = instruction.getArgumentValue<ShapeNameValue>("shape")!;
+      const direction = instruction.getArgumentValue<DirectionValue>("direction")!;
+      return `this.see('${shape.shapeId}', ${direction.row}, ${direction.column})`;
     },
-    icon: "icons/instructions/conditions/open-eye.svg",
+    icon: "img/instructions/conditions/open-eye.svg",
     explanation({shape, direction}: any) {
       return `True if I see to ${direction.explain} an ${shape.explain}.`;
     },
@@ -31,7 +31,7 @@ export const instructionDefinitions: Array<any> = [
       chance: FormulaValue,
     },
     code(instruction: Instruction) {
-      return `this.percentChance(${instruction.args.chance.value})`;
+      return `this.percentChance(${instruction.getArgumentValue<FormulaValue>("chance")?.formula})`;
     },
     icon: "percentChance.png",
     // explanation: () => `True with a ${chance.explain} percent chance.`,
@@ -47,9 +47,10 @@ export const instructionDefinitions: Array<any> = [
     },
     code(instruction: Instruction) {
       const {direction} = instruction.args;
-      return `this.move(${direction.value[0]}, ${direction.value[1]})`;
+      const asDirectionValue = direction as DirectionValue;
+      return `this.move(${asDirectionValue.row}, ${asDirectionValue.column})`;
     },
-    icon: "icons/instructions/actions/move.svg",
+    icon: "img/instructions/actions/move.svg",
     explanation({direction}: any) {
       return `I move to the ${direction.explain}`;
     },
@@ -58,13 +59,16 @@ export const instructionDefinitions: Array<any> = [
     name: "playSound",
     class: Action,
     parameters: {
-      sound: SoundValue,
+      // sound: SoundValue,
+      // FIXME: Replace with SoundValue
+      sound: FormulaValue,
     },
     code(instruction: Instruction) {
-      const {sound} = instruction.args;
-      return `this.playSound('${sound.value}')`;
+      // const {sound} = instruction.args;
+      // return `this.playSound('${sound.value}')`;
+      return "";
     },
-    icon: "icons/instructions/actions/play-sound.svg",
+    icon: "img/instructions/actions/play-sound.svg",
     explanation({direction}: any) {
       return `I move to the ${direction.explain}`;
     },
@@ -125,7 +129,7 @@ export const instructionDefinitions: Array<any> = [
     code(instruction: Instruction) {
       return "";
     },
-    icon: "icons/instructions/actions/delete.svg",
+    icon: "img/instructions/actions/delete.svg",
     explanation: () => "Ich lösche ein Agent",
   },
 

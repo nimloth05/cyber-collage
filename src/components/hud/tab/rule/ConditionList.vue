@@ -4,7 +4,9 @@
     :key="index"
     :declaration="instruction.declaration"
     :argument-resolver="_argumentResolver(instruction)"
-    @arg-changed="e => _updateArgument(instruction, e)">
+    @arg-changed="e => _updateArgument(instruction, e)"
+    :read-only="false"
+  >
     <span class="boolean-operator" v-if="index !== conditions.length - 1"> and </span>
   </instruction-renderer>
   <add-command-button @click="addNewCondition"/>
@@ -50,7 +52,7 @@ export default class ConditionPanel extends Vue {
   _conditionSelected(conditionDecl: InstructionDeclaration): void {
     const condition = new Condition(conditionDecl, {
       shape: new ShapeNameValue("cat"),
-      direction: new DirectionValue([-1, 1]),
+      direction: new DirectionValue(0, 1),
     });
     app.undoManager.execute(new AddASTNodeCommand<Condition>(this.conditions, condition));
   }
