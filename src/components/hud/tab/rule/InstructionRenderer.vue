@@ -1,16 +1,18 @@
 <template>
-  <button class="btn sizeable-ui-element instruction-declaration-button" @click="e => $emit('click', e)">
-    <img v-if="declaration.icon != null" class="tool-icon" :src="declaration.icon"
+  <div class="btn instruction" @click="e => $emit('click', e)">
+    <img v-if="declaration.icon != null" class="sizeable-ui-element" :src="declaration.icon"
          :alt="declaration.name"/>
     <span v-if="declaration.icon == null">{{ declaration.name }}</span>
-    <parameter-renderer
-      v-for="([name, paramType]) in parameters"
-      :key="name"
-      :param="paramType"
-      :argument="getArgumentValue(name, paramType)"
-      @arg-changed="v => setArgumentValue(name, v)"
-    />
-  </button>
+    <div class="argument">
+      <parameter-renderer
+        v-for="([name, paramType]) in parameters"
+        :key="name"
+        :param="paramType"
+        :argument="getArgumentValue(name, paramType)"
+        @arg-changed="v => setArgumentValue(name, v)"
+      />
+    </div>
+  </div>
 </template>
 
 <script lang="ts">

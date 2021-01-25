@@ -1,7 +1,8 @@
 <template>
-  <span v-if="isDirectionValue" @click="changeDirectionValue">
-    <img :src="'icons/instructions/parameters/' + getDirectionValueImage()" :alt="getDirectionValueImage()"/>
-  </span>
+    <img
+      class="sizeable-ui-element"
+      v-if="isDirectionValue" @click="changeDirectionValue"
+         :src="'icons/instructions/parameters/' + getDirectionValueImage()" :alt="getDirectionValueImage()"/>
 </template>
 
 <script lang="ts">

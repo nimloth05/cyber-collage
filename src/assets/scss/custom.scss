@@ -106,13 +106,13 @@ $tab-hover-color: $tab-active-color;
 }
 
 .rule-tab-content {
-  height: 150px;
+  height: 50vh;
   overflow: auto;
 }
 
 @include media-breakpoint-up(lg) {
   .rule-tab-content {
-    height: 210px;
+    height: 35vh;
     overflow: auto;
   }
 }
@@ -149,11 +149,13 @@ $top-bar-index: 10;
   background-color: lightgray;
   border-radius: 0.25rem;
   padding: 1rem;
+  display: flex;
+  flex-direction: column;
 }
 
 @include media-breakpoint-up(lg) {
   .rule {
-    width: 80%;
+    flex-direction: row;
   }
 }
 
@@ -163,12 +165,40 @@ $top-bar-index: 10;
   display: inline;
 }
 
+.if-block,
+.then-block {
+  min-width: 50%;
+}
+
+.conditions,
+.actions {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.conditions .instruction {
+  background-color: #ffA800;
+}
+
+.actions .instruction {
+  background-color: #00bee9ff;
+}
+
+.instruction {
+  width: fit-content;
+  display: flex;
+  margin-bottom: 0.25em;
+  padding: 10px;
+  margin-right: 1em;
+}
+
+.argument {
+  display: flex;
+  flex-direction: column;
+}
+
 .instruction-declaration-list {
   list-style: none;
 }
 
-.instruction-declaration-button {
-  background-color: #00bee9ff;
-  padding: 10px;
-  margin-right: 1em;
-}

@@ -1,11 +1,17 @@
 <template>
   <div class="rule">
-    <div class="ifStatement">
+    <div class="if-block">
       <div class="if-keyword">{{ getIfLabel() }}</div>
-      <condition-list :conditions="rule.conditions"/>
+      <div class="conditions">
+        <condition-list :conditions="rule.conditions"/>
+      </div>
     </div>
-    <div class="then-keyword">then</div>
-    <action-list :actions="rule.actions"/>
+    <div class="then-block">
+      <div class="then-keyword">then</div>
+      <div class="actions">
+        <action-list :actions="rule.actions"/>
+      </div>
+    </div>
   </div>
 </template>
 
