@@ -7,7 +7,7 @@
       </div>
     </div>
     <div class="then-block">
-      <div class="then-keyword">then</div>
+      <div class="then-keyword">Dann</div>
       <div class="actions">
         <action-list :actions="rule.actions"/>
       </div>
@@ -40,15 +40,15 @@ export default class RulePanel extends Vue {
 
   getIfLabel(): string {
     if (this.noOfRules === 1) {
-      return "if";
+      return "Wenn";
     }
     if (this.ruleIndex === 0) {
-      return "if";
+      return "Wenn";
     }
     if (this.ruleIndex === this.noOfRules - 1) {
-      return "else";
+      return "Sonst";
     }
-    return "else if";
+    return "Wenn sonst";
   }
 }
 </script>

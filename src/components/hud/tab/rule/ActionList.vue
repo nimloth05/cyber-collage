@@ -7,7 +7,12 @@
     @arg-changed="e => _updateArgument(action, e)"
   />
   <add-command-button @click="addNewAction"/>
-  <action-modal :id="actions.id" ref="actionModal" @selected="_actionSelected"/>
+  <action-modal
+    :id="actions.id"
+    ref="actionModal"
+    @selected="_actionSelected"
+    :declarations="_getActionDeclarations()"
+  />
 </template>
 
 <script lang="ts">
@@ -21,6 +26,7 @@ import {app} from "@/engine/app";
 import {AddASTNodeCommand} from "@/model/commands/instruction/AddASTNodeCommand";
 import InstructionRenderer from "@/components/hud/tab/rule/InstructionRenderer.vue";
 import {ChangeInstructionValueCommand} from "@/model/commands/instruction/ChangeInstructionValueCommand";
+import {instructionDefinitions} from "@/engine/instruction-definitions";
 
 @Options({
   name: "ActionList",
@@ -47,10 +53,6 @@ export default class ActionPanel extends Vue {
     app.undoManager.execute(new AddASTNodeCommand<Action>(this.actions, action));
   }
 
-  _openParameterDialog() {
-    console.log("parameter dialog open");
-  }
-
   _argumentResolver(action: Instruction): (name: string) => InstructionValue | undefined {
     return (name: string): InstructionValue | undefined => {
       return action.getArgumentValue(name);
@@ -61,12 +63,9 @@ export default class ActionPanel extends Vue {
     const {name, value} = e;
     app.undoManager.execute(new ChangeInstructionValueCommand(action, name, value));
   }
+
+  _getActionDeclarations(): Array<any> {
+    return instructionDefinitions.filter(it => it.class === Action);
+  }
 }
 </script>
-
-<style lang="less">
-.command {
-  margin-left: 2rem;
-  background-color: darkgray;
-}
-</style>

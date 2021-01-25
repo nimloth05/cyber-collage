@@ -1,5 +1,5 @@
 <template>
-  <button class="add-operation" @click="click">+</button>
+  <button class="sizeable-ui-element add-operation" @click="click">+</button>
   <!--  <button class="add-operation">&#8853;</button>-->
 </template>
 
@@ -35,7 +35,6 @@ export default class AddCommandButton extends Vue {
   text-align: center;
   -webkit-appearance: none;
   -moz-appearance: none;
-  width: 1.6rem;
 }
 
 .add-operation:hover {

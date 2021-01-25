@@ -20,8 +20,6 @@
 </template>
 <script lang="ts">
 import {Options, Vue} from "vue-class-component";
-import {instructionDefinitions} from "@/engine/instruction-definitions";
-import {Action} from "@/engine/Instruction";
 import {InstructionDeclaration} from "@/model/InstructionDeclaration";
 import {Modal} from "bootstrap";
 import InstructionRenderer from "@/components/hud/tab/rule/InstructionRenderer.vue";
@@ -32,12 +30,16 @@ import {InstructionValue} from "@/engine/instruction-value";
   components: {
     InstructionRenderer,
   },
+  props: {
+    declarations: Array,
+  },
   emits: [
     "selected",
   ],
 })
 export default class ActionModal extends Vue {
-  declarations = instructionDefinitions.filter(it => it.class === Action);
+  // FIXME: InstructionDecl funktioniert nicht
+  declarations!: Array<any>;
 
   private _instance?: Modal;
 

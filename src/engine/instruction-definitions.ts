@@ -19,7 +19,7 @@ export const instructionDefinitions: Array<any> = [
       console.log("shape", shape);
       return `this.see('${shape.value}', ${direction.value[0]}, ${direction.value[1]})`;
     },
-    icon: "see.png",
+    icon: "icons/instructions/conditions/open-eye.svg",
     explanation({shape, direction}: any) {
       return `True if I see to ${direction.explain} an ${shape.explain}.`;
     },
