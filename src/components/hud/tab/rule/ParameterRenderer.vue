@@ -1,13 +1,13 @@
 <template>
   <img
     class="sizeable-ui-element"
-    v-if="isDirectionValue" @click="changeDirectionValue"
+    v-if="isDirectionValue()" @click="changeDirectionValue"
     :src="'img/instructions/parameters/' + getDirectionValueImage()" :alt="getDirectionValueImage()"/>
   <img
     class="sizeable-ui-element"
-    v-if="isShapeValue" @click="changeShapeValue"
+    v-if="isShapeValue()" @click="changeShapeValue"
     :src="getShapePath()" :alt="getShapeId()"/>
-  <shape-modal :id="id + '-shape-modal'" ref="shapeModal" @shape-selected="shapeSelected"/>
+  <shape-modal v-if="isShapeValue()" :id="id + '-shape-modal'" ref="shapeModal" @shape-selected="shapeSelected"/>
 </template>
 
 <script lang="ts">
@@ -45,7 +45,8 @@ export default class ParameterRenderer extends Vue {
     return this.param.name;
   }
 
-  get isDirectionValue(): boolean {
+  isDirectionValue(): boolean {
+    console.log("(isDirectionValue) this.paramTypeName", this.paramTypeName, "DirectionValue.name", DirectionValue.name);
     return this.paramTypeName === DirectionValue.name;
   }
 
@@ -85,7 +86,8 @@ export default class ParameterRenderer extends Vue {
     return "arrow-down.svg";
   }
 
-  get isShapeValue(): boolean {
+  isShapeValue(): boolean {
+    console.log("(isShapeValue) this.paramTypeName", this.paramTypeName, "ShapeNameValue.name", ShapeNameValue.name);
     return this.paramTypeName === ShapeNameValue.name;
   }
 

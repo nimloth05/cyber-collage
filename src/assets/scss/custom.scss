@@ -31,10 +31,17 @@ body {
 
 #current-agent {
   position: absolute;
-  width: 96px;
-  height: 96px;
+  width: 64px;
+  height: 64px;
   left: 20px;
   top: -30px
+}
+
+@include media-breakpoint-up(lg) {
+  #current-agent {
+    width: 96px;
+    height: 96px;
+  }
 }
 
 .shape-element-button {
