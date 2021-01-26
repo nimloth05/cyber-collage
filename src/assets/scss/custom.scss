@@ -16,6 +16,10 @@ body {
   padding: 0; // remove any padding added by browsers. (Fix for mobile-safari - the new IE!)
 }
 
+button.sizeable-ui-element {
+  padding: 0.375rem 0.75rem;
+}
+
 @include media-breakpoint-up(lg) {
   .sizeable-ui-element {
     width: 64px;
