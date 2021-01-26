@@ -30,6 +30,7 @@ import {InstructionValue} from "@/engine/instruction-value";
     declaration: /* InstructionDeclaration */ Object,
     argumentResolver: Function,
     readOnly: Boolean,
+    id: String,
   },
   emits: [
     "click",
@@ -43,6 +44,7 @@ export default class InstructionRenderer extends Vue {
   declaration!: InstructionDeclaration;
   argumentResolver!: (name: string, type: ParameterType) => InstructionValue;
   readOnly = true;
+  id!: string;
 
   get parameters(): Array<[string, ParameterType]> {
     return Object.entries(this.declaration.parameters);
@@ -60,10 +62,7 @@ export default class InstructionRenderer extends Vue {
   }
 
   getEditorId(name: string): string {
-    if (this.$el === null) {
-      return `${name}-param-renderer`;
-    }
-    return `${this.$el.getAttribute("id")}-${name}-param-renderer`;
+    return `${this.id}-${name}-param-renderer`;
   }
 }
 </script>
