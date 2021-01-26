@@ -3,6 +3,7 @@
     v-for="(instruction, index) in conditions.instructionObjects"
     :key="index"
     :declaration="instruction.declaration"
+    :id="conditions.id + '-instruction-' + index"
     :argument-resolver="_argumentResolver(instruction)"
     @arg-changed="e => _updateArgument(instruction, e)"
     :read-only="false"

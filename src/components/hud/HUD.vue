@@ -56,7 +56,7 @@ export default class HUD extends Vue {
   }
 
   openAgentClassModal() {
-    (this.$refs.agentClassModal as AgentClassModal).show();
+    (this.$refs.agentClassModal as any).show();
   }
 
   get isDesignTabActive() {

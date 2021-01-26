@@ -46,7 +46,6 @@ export default class ParameterRenderer extends Vue {
   }
 
   isDirectionValue(): boolean {
-    console.log("(isDirectionValue) this.paramTypeName", this.paramTypeName, "DirectionValue.name", DirectionValue.name);
     return this.paramTypeName === DirectionValue.name;
   }
 
@@ -87,7 +86,6 @@ export default class ParameterRenderer extends Vue {
   }
 
   isShapeValue(): boolean {
-    console.log("(isShapeValue) this.paramTypeName", this.paramTypeName, "ShapeNameValue.name", ShapeNameValue.name);
     return this.paramTypeName === ShapeNameValue.name;
   }
 

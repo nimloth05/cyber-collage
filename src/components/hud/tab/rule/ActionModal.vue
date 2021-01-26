@@ -10,6 +10,7 @@
             :declaration="declaration"
             :argument-resolver="_getDefaultValue"
             :read-only="true"
+            :id="declaration.name"
           />
           <!--            <img v-if="declarations.icon != null" class="tool-icon" :src="declarations.icon"-->
           <!--                 :alt="declarations.name"/>-->
