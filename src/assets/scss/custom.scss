@@ -1,0 +1,211 @@
+@import "~bootstrap/scss/bootstrap";
+
+@font-face {
+  font-family: "Inky Thin Pixels";
+  src: url("../fonts/Inky Thin Pixels.ttf") format("truetype"),
+  url("../fonts/Inky Thin Pixels.woff") format("woff");
+}
+
+body {
+  font-family: "Inky Thin Pixels", Courier;
+}
+
+.sizeable-ui-element {
+  width: 48px;
+  height: 48px;
+}
+
+@include media-breakpoint-up(lg) {
+  .sizeable-ui-element {
+    width: 64px;
+    height: 64px;
+  }
+}
+
+.hud {
+  position: absolute;
+  background-color: #b5b5b5EE;
+  width: 100%;
+  bottom: 0;
+}
+
+#current-agent {
+  position: absolute;
+  width: 64px;
+  height: 64px;
+  left: 20px;
+  top: -30px
+}
+
+@include media-breakpoint-up(lg) {
+  #current-agent {
+    width: 96px;
+    height: 96px;
+  }
+}
+
+.shape-element-button {
+  border: none;
+  font-size: 250%;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  border-radius: 50%;
+  line-height: 1;
+  background-color: white;
+}
+
+.shape-element-button:hover {
+  box-shadow: 0 0 10px rgba(0, 200, 200, 0.5);
+}
+
+.shape-list .shape-element-button {
+  margin-bottom: 0.5em;
+}
+
+.hud-tab-list {
+  list-style: none;
+  display: flex;
+  margin: 0 auto;
+  padding: 0;
+}
+
+$tab-normal-color: #b5b5b5;
+$tab-active-color: #e2e2e2;
+$tab-hover-color: $tab-active-color;
+
+.hud-tab-list li {
+  padding: 0.5em;
+  text-align: center;
+  background: #b5b5b5;
+  position: relative;
+  border-top-left-radius: 0.25rem;
+  border-top-right-radius: 0.25rem;
+}
+
+.hud-tab-list li.selected {
+  background-color: $tab-active-color;
+}
+
+.hud-tab-list li:hover {
+  background-color: $tab-hover-color;
+}
+
+.tab-container {
+  padding: 1em;
+  background-color: $tab-active-color;
+}
+
+.design-tab-content {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.tool {
+  display: inline-block;
+}
+
+.tool-icon {
+  width: 100%;
+  height: 100%;
+}
+
+.activeTool {
+  border: 1px solid red;
+}
+
+.rule-tab-content {
+  height: 50vh;
+  overflow: auto;
+}
+
+@include media-breakpoint-up(lg) {
+  .rule-tab-content {
+    height: 35vh;
+    overflow: auto;
+  }
+}
+
+/**
+ * Small screen
+ */
+.hud-toolbar-button {
+}
+
+$top-bar-index: 10;
+
+.play-bar {
+  position: absolute;
+  left: 40%;
+  display: flex;
+  justify-content: space-between;
+  z-index: $top-bar-index;
+}
+
+.undo-bar {
+  position: absolute;
+  display: flex;
+  z-index: $top-bar-index;
+}
+
+.aux-bar {
+  position: absolute;
+  right: 0;
+  z-index: $top-bar-index;
+}
+
+.rule {
+  background-color: lightgray;
+  border-radius: 0.25rem;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+@include media-breakpoint-up(lg) {
+  .rule {
+    flex-direction: row;
+  }
+}
+
+.if-keyword,
+.then-keyword {
+  padding-right: 1rem;
+  display: inline;
+}
+
+.if-block,
+.then-block {
+  min-width: 50%;
+}
+
+.conditions,
+.actions {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.conditions .instruction {
+  background-color: #ffA800;
+}
+
+.actions .instruction {
+  background-color: #00bee9ff;
+}
+
+.instruction {
+  width: fit-content;
+  display: flex;
+  margin-bottom: 0.25em;
+  padding: 10px;
+  margin-right: 1em;
+}
+
+.argument {
+  display: flex;
+  flex-direction: row;
+}
+
+.instruction-declaration-list {
+  list-style: none;
+}
+

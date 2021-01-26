@@ -35,6 +35,7 @@ export class AgentClass implements ShapeRef {
     this.methods.instructionObjects
       .map((m: Method) => {
         const code = m.compile();
+        console.log("code for ", code);
         // eslint-disable-next-line
         return [m.name, new Function(code)];
       })

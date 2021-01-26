@@ -14,7 +14,7 @@ export class AgentRepository {
     }
   }
 
-  get agentClasses() {
+  get agentClasses(): Array<AgentClass> {
     // FIXME: Pass out array?
     return this.agents;
   }

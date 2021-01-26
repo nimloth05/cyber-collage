@@ -4,7 +4,7 @@ export class CompositeCommand implements Command {
   contextId: UndoContextId;
   timeStamp: number;
 
-  private commands: Array<Command> = [];
+  private readonly commands: Array<Command> = [];
 
   constructor(contextId: UndoContextId, commands: Array<Command>) {
     this.contextId = contextId;
@@ -22,7 +22,15 @@ export class CompositeCommand implements Command {
   }
 
   execute(): Command {
-    const reverseCommands = this.commands.map(c => c.execute());
-    return new CompositeCommand(this.contextId, reverseCommands);
+    const list: Array<Command> = [];
+    for (let i = this.commands.length - 1; i > -1; --i) {
+      list.push(this.commands[i].execute());
+    }
+    return new CompositeCommand(this.contextId, list);
+  }
+
+  pushCommand(command: Command): void {
+    this.commands.push(command);
+    this.timeStamp = new Date().valueOf();
   }
 }

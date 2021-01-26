@@ -1,17 +1,19 @@
 <template>
-  <div class="modal fade" id="$el.getAttribute('id')" tabindex="-1" aria-labelledby="action-modal" aria-hidden="true">
+  <div class="modal fade instruction-modal" tabindex="-1" aria-labelledby="action-modal" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-body">
-          <ul>
-            <li
-              v-for="declarations in declarations"
-              :key="declarations.name"
-              @click="_actionSelected(declarations)"
-            >
-              {{ declarations.name }}
-            </li>
-          </ul>
+          <instruction-renderer
+            v-for="declaration in declarations"
+            :key="declaration.name"
+            @click="_actionSelected(declaration)"
+            :declaration="declaration"
+            :argument-resolver="_getDefaultValue"
+            :read-only="true"
+          />
+          <!--            <img v-if="declarations.icon != null" class="tool-icon" :src="declarations.icon"-->
+          <!--                 :alt="declarations.name"/>-->
+          <!--            <span v-if="declarations.icon == null">{{ declarations.name }}</span>-->
         </div>
       </div>
     </div>
@@ -19,19 +21,26 @@
 </template>
 <script lang="ts">
 import {Options, Vue} from "vue-class-component";
-import {instructionDefinitions} from "@/engine/instruction-definitions";
-import {Action} from "@/engine/Instruction";
 import {InstructionDeclaration} from "@/model/InstructionDeclaration";
 import {Modal} from "bootstrap";
+import InstructionRenderer from "@/components/hud/tab/rule/InstructionRenderer.vue";
+import {DirectionValue, InstructionValue, ShapeNameValue} from "@/engine/instruction-value";
 
 @Options({
   name: "ActionModal",
+  components: {
+    InstructionRenderer,
+  },
+  props: {
+    declarations: Array,
+  },
   emits: [
     "selected",
   ],
 })
 export default class ActionModal extends Vue {
-  declarations = instructionDefinitions.filter(it => it.class === Action);
+  // FIXME: InstructionDecl funktioniert nicht
+  declarations!: Array<any>;
 
   private _instance?: Modal;
 
@@ -50,6 +59,14 @@ export default class ActionModal extends Vue {
   _actionSelected(conditionDecl: InstructionDeclaration) {
     this.$emit("selected", conditionDecl);
     this.hide();
+  }
+
+  _getDefaultValue(name: string, type: Function): InstructionValue {
+    console.log("defaultValue", type);
+    if (type.name === ShapeNameValue.name) {
+      return new ShapeNameValue("cat");
+    }
+    return new DirectionValue(0, 1);
   }
 }
 </script>

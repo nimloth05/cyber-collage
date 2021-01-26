@@ -29,6 +29,36 @@ import {findObjectAgent} from "@/engine/helperfunctions.ts";
 import {Agent} from "@/engine/Agent";
 import {removeFromArray} from "@/util/util";
 
+export class GameLoop {
+  running = false;
+
+  play() {
+    this.running = true;
+  }
+
+  stop() {
+    this.running = false;
+  }
+
+  update() {
+    if (!this.running) {
+      return;
+    }
+    app.agentCube.broadcast("step");
+  }
+
+  /**
+   * Launches the animation and game loop.
+   */
+  run() {
+    requestAnimationFrame(() => {
+      this.run();
+    });
+    this.update();
+    app.agentCube.render();
+  }
+}
+
 // --------------------------------------
 // Scene Edit Objects Classes
 // --------------------------------------
@@ -204,7 +234,6 @@ export class AgentCube {
   }
 
   broadcast(methodName: string) {
-    // FIXME: Was passiert, wenn ein Agent ein anderer löscht und diese Liste dann mutiert wird während der Execution
     this.agentList.forEach((agent: any) => {
       const method = agent[methodName];
       if (method != null) {
@@ -368,7 +397,7 @@ export class AgentCube {
   findAgentAt(x: number, y: number, excludedAgent: any = null, excludedClasses: Array<string> = ["SelectionBox", "FoundationHover"]): FindAgentResult {
     this.raycaster.setFromCamera(new Vector2(x, y), this.camera);
     const intersections = this.raycaster.intersectObjects(this.scene.children, true);
-    console.log("intersections", intersections.map(inter => inter.object.constructor.name));
+    // console.log("intersections", intersections.map(inter => inter.object.constructor.name));
     // console.log("intersections", intersections.map(inter => findObjectAgent(inter.object)));
     const firstIntersection = intersections.filter(intersection => !(excludedClasses.includes(intersection.object.constructor.name) ||
       (excludedAgent && excludedAgent === findObjectAgent(intersection.object))))[0];

@@ -1,11 +1,19 @@
 <template>
   <div class="rule">
-    <div class="ifStatement">
-      <span class="ifKeyword">{{ getIfLabel() }}</span>
-      <condition-list :conditions="rule.conditions"/>
+    <div class="if-block">
+      <div class="if-keyword">{{ getIfLabel() }}</div>
+      <div class="conditions">
+        <condition-list
+          :conditions="rule.conditions"/>
+      </div>
     </div>
-    <div>then</div>
-    <action-list :actions="rule.actions"/>
+    <div class="then-block">
+      <div class="then-keyword">Dann</div>
+      <div class="actions">
+        <action-list
+          :actions="rule.actions"/>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -34,29 +42,18 @@ export default class RulePanel extends Vue {
 
   getIfLabel(): string {
     if (this.noOfRules === 1) {
-      return "if";
+      return "Wenn";
     }
     if (this.ruleIndex === 0) {
-      return "if";
+      return "Wenn";
     }
     if (this.ruleIndex === this.noOfRules - 1) {
-      return "else";
+      return "Sonst";
     }
-    return "else if";
+    return "Wenn sonst";
   }
 }
 </script>
 
 <style lang="less">
-.rule {
-  background-color: lightgray;
-  margin: 0 0 10px;
-  width: 50%;
-  border-radius: 10px;
-  padding: 1rem;
-}
-
-.ifKeyword {
-  padding-right: 1rem;
-}
 </style>

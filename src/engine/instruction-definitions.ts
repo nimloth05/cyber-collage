@@ -1,6 +1,5 @@
-import {InstructionDeclaration} from "@/model/InstructionDeclaration";
-import {Action, ActionList, Condition, Instruction} from "@/engine/Instruction";
-import {DirectionValue, FormulaValue, ShapeNameValue, SoundValue} from "@/engine/instruction-value";
+import {Action, Condition, Instruction} from "@/engine/Instruction";
+import {DirectionValue, FormulaValue, ShapeNameValue} from "@/engine/instruction-value";
 
 // ***************************************************
 // I N S T R U C T I O N   D E F I N I T I O N S
@@ -15,12 +14,12 @@ export const instructionDefinitions: Array<any> = [
       direction: DirectionValue,
       shape: ShapeNameValue,
     },
-    code(instruction: any) {
-      const {shape, direction} = instruction.parameterObjects;
-      console.log("shape", shape);
-      return `this.see('${shape.value}', ${direction.value[0]}, ${direction.value[1]})`;
+    code(instruction: Instruction) {
+      const shape = instruction.getArgumentValue<ShapeNameValue>("shape")!;
+      const direction = instruction.getArgumentValue<DirectionValue>("direction")!;
+      return `this.see('${shape.shapeId}', ${direction.row}, ${direction.column})`;
     },
-    icon: "see.png",
+    icon: "img/instructions/conditions/open-eye.svg",
     explanation({shape, direction}: any) {
       return `True if I see to ${direction.explain} an ${shape.explain}.`;
     },
@@ -32,7 +31,7 @@ export const instructionDefinitions: Array<any> = [
       chance: FormulaValue,
     },
     code(instruction: Instruction) {
-      return `this.percentChance(${instruction.parameterObjects.chance.value})`;
+      return `this.percentChance(${instruction.getArgumentValue<FormulaValue>("chance")?.formula})`;
     },
     icon: "percentChance.png",
     // explanation: () => `True with a ${chance.explain} percent chance.`,
@@ -47,10 +46,11 @@ export const instructionDefinitions: Array<any> = [
       direction: DirectionValue,
     },
     code(instruction: Instruction) {
-      const {direction} = instruction.parameterObjects;
-      return `this.move(${direction.value[0]}, ${direction.value[1]})`;
+      const {direction} = instruction.args;
+      const asDirectionValue = direction as DirectionValue;
+      return `this.move(${asDirectionValue.row}, ${asDirectionValue.column})`;
     },
-    icon: "move.png",
+    icon: "img/instructions/actions/move.svg",
     explanation({direction}: any) {
       return `I move to the ${direction.explain}`;
     },
@@ -59,13 +59,16 @@ export const instructionDefinitions: Array<any> = [
     name: "playSound",
     class: Action,
     parameters: {
-      sound: SoundValue,
+      // sound: SoundValue,
+      // FIXME: Replace with SoundValue
+      sound: FormulaValue,
     },
     code(instruction: Instruction) {
-      const {sound} = instruction.parameterObjects;
-      return `this.playSound('${sound.value}')`;
+      // const {sound} = instruction.args;
+      // return `this.playSound('${sound.value}')`;
+      return "";
     },
-    icon: "move.png",
+    icon: "img/instructions/actions/play-sound.svg",
     explanation({direction}: any) {
       return `I move to the ${direction.explain}`;
     },
@@ -118,19 +121,32 @@ export const instructionDefinitions: Array<any> = [
   //   },
   // },
   {
-    name: "repeat",
+    name: "erase",
     class: Action,
     parameters: {
-      times: FormulaValue,
-      actions: ActionList,
+      direction: DirectionValue,
     },
     code(instruction: Instruction) {
-      const {times, actions} = instruction.parameterObjects;
-      return `for (let i = 0; i < ${times.value}) {${actions.expand()}};`;
+      return "";
     },
-    icon: "repeat.png",
-    explanation: () => "I execute all actions first to last",
+    icon: "img/instructions/actions/delete.svg",
+    explanation: () => "Ich lösche ein Agent",
   },
+
+  // {
+  //   name: "repeat",
+  //   class: Action,
+  //   parameters: {
+  //     times: FormulaValue,
+  //     actions: ActionList,
+  //   },
+  //   code(instruction: Instruction) {
+  //     const {times, actions} = instruction.parameterObjects;
+  //     return `for (let i = 0; i < ${times.value}) {${actions.expand()}};`;
+  //   },
+  //   icon: "repeat.png",
+  //   explanation: () => "I execute all actions first to last",
+  // },
 ];
 
 // FIXME: Use hashMap (lodash keyBy) here

@@ -19,7 +19,6 @@
     "vue": "^3.0.5",
     "vue-class-component": "^8.0.0-0",
     "vue-router": "^4.0.0-0",
-    "vuejs-dialog": "^1.4.2",
     "vuex": "^4.0.0-0"
   },
   "devDependencies": {
@@ -51,6 +50,8 @@
     "eslint-plugin-vue": "^7.0.0-0",
     "less": "^3.0.4",
     "less-loader": "^5.0.0",
+    "sass": "^1.32.4",
+    "sass-loader": "^10.1.1",
     "typescript": "~3.9.3"
   }
 }

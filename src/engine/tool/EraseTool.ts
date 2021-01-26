@@ -5,7 +5,7 @@ import {RemoveAgentFromWorld} from "@/model/commands/RemoveAgentFromWorld";
 
 export class EraseTool extends AbstractAgentTool {
   id = "erase";
-  icon = "icons/tab/erase.svg";
+  icon = "img/tab/erase.svg";
   name = "Löschen"; // FIXME: Translate
 
   executeClick(hitResult: FindAgentResult): void {

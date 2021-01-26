@@ -2,10 +2,12 @@ import {AbstractAgentTool} from "@/engine/tool/AbstractAgentTool";
 import {FindAgentResult} from "@/engine/AgentCube";
 import {Agent} from "@/engine/Agent";
 import {app} from "@/engine/app";
+import {GridVector} from "@/model/util/GridVector";
+import {TeleportCommand} from "@/model/commands/TeleportCommand";
 
 export class ArrowTool extends AbstractAgentTool {
   id = "arrow";
-  icon = "icons/tab/hand-pointer.svg";
+  icon = "img/tab/hand-pointer.svg";
   name = "Verschieben"; // FIXME: Translate
 
   get agentSelected(): Agent | null {
@@ -42,8 +44,12 @@ export class ArrowTool extends AbstractAgentTool {
     const agentDragged = app.agentCube.agentDragged;
 
     if (agentDragged != null) {
+      if (hitResult.row === agentDragged.row && hitResult.column === agentDragged.column) {
+        return;
+      }
+
       if (hitResult.row !== this.toolRow || hitResult.column !== this.toolColumn) {
-        agentDragged.teleportTo(hitResult.row, hitResult.column);
+        app.undoManager.execute(new TeleportCommand(agentDragged, new GridVector(hitResult.column, hitResult.row)));
         this.toolRow = hitResult.row;
         this.toolColumn = hitResult.column;
       }

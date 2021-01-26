@@ -2,6 +2,7 @@
 // A P P
 // ***************************************************
 
+import Vue from "vue";
 import {Gallery} from "@/engine/Gallery.ts";
 import {registerListeners} from "@/engine/navigationevents";
 import {AppContext} from "@/engine/AppContext";
@@ -14,13 +15,7 @@ import {SaveTool} from "@/engine/tool/SaveTool";
 export const app = new AppContext();
 
 // FIXME: Global scope pollution
-(window as any).app = app; // need to be able to tinker with this
-
-function animate() {
-  requestAnimationFrame(animate);
-  app.agentCube.step();
-  app.agentCube.render();
-}
+// (window as any).app = app; // need to be able to tinker with this
 
 export async function init() {
   app.agentCube.init3DSystem();
@@ -52,12 +47,21 @@ export async function init() {
     app.agentCube.threeResize();
   });
 
+  SaveTool.registerListener(app.undoManager);
+
   registerListeners();
 
   SaveTool.loadState();
 
+  app.undoManager.addListener(() => {
+    app.repository.compile();
+  });
+  app.repository.compile();
+
   console.log("App init complete, start render cycle");
-  animate();
+  app.gameLoop.run();
+
+  // Vue.forceUpdate();
 }
 
 // app.agentCube.draw();

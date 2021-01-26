@@ -1,7 +1,7 @@
 <template>
   <button
     @click="plusClicked"
-    class="shape-element-button"
+    class="shape-element-button sizeable-ui-element"
   >
     +
   </button>
@@ -27,18 +27,18 @@ export default class EmptyShapeElement extends Vue {
 </script>
 
 <style>
-.shape-element-button {
-  width: 64px;
-  height: 64px;
-  border: none;
-  margin-bottom: 0.5em;
-  font-size: 250%;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-  border-radius: 50%
-}
+/*.shape-element-button {*/
+/*  width: 64px;*/
+/*  height: 64px;*/
+/*  border: none;*/
+/*  margin-bottom: 0.5em;*/
+/*  font-size: 250%;*/
+/*  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);*/
+/*  border-radius: 50%*/
+/*}*/
 
-.shape-element-button:hover {
-  box-shadow: 0 0 10px rgba(0, 200, 200, 0.5);
-}
+/*.shape-element-button:hover {*/
+/*  box-shadow: 0 0 10px rgba(0, 200, 200, 0.5);*/
+/*}*/
 
 </style>

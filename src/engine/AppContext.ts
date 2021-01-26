@@ -1,4 +1,4 @@
-import {AgentCube} from "@/engine/AgentCube";
+import {AgentCube, GameLoop} from "@/engine/AgentCube";
 import {UndoManager} from "@/model/UndoManager";
 import {Gallery} from "@/engine/Gallery";
 import {AgentRepository} from "@/engine/agent/AgentRepository";
@@ -26,4 +26,5 @@ export class AppContext {
   repository = new AgentRepository();
   uiState = new UiState();
   toolbar = new DesignToolbar();
+  gameLoop = new GameLoop();
 }

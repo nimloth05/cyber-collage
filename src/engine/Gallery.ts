@@ -59,6 +59,14 @@ export class Gallery {
     };
   }
 
+  static getShapePath(shapeId: string): string {
+    if (shapeId == null) {
+      return "";
+    }
+    const name = shapeId.charAt(0).toUpperCase() + shapeId.substr(1);
+    return `shapes/${name}/${shapeId}-image.png`;
+  }
+
   static async loadShapes(cellSize: number, progressListener: ProgressListener): Promise<Gallery> {
     const loadingManager = new LoadingManager();
     loadingManager.onProgress = (url, loaded, total): void => {

@@ -1,30 +1,21 @@
 <template>
-  <div
-    v-for="tool in tools"
-    :key="tool.id"
-    :value="tool.id"
-    @click="selectTool(tool.id)"
-    class="tool"
-    :class="{ 'activeTool': selectedToolId === tool.id }"
-  >
-    <img class="tool-icon" :src="tool.icon" :alt="tool.name"/>
+  <div class="design-tab-content">
+    <button
+      class="btn tool sizeable-ui-element"
+      :class="{ 'activeTool': selectedToolId === tool.id }"
+      v-for="tool in tools"
+      :key="tool.id"
+      :value="tool.id"
+      @click="selectTool(tool.id)"
+    >
+      <img class="tool-icon" :src="tool.icon" :alt="tool.name"/>
+    </button>
   </div>
-  <!--  <select id="tool-mode" v-model="selectedToolId" name="agent-menu">-->
-  <!--    <option-->
-  <!--      v-for="tool in tools"-->
-  <!--      :key="tool.id"-->
-  <!--      :value="tool.id"-->
-  <!--      :style="'background-image: url(/'+tool.icon+')'"-->
-  <!--    >-->
-  <!--      {{ tool.name }}-->
-  <!--    </option>-->
-  <!--  </select>-->
 </template>
 
 <script lang="ts">
 import {Options, Vue} from "vue-class-component";
 import {app} from "@/engine/app";
-import {DesignToolbar} from "@/components/hud/tab/design/DesignToolbar";
 
 @Options({
   name: "DesignTab",
@@ -63,20 +54,5 @@ export default class TabContainer extends Vue {
 </script>
 
 <style>
-.tool {
-  display: inline-block;
-  width: 5em;
-  height: 5em;
-  margin: 1rem;
-}
-
-.tool-icon {
-  width: 100%;
-  height: 100%;
-}
-
-.activeTool {
-  border: 1px solid red;
-}
 
 </style>
