@@ -10,11 +10,9 @@ export function oneOf<T>(array: Array<T>): T {
   return array[Math.floor(Math.random() * array.length)];
 }
 
-// FIXME: Use Type Agent
 export function findObjectAgent(object: Object3D): Agent | null {
   if (!object) return null;
   if (object.userData != null && object.userData instanceof Agent) {
-    // FIXME: object.agent
     return object.userData as Agent;
   } else {
     if (object.parent != null) {

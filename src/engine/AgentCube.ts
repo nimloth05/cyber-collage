@@ -6,28 +6,18 @@ import {
   AmbientLight,
   AxesHelper,
   BasicShadowMap,
-  BufferGeometry,
   Color,
   DirectionalLight,
-  LineBasicMaterial,
-  LineSegments,
-  Mesh,
-  MeshPhongMaterial,
   Object3D,
-  PlaneGeometry,
   Raycaster,
-  RepeatWrapping,
   Scene,
-  TextureLoader,
   Vector2,
-  Vector3,
   WebGLRenderer,
 } from "three";
-import {foundationGridColor, selectionBoxColor} from "@/engine/globals.ts";
 import {app} from "@/engine/app";
 import {findObjectAgent} from "@/engine/helperfunctions.ts";
 import {Agent} from "@/engine/Agent";
-import {removeFromArray} from "@/util/util";
+import {AgentMap} from "@/engine/Map";
 
 export class GameLoop {
   running = false;
@@ -44,7 +34,7 @@ export class GameLoop {
     if (!this.running) {
       return;
     }
-    app.agentCube.broadcast("step");
+    app.agentCube.map.broadcast("step");
   }
 
   /**
@@ -63,18 +53,6 @@ export class GameLoop {
 // Scene Edit Objects Classes
 // --------------------------------------
 
-class FoundationSurface extends Mesh {
-  // can differentiate from other ohter Object3D using obj.constructor.name
-}
-
-class FoundationGrid extends LineSegments {
-  // can differentiate from other ohter Object3D using obj.constructor.name
-}
-
-class FoundationHover extends LineSegments {
-  // can differentiate from other ohter Object3D using obj.constructor.name
-}
-
 export type FindAgentResult = { agent: Agent | null; row: number; column: number };
 
 /**
@@ -84,11 +62,6 @@ export type FindAgentResult = { agent: Agent | null; row: number; column: number
  **/
 // FIXME: Code smell: Class has multiple responsibilities
 export class AgentCube {
-  rows: number;
-  columns: number;
-  layers: number;
-  cellSize: number;
-  grid: Array<Array<Array<Array<Agent>>>>;
   agentHovered: Agent | null;
   agentSelected: Agent | null;
   agentDragged: Agent | null;
@@ -101,29 +74,14 @@ export class AgentCube {
   scene!: Scene;
   camera!: AgentCamera;
   renderer!: WebGLRenderer;
-  foundationHoverShape!: LineSegments;
-  foundationSurface!: Mesh;
   touchMomentumHandler: Function | null;
   toolRow: number;
   toolColumn: number;
-  agentList: Array<Agent> = [];
+  map: AgentMap;
 
   constructor(rows = 9, columns = 16, layers = 1, cellSize = 20.0) {
-    this.rows = rows;
-    this.columns = columns;
-    this.layers = layers;
-    this.cellSize = cellSize;
+    this.map = new AgentMap(rows, columns, layers, cellSize);
     // this.shape = null;
-    this.grid = new Array(layers);
-    for (let layer = 0; layer < layers; layer++) {
-      this.grid[layer] = new Array(rows);
-      for (let row = 0; row < rows; row++) {
-        this.grid[layer][row] = new Array(columns);
-        for (let column = 0; column < columns; column++) {
-          this.grid[layer][row][column] = [];
-        }
-      }
-    }
     this.agentHovered = null;
     this.agentSelected = null;
     this.agentDragged = null;
@@ -142,6 +100,7 @@ export class AgentCube {
     // this.addFoundationGrid();
     this.addFoundationHover();
     this.addFoundationSurface();
+    this.map.addToScene(this.scene);
   }
 
   initTHREE() {
@@ -186,9 +145,9 @@ export class AgentCube {
     spotLight.shadow.camera.far = 2500;
 
     spotLight.shadow.camera.left = 0;
-    spotLight.shadow.camera.right = this.cellSize * this.columns * 1.2;
+    spotLight.shadow.camera.right = this.map.cellSize * this.map.columns * 1.2;
     spotLight.shadow.camera.top = 0;
-    spotLight.shadow.camera.bottom = this.cellSize * this.rows * 1.2;
+    spotLight.shadow.camera.bottom = this.map.cellSize * this.map.rows * 1.2;
 
     spotLight.shadow.camera.updateProjectionMatrix();
 
@@ -233,161 +192,39 @@ export class AgentCube {
     this.render();
   }
 
-  broadcast(methodName: string) {
-    this.agentList.forEach((agent: any) => {
-      const method = agent[methodName];
-      if (method != null) {
-        agent[methodName]();
-      }
-    });
-  }
-
-  broadcastGeometrically(handler: (agent: Agent) => void) {
-    this.grid.forEach((layer) => {
-      layer.forEach((row) => {
-        row.forEach((column) => {
-          column.forEach((agent: any) => {
-            handler(agent);
-          });
-        });
-      });
-    });
-  }
-
-  addFoundationGrid() {
-    const points = [];
-    /// ignore layers for the moment
-    for (let row = 0; row < this.rows + 1; row++) {
-      points.push(new Vector3(0.0, row * this.cellSize, 0.0));
-      points.push(new Vector3(this.columns * this.cellSize, row * this.cellSize, 0.0));
-    }
-    for (let column = 0; column < this.columns + 1; column++) {
-      points.push(new Vector3(column * this.cellSize, 0.0, 0.0));
-      points.push(new Vector3(column * this.cellSize, this.rows * this.cellSize, 0.0));
-    }
-    const material = new LineBasicMaterial({color: foundationGridColor});
-    const geometry = new BufferGeometry().setFromPoints(points);
-    const foundationGrid = new FoundationGrid(geometry, material);
-    this.scene.add(foundationGrid);
-  }
+  // addFoundationGrid() {
+  //   const points = [];
+  //   /// ignore layers for the moment
+  //   for (let row = 0; row < this.rows + 1; row++) {
+  //     points.push(new Vector3(0.0, row * this.cellSize, 0.0));
+  //     points.push(new Vector3(this.columns * this.cellSize, row * this.cellSize, 0.0));
+  //   }
+  //   for (let column = 0; column < this.columns + 1; column++) {
+  //     points.push(new Vector3(column * this.cellSize, 0.0, 0.0));
+  //     points.push(new Vector3(column * this.cellSize, this.rows * this.cellSize, 0.0));
+  //   }
+  //   const material = new LineBasicMaterial({color: foundationGridColor});
+  //   const geometry = new BufferGeometry().setFromPoints(points);
+  //   const foundationGrid = new FoundationGrid(geometry, material);
+  //   this.scene.add(foundationGrid);
+  // }
 
   // FIXME: Function is async but doesn't communicate this fact
   addFoundationSurface() {
-    const texturePath = "textures/";
-    const texturesFile = "chess_texture.png";
-    const loader = new TextureLoader();
-    loader.load(
-      `${texturePath}${texturesFile}`,
-      texture => {
-        texture.wrapS = RepeatWrapping;
-        texture.wrapT = RepeatWrapping;
-        texture.repeat.set(Math.ceil(this.columns / 2), Math.ceil(this.rows / 2));
-        this.foundationSurface = new FoundationSurface(
-          new PlaneGeometry(this.columns * this.cellSize, this.rows * this.cellSize),
-          new MeshPhongMaterial({map: texture})
-        );
-        this.foundationSurface.position.x = 0.5 * this.columns * this.cellSize;
-        this.foundationSurface.position.y = 0.5 * this.rows * this.cellSize;
-        // this.foundationSurface.position.z = -50.0;
-        this.foundationSurface.userData.isFoundation = true;
-        this.foundationSurface.receiveShadow = true;
-        this.scene.add(this.foundationSurface);
-      },
-      undefined,
-      // eslint-disable-next-line handle-callback-err
-      err => console.error("cannot load texture", err)
-    );
+    this.map.addFoundationSurface();
   }
 
   addFoundationHover() {
-    const z = 1.0;
-    const points = []; // square with a long vertical antenna
-    points.push(new Vector3(0.0, 0.0, z));
-    points.push(new Vector3(this.cellSize, 0.0, z));
-
-    points.push(new Vector3(this.cellSize, 0.0, z));
-    points.push(new Vector3(this.cellSize, this.cellSize, z));
-
-    points.push(new Vector3(this.cellSize, this.cellSize, z));
-    points.push(new Vector3(0.0, this.cellSize, z));
-
-    points.push(new Vector3(0.0, this.cellSize, z));
-    points.push(new Vector3(0.0, 0.0, z));
-
-    points.push(new Vector3(0.5 * this.cellSize, 0.5 * this.cellSize, z));
-    points.push(new Vector3(0.5 * this.cellSize, 0.5 * this.cellSize, 2 * this.cellSize));
-
-    const material = new LineBasicMaterial({color: selectionBoxColor});
-    const geometry = new BufferGeometry().setFromPoints(points);
-    this.foundationHoverShape = new FoundationHover(geometry, material);
-    this.scene.add(this.foundationHoverShape);
-  }
-
-  step() {
-    this.broadcast("step");
-  }
-
-  draw() {
-    // no actual drawing happening here. Shapes are in the scene graph
-    this.broadcast("draw");
-  }
-
-  hoverAt(row: number, column: number, layer = 0) {
-    this.foundationHoverShape.position.x = column * this.cellSize;
-    this.foundationHoverShape.position.y = row * this.cellSize;
-  }
-
-  agentAtTop(row: number, column: number, layer = 0) {
-    const agents = this.grid[layer][row][column];
-    return agents[agents.length - 1];
+    this.map.addFoundationHover();
   }
 
   pushAgent(agent: Agent, row: number, column: number, layer = 0) {
-    // if (row === -1 || column === -1) return; // this should never happen
-
-    if (agent.shape.mesh.parent == null) {
-      this.scene.add(agent.shape.mesh);
-    }
-    const agents = this.grid[layer][row][column];
-    const agentAtTop = this.agentAtTop(row, column, layer);
-
-    // adjust geometry
-    // FIXME: If agent would be aware of the cell size it could calculate the correct coordinates by itself
-    agent.x = column * this.cellSize + 0.5 * this.cellSize;
-    agent.y = row * this.cellSize + 0.5 * this.cellSize;
-
-    if (agentAtTop == null) {
-      agent.z = layer * this.cellSize;
-    } else {
-      agent.z = agentAtTop.z + agentAtTop.depth;
-    }
-
-    // adjust topology
-    agent.row = row;
-    agent.column = column;
-    agent.layer = layer;
-    // adjust part hierarchy
+    this.map.pushAgent(agent, row, column, layer);
     agent.parent = this;
-    // update stack
-    agents.push(agent);
-    this.agentList.push(agent);
   }
 
   removeAgent(agent: Agent, removeFromScene = false) {
-    const mesh = agent.shape.mesh;
-    if (removeFromScene && mesh.parent != null) {
-      mesh.parent.remove(agent.shape.mesh);
-    }
-
-    const stack = this.grid[agent.layer][agent.row][agent.column];
-    const index = removeFromArray(stack, agent);
-
-    removeFromArray(this.agentList, agent);
-
-    // adjust z values of all the agents that used to be above me
-    for (let i = index; i < stack.length; i++) {
-      stack[i].z -= agent.depth;
-    }
+    this.map.removeAgent(agent, removeFromScene);
   }
 
   /**
@@ -405,10 +242,11 @@ export class AgentCube {
     if (firstIntersection) {
       // FIXME: This schecks if the function isFoundation is present and not if it returns true/false. Is this correct?
       if (firstIntersection.object.userData.isFoundation) {
-        hit.row = Math.floor(firstIntersection.point.y / this.cellSize);
-        hit.column = Math.floor(firstIntersection.point.x / this.cellSize);
+        const mapCoordinate = this.map.toMapCoordinate(firstIntersection.point);
+        hit.row = mapCoordinate.row;
+        hit.column = mapCoordinate.column;
         // Heuristic: if we find an agent in that cell use it; May not work well in a tall stack
-        hit.agent = this.agentAtTop(hit.row, hit.column);
+        hit.agent = this.map.agentAtTop(hit.row, hit.column);
       } else {
         hit.agent = findObjectAgent(firstIntersection.object);
         if (hit.agent) {
@@ -465,14 +303,6 @@ export class AgentCube {
     this.renderer.render(this.scene, this.camera);
     // console.timeEnd("render");
   }
-
-  // animate() {
-  //   setTimeout(() => {
-  //     console.log("animate");
-  //     this.renderer.render(this.scene, this.camera);
-  //     requestAnimationFrame(app.agentCube.animate);
-  //   }, 1000);
-  // }
 
   addToScene(object3D: Object3D) {
     this.scene.add(object3D);

@@ -188,11 +188,11 @@ export class Agent {
   // Queries
   isValidCoordinate(row: number, column: number, layer = 0) {
     return !(row < 0 ||
-      row >= this.parent.rows ||
+      row >= this.parent.map.rows ||
       column < 0 ||
-      column >= this.parent.columns ||
+      column >= this.parent.map.columns ||
       layer < 0 ||
-      layer >= this.parent.layers);
+      layer >= this.parent.map.layers);
   }
 
   agentRelative(deltaRow: number, deltaColumn: number, deltaLayer = 0) {
@@ -203,7 +203,7 @@ export class Agent {
 
     // console.log(`accessing row, column, layer: ${row}, ${column}, ${layer}`)
     if (!this.isValidCoordinate(row, column, layer)) return null;
-    const agents = this.parent.grid[layer][row][column];
+    const agents = this.parent.map.grid[layer][row][column];
     const agent = agents[agents.length - 1];
     if (agent == null) {
       return null;
@@ -212,8 +212,8 @@ export class Agent {
     }
   }
 
-  removeFromAgentCube() {
-    this.app.agentCube.removeAgent(this, false);
+  removeFromAgentCube(removeFromScene = false) {
+    this.parent.removeAgent(this, removeFromScene);
   }
 
   // C O N D I T I O N S
@@ -233,7 +233,7 @@ export class Agent {
     const layer = this.layer + deltaLayer;
     if (!this.isValidCoordinate(row, column, layer)) return false;
     // console.log(app.agentCube.grid[layer][row][column].length);
-    return app.agentCube.grid[layer][row][column].length === 0;
+    return this.parent.map.grid[layer][row][column].length === 0;
   }
 
   // A C T I O N S
@@ -271,7 +271,7 @@ export class Agent {
     this.heading += deltaHeading;
   }
 
-  roateTo(deltaRoll = 0.0, deltaPitch = 0.0, deltaHeading = 0.0) {
+  rotateTo(deltaRoll = 0.0, deltaPitch = 0.0, deltaHeading = 0.0) {
     this.roll = deltaRoll;
     this.pitch = deltaPitch;
     this.heading = deltaHeading;
@@ -279,8 +279,7 @@ export class Agent {
 
   erase() {
     this.deselect();
-    this.removeFromAgentCube();
-    this.parent.scene.remove(this.shape.mesh);
+    this.removeFromAgentCube(true);
   }
 
   getPosition(): GridVector {

@@ -83,7 +83,7 @@ export class SaveTool implements Tool {
 
     function getWorldData(): Array<WorldEntry> {
       const result: Array<WorldEntry> = [];
-      SaveTool.app().agentCube.broadcastGeometrically(it => {
+      SaveTool.app().agentCube.map.broadcastGeometrically(it => {
         const obj = {
           layer: it.layer,
           row: it.row,

@@ -2,7 +2,6 @@
 // A P P
 // ***************************************************
 
-import Vue from "vue";
 import {Gallery} from "@/engine/Gallery.ts";
 import {registerListeners} from "@/engine/navigationevents";
 import {AppContext} from "@/engine/AppContext";
@@ -20,7 +19,7 @@ export const app = new AppContext();
 export async function init() {
   app.agentCube.init3DSystem();
 
-  app.gallery = await Gallery.loadShapes(app.agentCube.cellSize, (loaded, total, percentage) => {
+  app.gallery = await Gallery.loadShapes(app.agentCube.map.cellSize, (loaded, total, percentage) => {
     console.log(`loaded ${loaded} of ${total} ${percentage}% completion`);
   });
 
