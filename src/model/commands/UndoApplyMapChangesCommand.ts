@@ -3,7 +3,7 @@ import {Command} from "@/model/Command";
 import {MapSnapShot} from "@/engine/Map";
 import {app} from "@/engine/app";
 
-export class UndoWorldApplyCommand extends AbstractCommand {
+export class UndoApplyMapChangesCommand extends AbstractCommand {
   private readonly snapShot: MapSnapShot;
 
   constructor(snapShot: MapSnapShot) {
@@ -14,7 +14,7 @@ export class UndoWorldApplyCommand extends AbstractCommand {
   execute(): Command {
     const snapShot = app.agentCube.map.createSnapShot();
     app.agentCube.map.applySnapShot(this.snapShot);
-    return new UndoWorldApplyCommand(snapShot);
+    return new UndoApplyMapChangesCommand(snapShot);
   }
 
   equals(command: Command): boolean {
