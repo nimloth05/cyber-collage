@@ -18,6 +18,7 @@ import {removeFromArray} from "@/util/util";
 import {GridVector} from "@/model/util/GridVector";
 
 export type GridArray = Array<Array<Array<Array<Agent>>>>;
+export type MapSnapShot = { grid: GridArray; agents: Array<Agent> };
 
 export class AgentMap {
   rows: number;
@@ -108,7 +109,7 @@ export class AgentMap {
   }
 
   pushAgent(agent: Agent, row: number, column: number, layer = 0) {
-    // if (row === -1 || column === -1) return; // this should never happen
+    if (row === -1 || column === -1) return; // this should never happen
 
     if (agent.shape.mesh.parent == null) {
       this.agentGroup.add(agent.shape.mesh);
@@ -197,7 +198,47 @@ export class AgentMap {
     scene.add(this.agentGroup);
   }
 
-  createSnapShot(): { grid: GridArray; agents: Array<Agent> } {
-    throw new Error("TBI");
+  createSnapShot(): MapSnapShot {
+    const grid: GridArray = this.grid.map((layer) => {
+      return layer.map((row) => {
+        return row.map((column) => {
+          return column.slice();
+        });
+      });
+    });
+
+    const agents = this.agentList.slice();
+    return {
+      grid,
+      agents,
+    };
+  }
+
+  applySnapShot(snapShot: MapSnapShot): void {
+    this.agentGroup.clear();
+    this.grid = snapShot.grid;
+    this.agentList = snapShot.agents;
+
+    // We have to re-add the given agent the correct position in the grid. The agent refers to its previous position.
+    this.grid.forEach((layer, layerIndex) => {
+      layer.forEach((row, rowIndex) => {
+        row.forEach((column, columnIndex) => {
+          column.forEach((agent: Agent, stackIndex) => {
+            agent.x = columnIndex * this.cellSize + 0.5 * this.cellSize;
+            agent.y = rowIndex * this.cellSize + 0.5 * this.cellSize;
+            agent.z = column
+              .map(a => a.depth)
+              .reduce((acc, depth, currentIndex) => currentIndex < stackIndex ? (acc + depth) : acc, 0);
+            console.log(`agent.z (${agent.shapeName})`, agent.z);
+
+            // adjust topology
+            agent.row = rowIndex;
+            agent.column = columnIndex;
+            agent.layer = layerIndex;
+            this.agentGroup.add(agent.shape.mesh);
+          });
+        });
+      });
+    });
   }
 }

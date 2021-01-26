@@ -1,11 +1,13 @@
 <template>
   <undo-redo-toolbar/>
   <div class="play-bar">
-    <button @click="toggleState" class="btn sizeable-ui-element hud-toolbar-button">
-      <img v-if="!isRunning" src="img/play/play.svg" alt="Spiel Starten"/>
-      <img v-if="isRunning" src="img/play/pause.svg" alt="stop"/>
+    <button v-if="!isRunning" @click="play" class="btn sizeable-ui-element hud-toolbar-button">
+      <img src="img/play/play.svg" alt="Spiel Starten"/>
     </button>
-    <button v-if="isRunning" @click="stop" class="btn sizeable-ui-element hud-toolbar-button">
+    <button v-if="isRunning" @click="pause" class="btn sizeable-ui-element hud-toolbar-button">
+      <img src="img/play/pause.svg" alt="stop"/>
+    </button>
+    <button v-if="isRunning || paused" @click="stop" class="btn sizeable-ui-element hud-toolbar-button">
       <img src="img/play/stop.svg" alt="stop"/>
     </button>
   </div>
@@ -18,6 +20,9 @@ import HUD from "@/components/hud/HUD.vue";
 import UndoRedoToolbar from "@/components/hud/UndoRedoToolbar.vue";
 import AuxToolbar from "@/components/hud/AuxToolbar.vue";
 import {app} from "@/engine/app";
+import {MapSnapShot} from "@/engine/Map";
+
+let mapState: MapSnapShot;
 
 @Options({
   name: "HUDTop",
@@ -29,9 +34,25 @@ import {app} from "@/engine/app";
 })
 export default class HUDTop extends Vue {
   gameLoop = app.gameLoop;
+  paused = false;
 
-  toggleState() {
+  play() {
+    if (!this.paused) {
+      mapState = app.agentCube.map.createSnapShot();
+    }
     this.gameLoop.running = !this.gameLoop.running;
+  }
+
+  pause() {
+    this.gameLoop.running = false;
+    this.paused = true;
+  }
+
+  stop() {
+    // rewind state
+    app.agentCube.map.applySnapShot(mapState);
+    this.gameLoop.running = false;
+    this.paused = false;
   }
 
   get isRunning(): boolean {
