@@ -65,6 +65,10 @@ export class Instruction implements ASTNode {
   get explanation() {
     return "compute explanation string";
   }
+
+  toJson() {
+    return Object.keys(this.declaration.parameters).map(k => ({[k]: JSON.parse(JSON.stringify(this.getArgumentValue(k)))}));
+  }
 }
 
 export class Condition extends Instruction {
@@ -100,6 +104,10 @@ export abstract class ASTNodeList<T extends ASTNode> implements ASTNode {
 
   getChild(index: number): ASTNode {
     return this.instructionObjects[index];
+  }
+
+  map<E>(handler: (node: T) => E): Array<E> {
+    return this.instructionObjects.map(handler);
   }
 }
 

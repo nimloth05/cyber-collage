@@ -78,6 +78,12 @@ export class SaveTool implements Tool {
       return SaveTool.app().repository.agentClasses.map((it) => ({
         name: it.name,
         shapeId: it.shape.id,
+        methods: it.methods.map(method => ({
+          [method.name]: method.rules.map(rule => ({
+            conditions: rule.conditions.map(condition => condition.toJson()),
+            actions: rule.actions.map(condition => condition.toJson()),
+          })),
+        })),
       }));
     }
 
