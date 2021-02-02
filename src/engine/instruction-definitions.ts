@@ -1,5 +1,7 @@
 import {Action, Condition, Instruction} from "@/engine/Instruction";
 import {DirectionValue, FormulaValue, ShapeNameValue} from "@/engine/instruction-value";
+import {Arguments, InstructionDeclaration} from "@/model/InstructionDeclaration";
+import {ArgEntry} from "@/engine/tool/SaveModel";
 
 // ***************************************************
 // I N S T R U C T I O N   D E F I N I T I O N S
@@ -23,6 +25,16 @@ export const instructionDefinitions: Array<any> = [
     explanation({shape, direction}: any) {
       return `True if I see to ${direction.explain} an ${shape.explain}.`;
     },
+    deserialize(argEntries: Record<string, ArgEntry>): Arguments {
+      const result: Record<string, any> = {};
+
+      const directionValues = argEntries.direction;
+      result.direction = new DirectionValue(directionValues.row, directionValues.column);
+
+      const shapeValues = argEntries.shape;
+      result.shape = new ShapeNameValue(shapeValues.shapeId);
+      return result;
+    },
   },
   {
     name: "percentChance",
@@ -37,6 +49,12 @@ export const instructionDefinitions: Array<any> = [
     // explanation: () => `True with a ${chance.explain} percent chance.`,
     // FIXME: Replace with above code, after its clear what "chance" is
     explanation: () => "True with a <unknown> percent chance.",
+    deserialize(argEntries: Record<string, ArgEntry>): Arguments {
+      const result: Record<string, any> = {};
+      const chanceValue = argEntries.chance;
+      result.chance = new FormulaValue(chanceValue.formula);
+      return result;
+    },
   },
   // Actions
   {
@@ -53,6 +71,12 @@ export const instructionDefinitions: Array<any> = [
     icon: "img/instructions/actions/move.svg",
     explanation({direction}: any) {
       return `I move to the ${direction.explain}`;
+    },
+    deserialize(argEntries: Record<string, ArgEntry>): Arguments {
+      const result: Record<string, any> = {};
+      const directionValues = argEntries.direction;
+      result.direction = new DirectionValue(directionValues.row, directionValues.column);
+      return result;
     },
   },
   {
@@ -71,6 +95,12 @@ export const instructionDefinitions: Array<any> = [
     icon: "img/instructions/actions/play-sound.svg",
     explanation({direction}: any) {
       return `I move to the ${direction.explain}`;
+    },
+    deserialize(argEntries: Record<string, ArgEntry>): Arguments {
+      const result: Record<string, any> = {};
+      const soundValue = argEntries.direction;
+      result.sound = new FormulaValue(soundValue.sound);
+      return result;
     },
   },
   // {
@@ -131,6 +161,12 @@ export const instructionDefinitions: Array<any> = [
     },
     icon: "img/instructions/actions/delete.svg",
     explanation: () => "Ich lösche ein Agent",
+    deserialize(argEntries: Record<string, ArgEntry>): Arguments {
+      const result: Record<string, any> = {};
+      const directionValues = argEntries.direction;
+      result.direction = new DirectionValue(directionValues.row, directionValues.column);
+      return result;
+    },
   },
 
   // {
@@ -151,7 +187,7 @@ export const instructionDefinitions: Array<any> = [
 
 // FIXME: Use hashMap (lodash keyBy) here
 export class InstructionDefinitions {
-  static findDefinition(name: string) {
+  static findDefinition(name: string): InstructionDeclaration | undefined {
     const definition = instructionDefinitions.find(definition => name === definition.name);
     if (!definition) console.trace(`cannot find definition ${name} `);
     return definition;

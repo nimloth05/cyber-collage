@@ -3,8 +3,10 @@
 //* **************************************************
 
 import * as uuid from "uuid";
+import {fromPairs} from "lodash";
 import {Arguments, InstructionDeclaration} from "@/model/InstructionDeclaration";
 import {InstructionValue} from "@/engine/instruction-value";
+import {InstructionEntry} from "@/engine/tool/SaveModel";
 
 export interface ASTNode {
   explanation: string;
@@ -66,8 +68,15 @@ export class Instruction implements ASTNode {
     return "compute explanation string";
   }
 
-  toJson() {
-    return Object.keys(this.declaration.parameters).map(k => ({[k]: JSON.parse(JSON.stringify(this.getArgumentValue(k)))}));
+  toJson(): InstructionEntry {
+    return {
+      name: this.declaration.name,
+      arguments: fromPairs(
+        Object
+          .keys(this.declaration.parameters)
+          .map(k => ([k, JSON.parse(JSON.stringify(this.getArgumentValue(k))) as Record<string, any>])),
+      ),
+    };
   }
 }
 
@@ -162,6 +171,14 @@ export class Rule implements ASTNode {
     return `if (${this.conditions.compile()}) { \r\n ${this.actions.compile()} \r\n}\r\n`;
   }
 
+  addCondition(condition: Condition): void {
+    this.conditions.add(condition);
+  }
+
+  addAction(action: Action): void {
+    this.actions.add(action);
+  }
+
   explanation = "Sind alle Bedingungen wahr führe aktionen aus.";
 }
 
@@ -205,6 +222,14 @@ export class Method implements ASTNode {
 }
 
 export class MethodList extends ASTNodeList<Method> {
+  addMethod(m: Method): void {
+    const index = this.instructionObjects.findIndex(it => it.name === m.name);
+    if (index > -1) {
+      this.instructionObjects.splice(index, 1);
+    }
+    this.instructionObjects.push(m);
+  }
+
   compile(): string {
     // <methodName1>() {<rules>}
     const methods = this.instructionObjects;

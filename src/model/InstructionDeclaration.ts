@@ -1,4 +1,5 @@
 import {InstructionValue} from "@/engine/instruction-value";
+import {ArgEntry} from "@/engine/tool/SaveModel";
 
 export type CommandInstance = any;
 
@@ -13,4 +14,5 @@ export interface InstructionDeclaration {
   parameters: Parameters;
   explanation: (instruction: any) => string;
   code: (instruction: any) => string;
+  deserialize: (argEntries: Record<string, ArgEntry>) => Arguments;
 }
