@@ -1,12 +1,12 @@
 import {ref} from "vue";
+import {fromPairs} from "lodash";
 import {Tool} from "@/engine/tool/Tool";
 import {app} from "@/engine/app";
 import {AppContext} from "@/engine/AppContext";
 import {AgentClass} from "@/engine/agent/AgentClass";
 import {UndoManager} from "@/model/UndoManager";
-import {Action, Condition, Method, Rule} from "@/engine/Instruction";
-import {ClassStoreEntry, MethodEntry, ProjectData, RuleEntry, WorldEntry} from "@/engine/tool/SaveModel";
-import {InstructionDefinitions, instructionDefinitions} from "@/engine/instruction-definitions";
+import {MethodList} from "@/engine/Instruction";
+import {ClassStoreEntry, ProjectData, WorldEntry} from "@/engine/tool/SaveModel";
 
 export class SaveTool implements Tool {
   static loadState(): void {
@@ -31,36 +31,7 @@ export class SaveTool implements Tool {
       const shape = gallery.findShape(it.shapeId);
       if (shape != null) {
         const agentClass = new AgentClass(shape, it.name);
-        it.methods.forEach((methodEntry) => {
-          Object.keys(methodEntry)
-            .forEach(methodName => {
-              const m = new Method();
-              m.name = methodName;
-              agentClass.methods.addMethod(m);
-              methodEntry[methodName].forEach(ruleEntry => {
-                const rule = new Rule();
-                m.rules.add(rule);
-
-                ruleEntry.actions.forEach(conditionEntry => {
-                  const decl = InstructionDefinitions.findDefinition(conditionEntry.name);
-                  if (decl == null) {
-                    throw new Error(`No instruction declaration with name ${conditionEntry.name} found`);
-                  }
-                  const args = decl.deserialize(conditionEntry.arguments);
-                  rule.addAction(new Action(decl, args));
-                });
-
-                ruleEntry.conditions.forEach(conditionEntry => {
-                  const decl = InstructionDefinitions.findDefinition(conditionEntry.name);
-                  if (decl == null) {
-                    throw new Error(`No instruction declaration with name ${conditionEntry.name} found`);
-                  }
-                  const args = decl.deserialize(conditionEntry.arguments);
-                  rule.addCondition(new Condition(decl, args));
-                });
-              });
-            });
-        });
+        agentClass.methods = MethodList.deserialize(it.methods);
         agentClassArray.value.push(agentClass);
       } else {
         console.warn(`Could not find shape: ${it.shapeId}`);
@@ -111,12 +82,14 @@ export class SaveTool implements Tool {
         .map((it) => ({
           name: it.name,
           shapeId: it.shape.id,
-          methods: it.methods.map(method => ({
-            [method.name]: method.rules.map(rule => ({
-              conditions: rule.conditions.map(condition => condition.toJson()),
-              actions: rule.actions.map(condition => condition.toJson()),
-            } as RuleEntry)),
-          } as MethodEntry)),
+          methods: fromPairs(it.methods.map(method => ([
+              method.name, method.rules.map(rule => ({
+                conditions: rule.conditions.map(condition => condition.toJson()),
+                actions: rule.actions.map(condition => condition.toJson()),
+              })),
+            ]),
+            ),
+          ),
         } as ClassStoreEntry));
     }
 

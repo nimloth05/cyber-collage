@@ -6,7 +6,8 @@ import * as uuid from "uuid";
 import {fromPairs} from "lodash";
 import {Arguments, InstructionDeclaration} from "@/model/InstructionDeclaration";
 import {InstructionValue} from "@/engine/instruction-value";
-import {InstructionEntry} from "@/engine/tool/SaveModel";
+import {InstructionEntry, MethodListEntry, RuleEntry} from "@/engine/tool/SaveModel";
+import {InstructionDefinitions} from "@/engine/instruction-definitions";
 
 export interface ASTNode {
   explanation: string;
@@ -25,12 +26,6 @@ export class Instruction implements ASTNode {
   constructor(declaration: InstructionDeclaration, args: Arguments) {
     this.declaration = declaration;
     this.args = args;
-    // create parameter objects
-    // Object.assign(this.parameterObjects, this.parameters);
-    // for (const parameter in this.parameterObjects) {
-    //   // console.log(definition.parameters[parameter]);
-    //   this.parameterObjects[parameter] = new declaration.parameters[parameter](parameters[parameter]);
-    // }
   }
 
   getArgumentValue<T extends InstructionValue>(name: string): T | undefined {
@@ -76,6 +71,27 @@ export class Instruction implements ASTNode {
           .keys(this.declaration.parameters)
           .map(k => ([k, JSON.parse(JSON.stringify(this.getArgumentValue(k))) as Record<string, any>])),
       ),
+    };
+  }
+
+  static deserializeInstruction(entry: InstructionEntry): { decl: InstructionDeclaration; args: Arguments } {
+    const decl = InstructionDefinitions.findDefinition(entry.name);
+    if (decl == null) {
+      throw new Error(`No instruction declaration with name ${entry.name} found`);
+    }
+    const args: Arguments = {};
+    Object.keys(decl.parameters)
+      .forEach(argName => {
+        const parameterType = decl.parameters[argName];
+        if (parameterType.deserialize == null) {
+          throw new Error(`Type of ${argName} has not serialize method`);
+        }
+        args[argName] = parameterType.deserialize(entry.arguments[argName]);
+        console.log("deserialized", argName, args[argName]);
+      });
+    return {
+      decl,
+      args,
     };
   }
 }
@@ -179,7 +195,20 @@ export class Rule implements ASTNode {
     this.actions.add(action);
   }
 
-  explanation = "Sind alle Bedingungen wahr führe aktionen aus.";
+  explanation = "Führe alle Aktionen aus, wenn alle Bedingungen erfüllt sind.";
+
+  static deserialize(ruleEntry: RuleEntry): Rule {
+    const result = new Rule();
+    ruleEntry.actions.forEach(entry => {
+      const {decl, args} = Instruction.deserializeInstruction(entry);
+      result.addAction(new Action(decl, args));
+    });
+    ruleEntry.conditions.forEach(conditionEntry => {
+      const {decl, args} = Instruction.deserializeInstruction(conditionEntry);
+      result.addCondition(new Condition(decl, args));
+    });
+    return result;
+  }
 }
 
 export class RuleList extends ASTNodeList<Rule> {
@@ -219,6 +248,17 @@ export class Method implements ASTNode {
   compile(): string {
     return `${this.rules.compile()}`;
   }
+
+  static deserialize(methodName: string, ruleEntries: Array<RuleEntry>): Method {
+    const m = new Method();
+    m.name = methodName;
+    // FIXME: Move to RuleList
+    ruleEntries.forEach(ruleEntry => {
+      const rule = Rule.deserialize(ruleEntry);
+      m.rules.add(rule);
+    });
+    return m;
+  }
 }
 
 export class MethodList extends ASTNodeList<Method> {
@@ -237,6 +277,16 @@ export class MethodList extends ASTNodeList<Method> {
     return methods
       .map(it => it.compile())
       .join("\n");
+  }
+
+  static deserialize(methods: MethodListEntry): MethodList {
+    const result = new MethodList([]);
+    Object.keys(methods).forEach((methodName) => {
+      const ruleEntry = methods[methodName];
+      const m = Method.deserialize(methodName, ruleEntry);
+      result.addMethod(m);
+    });
+    return result;
   }
 }
 

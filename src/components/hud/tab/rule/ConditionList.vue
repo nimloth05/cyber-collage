@@ -29,7 +29,7 @@ import {app} from "@/engine/app";
 import {AddASTNodeCommand} from "@/model/commands/instruction/AddASTNodeCommand";
 import InstructionRenderer from "@/components/hud/tab/rule/InstructionRenderer.vue";
 import {ChangeInstructionValueCommand} from "@/model/commands/instruction/ChangeInstructionValueCommand";
-import {instructionDefinitions} from "@/engine/instruction-definitions";
+import {CONDITION_TYPE, instructionDefinitions} from "@/engine/instruction-definitions";
 import ActionModal from "@/components/hud/tab/rule/ActionModal.vue";
 
 @Options({
@@ -70,7 +70,8 @@ export default class ConditionPanel extends Vue {
   }
 
   _getConditions(): Array<any> {
-    return instructionDefinitions.filter(it => it.class === Condition);
+    console.log("instructioNDefintiions", instructionDefinitions, "filter", instructionDefinitions.filter(it => it.instructionType === CONDITION_TYPE));
+    return instructionDefinitions.filter(it => it.instructionType === CONDITION_TYPE);
   }
 }
 </script>

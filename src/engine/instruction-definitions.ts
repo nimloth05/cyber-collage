@@ -1,17 +1,21 @@
-import {Action, Condition, Instruction} from "@/engine/Instruction";
+import {Instruction} from "@/engine/Instruction";
 import {DirectionValue, FormulaValue, ShapeNameValue} from "@/engine/instruction-value";
-import {Arguments, InstructionDeclaration} from "@/model/InstructionDeclaration";
-import {ArgEntry} from "@/engine/tool/SaveModel";
+import {InstructionDeclaration} from "@/model/InstructionDeclaration";
 
 // ***************************************************
 // I N S T R U C T I O N   D E F I N I T I O N S
 // ***************************************************
 
-export const instructionDefinitions: Array<any> = [
+// Why don't you use class literals directly? Because JS cannot load the code with cyclic deps. properly.
+// If we use Condition instead of "Condition" the class literal would be empty if the Condition class would backref to this class.
+export const ACTION_TYPE = "Action";
+export const CONDITION_TYPE = "Condition";
+
+export const instructionDefinitions: Array<InstructionDeclaration> = [
   // Conditions
   {
     name: "see",
-    class: Condition,
+    instructionType: CONDITION_TYPE,
     parameters: {
       direction: DirectionValue,
       shape: ShapeNameValue,
@@ -25,20 +29,10 @@ export const instructionDefinitions: Array<any> = [
     explanation({shape, direction}: any) {
       return `True if I see to ${direction.explain} an ${shape.explain}.`;
     },
-    deserialize(argEntries: Record<string, ArgEntry>): Arguments {
-      const result: Record<string, any> = {};
-
-      const directionValues = argEntries.direction;
-      result.direction = new DirectionValue(directionValues.row, directionValues.column);
-
-      const shapeValues = argEntries.shape;
-      result.shape = new ShapeNameValue(shapeValues.shapeId);
-      return result;
-    },
   },
   {
     name: "percentChance",
-    class: Condition,
+    instructionType: CONDITION_TYPE,
     parameters: {
       chance: FormulaValue,
     },
@@ -49,17 +43,11 @@ export const instructionDefinitions: Array<any> = [
     // explanation: () => `True with a ${chance.explain} percent chance.`,
     // FIXME: Replace with above code, after its clear what "chance" is
     explanation: () => "True with a <unknown> percent chance.",
-    deserialize(argEntries: Record<string, ArgEntry>): Arguments {
-      const result: Record<string, any> = {};
-      const chanceValue = argEntries.chance;
-      result.chance = new FormulaValue(chanceValue.formula);
-      return result;
-    },
   },
   // Actions
   {
     name: "move",
-    class: Action,
+    instructionType: ACTION_TYPE,
     parameters: {
       direction: DirectionValue,
     },
@@ -72,16 +60,10 @@ export const instructionDefinitions: Array<any> = [
     explanation({direction}: any) {
       return `I move to the ${direction.explain}`;
     },
-    deserialize(argEntries: Record<string, ArgEntry>): Arguments {
-      const result: Record<string, any> = {};
-      const directionValues = argEntries.direction;
-      result.direction = new DirectionValue(directionValues.row, directionValues.column);
-      return result;
-    },
   },
   {
     name: "playSound",
-    class: Action,
+    instructionType: ACTION_TYPE,
     parameters: {
       // sound: SoundValue,
       // FIXME: Replace with SoundValue
@@ -95,12 +77,6 @@ export const instructionDefinitions: Array<any> = [
     icon: "img/instructions/actions/play-sound.svg",
     explanation({direction}: any) {
       return `I move to the ${direction.explain}`;
-    },
-    deserialize(argEntries: Record<string, ArgEntry>): Arguments {
-      const result: Record<string, any> = {};
-      const soundValue = argEntries.direction;
-      result.sound = new FormulaValue(soundValue.sound);
-      return result;
     },
   },
   // {
@@ -135,24 +111,9 @@ export const instructionDefinitions: Array<any> = [
   //     return "I check my rules from top to bottom";
   //   },
   // },
-  // {
-  //   name: "behavior",
-  //   class: Behavior,
-  //   parameters: {
-  //     methods: MethodList,
-  //   },
-  //   code(instruction) {
-  //     const {methods} = instruction.parameterObjects;
-  //     return `${methods.expand()}`;
-  //   },
-  //   icon: "behavior.png",
-  //   explanation(instruction) {
-  //     return "I have a number of methods";
-  //   },
-  // },
   {
     name: "erase",
-    class: Action,
+    instructionType: "Action",
     parameters: {
       direction: DirectionValue,
     },
@@ -161,12 +122,6 @@ export const instructionDefinitions: Array<any> = [
     },
     icon: "img/instructions/actions/delete.svg",
     explanation: () => "Ich lösche ein Agent",
-    deserialize(argEntries: Record<string, ArgEntry>): Arguments {
-      const result: Record<string, any> = {};
-      const directionValues = argEntries.direction;
-      result.direction = new DirectionValue(directionValues.row, directionValues.column);
-      return result;
-    },
   },
 
   // {

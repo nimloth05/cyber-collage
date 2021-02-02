@@ -28,7 +28,7 @@ import {app} from "@/engine/app";
 import {AddASTNodeCommand} from "@/model/commands/instruction/AddASTNodeCommand";
 import InstructionRenderer from "@/components/hud/tab/rule/InstructionRenderer.vue";
 import {ChangeInstructionValueCommand} from "@/model/commands/instruction/ChangeInstructionValueCommand";
-import {instructionDefinitions} from "@/engine/instruction-definitions";
+import {ACTION_TYPE, instructionDefinitions} from "@/engine/instruction-definitions";
 
 @Options({
   name: "ActionList",
@@ -68,7 +68,7 @@ export default class ActionPanel extends Vue {
   }
 
   _getActionDeclarations(): Array<any> {
-    return instructionDefinitions.filter(it => it.class === Action);
+    return instructionDefinitions.filter(it => it.instructionType === ACTION_TYPE);
   }
 }
 </script>

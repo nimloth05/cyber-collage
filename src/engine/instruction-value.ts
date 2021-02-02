@@ -1,17 +1,8 @@
+import {ArgEntry} from "@/engine/tool/SaveModel";
+
 export abstract class InstructionValue {
   get explanation() {
     return "explain your value as string";
-  }
-
-  static deserialize(jsString: string) {
-    // return new this(JSON.parse(jsString));
-    console.error("Temporarily disabled");
-    return {};
-  }
-
-  serialize(): string {
-    console.error("Temporarily disabled");
-    return "";
   }
 }
 
@@ -24,6 +15,10 @@ export class DirectionValue extends InstructionValue {
     this.row = row;
     this.column = column;
   }
+
+  static deserialize(argValue: ArgEntry): DirectionValue {
+    return new DirectionValue(argValue.row, argValue.column);
+  }
 }
 
 export class ShapeNameValue extends InstructionValue {
@@ -32,6 +27,11 @@ export class ShapeNameValue extends InstructionValue {
   constructor(shapeId: string) {
     super();
     this.shapeId = shapeId;
+  }
+
+  static deserialize(argValue: ArgEntry): ShapeNameValue {
+    console.log("argValue", argValue);
+    return new ShapeNameValue(argValue.shapeId);
   }
 }
 
@@ -42,7 +42,12 @@ export class FormulaValue extends InstructionValue {
     super();
     this.formula = formula;
   }
+
+  static deserialize(argValue: ArgEntry): FormulaValue {
+    return new FormulaValue(argValue.formula);
+  }
 }
+
 //
 // export class MethodNameValue extends InstructionValue {
 //
