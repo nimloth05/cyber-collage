@@ -241,4 +241,10 @@ export class AgentMap {
       });
     });
   }
+
+  clearAll() {
+    while (this.agentList.length > 0) {
+      this.agentList[0].erase();
+    }
+  }
 }

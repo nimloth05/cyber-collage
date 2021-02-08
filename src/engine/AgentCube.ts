@@ -10,7 +10,7 @@ import {
   DirectionalLight,
   Object3D,
   Raycaster,
-  Scene,
+  Scene, sRGBEncoding,
   Vector2,
   WebGLRenderer,
 } from "three";
@@ -163,7 +163,14 @@ export class AgentCube {
  */
 
 // renderer
-    this.renderer = new WebGLRenderer({antialias: true, alpha: false, logarithmicDepthBuffer: false});
+    this.renderer = new WebGLRenderer({
+      antialias: true,
+      alpha: false,
+      logarithmicDepthBuffer: false
+    });
+    // this.renderer.outputEncoding = sRGBEncoding;
+    this.renderer.physicallyCorrectLights = false; // we use phong shading )-:
+
     this.renderer.sortObjects = false; // to work with disabled depth testing
     this.renderer.setClearColor(0xff0000, 0);
     this.renderer.autoClear = true;

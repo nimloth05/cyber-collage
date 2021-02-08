@@ -1,5 +1,5 @@
 <template>
-  <div class="btn instruction" @click="e => $emit('click', e)" v-long-press="longPress">
+  <div class="btn instruction" @click="e => $emit('click', e)" v-long-press="longPress" data-long-press-delay="500">
     <img v-if="declaration.icon != null" class="sizeable-ui-element" :src="declaration.icon"
          :alt="declaration.name"/>
     <span v-if="declaration.icon == null">{{ declaration.name }}</span>

@@ -7,6 +7,7 @@
       :key="tool.id"
       :value="tool.id"
       @click="selectTool(tool.id)"
+      :title="tool.name"
     >
       <img class="tool-icon" :src="tool.icon" :alt="tool.name"/>
     </button>

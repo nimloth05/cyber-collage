@@ -3,13 +3,16 @@
 //* **************************************************
 
 import {Dictionary, keyBy} from "lodash";
-import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
 import {LoadingManager, Mesh} from "three";
 import {ProgressListener} from "@/engine/promise-util";
 import {centerAndNormalizeShape, normalizeGeometry} from "@/engine/helperfunctions";
 import {Shape} from "@/engine/Shape";
+import {OBJLoader} from "three/examples/jsm/loaders/OBJLoader";
+import {MTLLoader} from "three/examples/jsm/loaders/MTLLoader";
 
-export const shapeNames = [
+export const SHAPE_DIR = "shapes-mmmm";
+
+export const alexShapes = [
   "Sheep",
   "Rabbit",
   "Pig",
@@ -30,6 +33,27 @@ export const shapeNames = [
   "Cow",
   "Rooster",
   "Bear"];
+
+export const mmmmShapes = [
+  "bear",
+  "cat",
+  "dog2",
+  "dog",
+  "girl",
+  "house4",
+  "house6",
+  "mike",
+  "penguin",
+  "robot",
+  "store",
+  "taxi",
+  "tree2",
+  "tree3",
+  "tree",
+  "truck",
+];
+
+export const shapeNames = mmmmShapes;
 
 export class Gallery {
   shapes: Dictionary<Shape>;
@@ -64,7 +88,7 @@ export class Gallery {
       return "";
     }
     const name = shapeId.charAt(0).toUpperCase() + shapeId.substr(1);
-    return `shapes/${name}/${shapeId}-image.png`;
+    return `${SHAPE_DIR}/${name}/${shapeId}-image.png`;
   }
 
   static async loadShapes(cellSize: number, progressListener: ProgressListener): Promise<Gallery> {
@@ -74,41 +98,51 @@ export class Gallery {
       progressListener(loaded, total, value);
     };
 
-    const loader = new GLTFLoader(loadingManager);
+    const objLoader = new OBJLoader(loadingManager);
+    const mtlLoader = new MTLLoader(loadingManager);
 
-    const shapePath = "shapes/";
-    const shapeFile = "scene.gltf";
+    const shapePath = SHAPE_DIR;
 
     function loadShape(shapeName: string): Promise<Shape> {
       return new Promise((resolve) => {
-        const path = shapePath + shapeName + "/";
-        loader.load(
-          path + shapeFile,
-          gltf => {
-            const shape = gltf.scene;
-            centerAndNormalizeShape(shape);
-            // centerMeshGeometryOnGround(shape);
-            normalizeGeometry(shape, cellSize, shapeName);
+        const path = shapePath + "/" + shapeName + "/";
+        console.log("path", path);
+        console.log("obj path", path + shapeName + ".obj");
 
-            // shadows
-            shape.traverse(child => {
-              if (child instanceof Mesh) {
-                child.castShadow = true;
-                // child.receiveShadow = true;  // good idea but looks crappy
-              }
-            });
+        mtlLoader
+          .setPath(path)
+          .load(shapeName + ".mtl", (materials) => {
+              materials.preload();
+              objLoader.setMaterials(materials);
 
-            const id = shapeName.toLowerCase();
+              objLoader.load(
+                path + shapeName + ".obj",
+                result => {
+                  const shape = result;
+                  centerAndNormalizeShape(shape);
+                  // centerMeshGeometryOnGround(shape);
+                  normalizeGeometry(shape, cellSize, shapeName);
 
-            resolve({
-              mesh: shape,
-              id,
-              iconPath: `${path}${id}-image.png`,
-            });
-          },
-          () => ({}), // xhr => console.log("shape " + name + " " + (xhr.loaded / xhr.total * 100) + '% loaded'),
-          err => console.error(`Cannot load shape: ${shapeName} error: `, err),
-        );
+                  // shadows
+                  shape.traverse(child => {
+                    if (child instanceof Mesh) {
+                      child.castShadow = true;
+                      // child.receiveShadow = true;  // good idea but looks crappy
+                    }
+                  });
+
+                  const id = shapeName.toLowerCase();
+
+                  resolve({
+                    mesh: shape,
+                    id,
+                    iconPath: `${path}preview.png`,
+                  });
+                });
+            },
+            () => ({}), // xhr => console.log("shape " + name + " " + (xhr.loaded / xhr.total * 100) + '% loaded'),
+            err => console.error(`Cannot load shape: ${shapeName} error: `, err),
+          );
       });
     }
 

@@ -33,7 +33,7 @@ export function meshGeometry(mesh: Object3D) {
   mesh.traverse((child: any) => {
     if (child.geometry != null) {
       console.log("-- geometry found at level", depthOfNesting(child, mesh), child);
-      if (geometry === null) {
+      if (geometry == null) {
         geometry = child.geometry;
       } else {
         console.error("multiple geometries found");
@@ -62,14 +62,20 @@ function meshGeometry(mesh) {
 
 export function centerAndNormalizeShape(mesh: Object3D) {
   const geometry = meshGeometry(mesh);
-  const box = geometry.boundingBox;
   geometry.center();
   geometry.computeBoundingBox();
+  const box = geometry.boundingBox;
   // most glTF models appear to oriented like a pig laying down on the x axis, looking towards minus x, and feet -y
-  geometry.rotateX(Math.PI * 1);
-  geometry.rotateY(Math.PI * 0.5);
-  // geometry.translate(0, 0, box.max.z);
-  geometry.translate(0, -box.max.y, 0);
+
+  // Alex model transofmrations
+  // geometry.rotateX(Math.PI * 1);
+  // geometry.rotateY(Math.PI * 0.5);
+  // // geometry.translate(0, 0, box.max.z);
+  // geometry.translate(0, -box.max.y, 0);
+
+  // mmmm transformations
+  geometry.rotateX(Math.PI / 2);
+  geometry.translate(0, 0, box.max.z);
   mesh.updateMatrixWorld();
 }
 
