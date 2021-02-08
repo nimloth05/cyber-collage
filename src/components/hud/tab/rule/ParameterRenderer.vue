@@ -106,8 +106,7 @@ export default class ParameterRenderer extends Vue {
   }
 
   changeShapeValue(): void {
-    if (this.readOnly
-    ) {
+    if (this.readOnly) {
       return;
     }
     (this.$refs.shapeModal as any).show();

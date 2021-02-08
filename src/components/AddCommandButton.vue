@@ -19,31 +19,3 @@ export default class AddCommandButton extends Vue {
   }
 }
 </script>
-
-<style lang="less">
-.add-operation {
-  display: inline-block;
-  padding: 0;
-  border-radius: 50%;
-  border: 1px solid white;
-  text-decoration: none;
-  background: none;
-  color: #ffffff;
-  font-family: sans-serif;
-  font-size: 1rem;
-  cursor: pointer;
-  text-align: center;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-}
-
-.add-operation:hover {
-  color: darkgray;
-  border-color: darkgray;
-}
-
-.rules > div > .add-operation {
-  color: black;
-  border-color: black;
-}
-</style>

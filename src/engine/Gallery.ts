@@ -87,8 +87,7 @@ export class Gallery {
     if (shapeId == null) {
       return "";
     }
-    const name = shapeId.charAt(0).toUpperCase() + shapeId.substr(1);
-    return `${SHAPE_DIR}/${name}/${shapeId}-image.png`;
+    return `${SHAPE_DIR}/${shapeId}/preview.png`;
   }
 
   static async loadShapes(cellSize: number, progressListener: ProgressListener): Promise<Gallery> {
