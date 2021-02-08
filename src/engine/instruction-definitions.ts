@@ -44,6 +44,19 @@ export const instructionDefinitions: Array<InstructionDeclaration> = [
     // FIXME: Replace with above code, after its clear what "chance" is
     explanation: () => "True with a <unknown> percent chance.",
   },
+  {
+    name: "empty",
+    instructionType: CONDITION_TYPE,
+    parameters: {
+      direction: DirectionValue,
+    },
+    code(instruction: Instruction) {
+      const direction = instruction.getArgumentValue<DirectionValue>("direction")!;
+      return `this.empty(${direction.row}, ${direction?.column})`;
+    },
+    icon: "img/instructions/conditions/question.svg",
+    explanation: () => "Prüfe ob in angegebener Richtung kein Agent steht",
+  },
   // Actions
   {
     name: "move",
