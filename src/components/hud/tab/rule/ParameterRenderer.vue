@@ -57,12 +57,20 @@ export default class ParameterRenderer extends Vue {
     const directionValue = this.argument as DirectionValue;
     let newValue: DirectionValue | undefined;
     if (directionValue.row === 1 && directionValue.column === 0) {
+      newValue = new DirectionValue(1, 1);
+    } else if (directionValue.row === 1 && directionValue.column === 1) {
       newValue = new DirectionValue(0, 1);
     } else if (directionValue.row === 0 && directionValue.column === 1) {
+      newValue = new DirectionValue(-1, 1);
+    } else if (directionValue.row === -1 && directionValue.column === 1) {
       newValue = new DirectionValue(-1, 0);
     } else if (directionValue.row === -1 && directionValue.column === 0) {
+      newValue = new DirectionValue(-1, -1);
+    } else if (directionValue.row === -1 && directionValue.column === -1) {
       newValue = new DirectionValue(0, -1);
     } else if (directionValue.row === 0 && directionValue.column === -1) {
+      newValue = new DirectionValue(1, -1);
+    } else if (directionValue.row === 1 && directionValue.column === -1) {
       newValue = new DirectionValue(1, 0);
     }
 
@@ -75,14 +83,22 @@ export default class ParameterRenderer extends Vue {
     const directionValue = this.argument as DirectionValue;
     if (directionValue.row === 1 && directionValue.column === 0) {
       return "arrow-up.svg";
+    } else if (directionValue.row === 1 && directionValue.column === 1) {
+      return "arrow-north-east.svg";
     } else if (directionValue.row === 0 && directionValue.column === 1) {
       return "arrow-right.svg";
+    } else if (directionValue.row === -1 && directionValue.column === 1) {
+      return "arrow-south-east.svg";
     } else if (directionValue.row === -1 && directionValue.column === 0) {
       return "arrow-down.svg";
+    } else if (directionValue.row === -1 && directionValue.column === -1) {
+      return "arrow-south-west.svg";
     } else if (directionValue.row === 0 && directionValue.column === -1) {
       return "arrow-left.svg";
+    } else if (directionValue.row === 1 && directionValue.column === -1) {
+      return "arrow-north-west.svg";
     }
-    return "arrow-down.svg";
+    return "arrow-left.svg";
   }
 
   isShapeValue(): boolean {
@@ -90,7 +106,8 @@ export default class ParameterRenderer extends Vue {
   }
 
   changeShapeValue(): void {
-    if (this.readOnly) {
+    if (this.readOnly
+    ) {
       return;
     }
     (this.$refs.shapeModal as any).show();

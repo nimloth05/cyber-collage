@@ -60,8 +60,6 @@ export async function init() {
     const uiState = ref(app.uiState);
     uiState.value.undoRedo.canUndo = app.undoManager.canUndo(WORLD_CONTEXT_ID);
     uiState.value.undoRedo.canRedo = app.undoManager.canRedo(WORLD_CONTEXT_ID);
-
-    console.log("state", uiState.value);
   });
   app.repository.compile();
 
