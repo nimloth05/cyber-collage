@@ -6,6 +6,8 @@ import {Gallery} from "@/engine/Gallery.ts";
 import {registerListeners} from "@/engine/navigationevents";
 import {AppContext} from "@/engine/AppContext";
 import {SaveTool} from "@/engine/tool/SaveTool";
+import {WORLD_CONTEXT_ID} from "@/model/Commands";
+import {ref} from "vue";
 
 // ***************************************************
 // T E S T I N G
@@ -54,6 +56,12 @@ export async function init() {
 
   app.undoManager.addListener(() => {
     app.repository.compile();
+
+    const uiState = ref(app.uiState);
+    uiState.value.undoRedo.canUndo = app.undoManager.canUndo(WORLD_CONTEXT_ID);
+    uiState.value.undoRedo.canRedo = app.undoManager.canRedo(WORLD_CONTEXT_ID);
+
+    console.log("state", uiState.value);
   });
   app.repository.compile();
 

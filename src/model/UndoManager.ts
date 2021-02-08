@@ -5,6 +5,9 @@ import {CompositeCommand} from "@/model/commands/CompositeCommand";
 
 export type UndoListener = () => void
 
+/**
+ * Coalesce threshold for commands. If commands are executed in this threshold they are merge together.
+ */
 const MERGE_THRESHOLD = 150; // in millis
 
 export class UndoManager {
@@ -54,11 +57,13 @@ export class UndoManager {
   }
 
   canUndo(contextId: UndoContextId): boolean {
-    return this.undoStack[contextId].length > 0;
+    const stack = this.undoStack[contextId];
+    return stack != null && stack.length > 0;
   }
 
   canRedo(contextId: UndoContextId): boolean {
-    return this.redoStack[contextId].length > 0;
+    const stack = this.redoStack[contextId];
+    return stack != null && stack.length > 0;
   }
 
   addListener(undoListener: UndoListener): Disposable {

@@ -13,6 +13,7 @@ import {DesignToolbar} from "@/components/hud/tab/design/DesignToolbar";
 export class UiState {
   selectedAgentClass?: AgentClass;
   selectedTool: Tool = new PenTool();
+  undoRedo: { canUndo: boolean; canRedo: boolean } = {canUndo: false, canRedo: false};
 }
 
 /**
@@ -22,9 +23,9 @@ export class AppContext {
   name = "Cyber Collage";
   agentCube = new AgentCube(20, 20);
   gallery?: Gallery;
+  uiState = new UiState();
   undoManager = new UndoManager();
   repository = new AgentRepository();
-  uiState = new UiState();
   toolbar = new DesignToolbar();
   gameLoop = new GameLoop();
 }
