@@ -4,6 +4,7 @@ import {Agent} from "@/engine/Agent";
 import {app} from "@/engine/app";
 import {GridVector} from "@/model/util/GridVector";
 import {TeleportCommand} from "@/model/commands/TeleportCommand";
+import {ref} from "vue";
 
 export class ArrowTool extends AbstractAgentTool {
   id = "arrow";
@@ -32,6 +33,8 @@ export class ArrowTool extends AbstractAgentTool {
       if (hitResult.agent != null) {
         hitResult.agent.select();
         app.agentCube.agentSelected = hitResult.agent;
+        const uiState = ref(app.uiState);
+        uiState.value.selectedAgentClass = hitResult.agent.agentClass;
       }
     }
     // start drag
