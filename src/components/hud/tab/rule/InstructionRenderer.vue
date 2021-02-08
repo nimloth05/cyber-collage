@@ -1,5 +1,5 @@
 <template>
-  <div class="btn instruction" @click="e => $emit('click', e)">
+  <div class="btn instruction" @click="e => $emit('click', e)" v-long-press="longPress">
     <img v-if="declaration.icon != null" class="sizeable-ui-element" :src="declaration.icon"
          :alt="declaration.name"/>
     <span v-if="declaration.icon == null">{{ declaration.name }}</span>
@@ -10,9 +10,18 @@
         :param="paramType"
         :argument="getArgumentValue(name, paramType)"
         :id="getEditorId(name)"
-        :read-only="readOnly"
+        :read-only="isReadOnly()"
         @arg-changed="v => setArgumentValue(name, v)"
       />
+    </div>
+    <div v-if="toolBarVisible" class="instruction-toolbar">
+      <button
+        v-for="action in finalToolbarActions"
+        :key="action.label"
+        class="btn sizeable-ui-element"
+        @click="() => {action.handler(); closeToolbar()}">
+        <img class="tool-icon" :src="action.icon" :alt="action.label"/>
+      </button>
     </div>
   </div>
 </template>
@@ -23,14 +32,16 @@ import {Options, Vue} from "vue-class-component";
 import ParameterRenderer from "./ParameterRenderer.vue";
 import {InstructionDeclaration, ParameterType} from "@/model/InstructionDeclaration";
 import {InstructionValue} from "@/engine/instruction-value";
+import {InstructionToolbarAction} from "@/components/hud/tab/rule/InstructionToolbarUtil";
 
 @Options({
   name: "InstructionRenderer",
   props: {
+    id: String,
     declaration: /* InstructionDeclaration */ Object,
     argumentResolver: Function,
     readOnly: Boolean,
-    id: String,
+    toolbarActions: Array,
   },
   emits: [
     "click",
@@ -41,13 +52,30 @@ import {InstructionValue} from "@/engine/instruction-value";
   },
 })
 export default class InstructionRenderer extends Vue {
+  id!: string;
   declaration!: InstructionDeclaration;
   argumentResolver!: (name: string, type: ParameterType) => InstructionValue;
   readOnly = true;
-  id!: string;
+  toolBarVisible = false;
+  toolbarActions!: Array<InstructionToolbarAction>;
 
   get parameters(): Array<[string, ParameterType]> {
     return Object.entries(this.declaration.parameters);
+  }
+
+  get finalToolbarActions(): Array<InstructionToolbarAction> {
+    if (this.toolbarActions == null || this.toolbarActions.length === 0) {
+      console.log("no actions registered", this.toolbarActions);
+      return [];
+    }
+    return [...this.toolbarActions, {
+      label: "Schliessen",
+      icon: "img/aux/close.svg",
+      handler: () => {
+        console.log("this", this);
+        this.toolBarVisible = false;
+      },
+    }];
   }
 
   getArgumentValue(name: string, type: ParameterType): InstructionValue {
@@ -63,6 +91,18 @@ export default class InstructionRenderer extends Vue {
 
   getEditorId(name: string): string {
     return `${this.id}-${name}-param-renderer`;
+  }
+
+  isReadOnly() {
+    return this.readOnly || this.toolBarVisible;
+  }
+
+  longPress() {
+    this.toolBarVisible = true;
+  }
+
+  closeToolbar() {
+    this.toolBarVisible = false;
   }
 }
 </script>

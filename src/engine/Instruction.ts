@@ -29,7 +29,6 @@ export class Instruction implements ASTNode {
   }
 
   getArgumentValue<T extends InstructionValue>(name: string): T | undefined {
-    console.log("instruction args", this.args);
     return this.args[name] as T;
   }
 

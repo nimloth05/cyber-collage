@@ -2,7 +2,7 @@
   <div class="aux-bar">
     <button @click="fullScreen" class="btn sizeable-ui-element hud-toolbar-button">
       <img class="tool-icon" v-if="!isFullscreen" src="img/aux/fullscreen.svg" alt="Vollbildschirm"/>
-      <img class="tool-icon" v-if="isFullscreen" src="img/aux/close.svg" alt="Vollbildschirm"/>
+      <img class="tool-icon" v-if="isFullscreen" src="img/aux/close.svg" alt="Vollbildschirm Beenden"/>
     </button>
   </div>
 </template>

@@ -7,6 +7,7 @@
     :argument-resolver="_argumentResolver(instruction)"
     @arg-changed="e => _updateArgument(instruction, e)"
     :read-only="false"
+    :toolbarActions="getToolbarActions(instruction)"
   >
     <span class="boolean-operator" v-if="index !== conditions.length - 1"> and </span>
   </instruction-renderer>
@@ -31,6 +32,7 @@ import InstructionRenderer from "@/components/hud/tab/rule/InstructionRenderer.v
 import {ChangeInstructionValueCommand} from "@/model/commands/instruction/ChangeInstructionValueCommand";
 import {CONDITION_TYPE, instructionDefinitions} from "@/engine/instruction-definitions";
 import ActionModal from "@/components/hud/tab/rule/ActionModal.vue";
+import {getDefaultActions, InstructionToolbarAction} from "@/components/hud/tab/rule/InstructionToolbarUtil";
 
 @Options({
   name: "ConditionList",
@@ -72,6 +74,10 @@ export default class ConditionPanel extends Vue {
   _getConditions(): Array<any> {
     console.log("instructioNDefintiions", instructionDefinitions, "filter", instructionDefinitions.filter(it => it.instructionType === CONDITION_TYPE));
     return instructionDefinitions.filter(it => it.instructionType === CONDITION_TYPE);
+  }
+
+  getToolbarActions(instruction: Condition): Array<InstructionToolbarAction> {
+    return getDefaultActions(this.conditions, instruction);
   }
 }
 </script>
