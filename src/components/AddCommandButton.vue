@@ -1,5 +1,7 @@
 <template>
-  <button class="sizeable-ui-element add-operation" @click="click">+</button>
+  <button class="btn instruction" @click="click">
+    <img class="sizeable-ui-element" src="img/plus.svg" alt="Plus"/>
+  </button>
   <!--  <button class="add-operation">&#8853;</button>-->
 </template>
 

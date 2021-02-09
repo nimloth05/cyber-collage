@@ -3,7 +3,7 @@
     @click="plusClicked"
     class="shape-element-button sizeable-ui-element"
   >
-    +
+    <img class="tool-icon" src="img/plus.svg" alt="Plus"/>
   </button>
 </template>
 
