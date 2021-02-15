@@ -30,6 +30,7 @@ export const instructionDefinitions: Array<InstructionDeclaration> = [
       return `True if I see to ${direction.explain} an ${shape.explain}.`;
     },
   },
+
   {
     name: "percentChance",
     instructionType: CONDITION_TYPE,
@@ -65,6 +66,7 @@ export const instructionDefinitions: Array<InstructionDeclaration> = [
       direction: DirectionValue,
     },
     code(instruction: Instruction) {
+      console.log("here");
       const {direction} = instruction.args;
       const asDirectionValue = direction as DirectionValue;
       return `this.move(${asDirectionValue.row}, ${asDirectionValue.column})`;
@@ -72,6 +74,23 @@ export const instructionDefinitions: Array<InstructionDeclaration> = [
     icon: "img/instructions/actions/move.svg",
     explanation({direction}: any) {
       return `I move to the ${direction.explain}`;
+    },
+  },
+  {
+    name: "createNew",
+    instructionType: ACTION_TYPE,
+    parameters: {
+      direction: DirectionValue,
+        shape: ShapeNameValue,
+    },
+    code(instruction: Instruction) {
+      const direction = instruction.getArgumentValue<DirectionValue>("direction")!;
+      const shape = instruction.getArgumentValue<ShapeNameValue>("shape")!;
+      return `this.createNew(${shape.shapeId}', ${direction.row}, ${direction.column})`;
+    },
+    icon: "img/instructions/actions/new.svg",
+    explanation({direction}: any) {
+      return `I create a new Agent in ${direction.explain}`;
     },
   },
   {
