@@ -1,6 +1,6 @@
 import {Instruction} from "@/engine/Instruction";
 import {DirectionValue, FormulaValue, ShapeNameValue} from "@/engine/instruction-value";
-import {InstructionDeclaration} from "@/model/InstructionDeclaration";
+import {InstructionDeclaration, ParameterType} from "@/model/InstructionDeclaration";
 
 // ***************************************************
 // I N S T R U C T I O N   D E F I N I T I O N S
@@ -10,6 +10,13 @@ import {InstructionDeclaration} from "@/model/InstructionDeclaration";
 // If we use Condition instead of "Condition" the class literal would be empty if the Condition class would backref to this class.
 export const ACTION_TYPE = "Action";
 export const CONDITION_TYPE = "Condition";
+
+export function getDefaultValue(name: string, type: ParameterType) {
+  if (type.name === ShapeNameValue.name) {
+    return new ShapeNameValue("cat");
+  }
+  return new DirectionValue(0, 1);
+}
 
 export const instructionDefinitions: Array<InstructionDeclaration> = [
   // Conditions
@@ -29,8 +36,8 @@ export const instructionDefinitions: Array<InstructionDeclaration> = [
     explanation({shape, direction}: any) {
       return `True if I see to ${direction.explain} an ${shape.explain}.`;
     },
+    defaultArguments: getDefaultValue,
   },
-
   {
     name: "percentChance",
     instructionType: CONDITION_TYPE,
@@ -44,6 +51,7 @@ export const instructionDefinitions: Array<InstructionDeclaration> = [
     // explanation: () => `True with a ${chance.explain} percent chance.`,
     // FIXME: Replace with above code, after its clear what "chance" is
     explanation: () => "True with a <unknown> percent chance.",
+    defaultArguments: getDefaultValue,
   },
   {
     name: "empty",
@@ -57,6 +65,7 @@ export const instructionDefinitions: Array<InstructionDeclaration> = [
     },
     icon: "img/instructions/conditions/question.svg",
     explanation: () => "Prüfe ob in angegebener Richtung kein Agent steht",
+    defaultArguments: getDefaultValue,
   },
   // Actions
   {
@@ -75,23 +84,25 @@ export const instructionDefinitions: Array<InstructionDeclaration> = [
     explanation({direction}: any) {
       return `I move to the ${direction.explain}`;
     },
+    defaultArguments: getDefaultValue,
   },
   {
     name: "createNew",
     instructionType: ACTION_TYPE,
     parameters: {
       direction: DirectionValue,
-        shape: ShapeNameValue,
+      shape: ShapeNameValue,
     },
     code(instruction: Instruction) {
       const direction = instruction.getArgumentValue<DirectionValue>("direction")!;
       const shape = instruction.getArgumentValue<ShapeNameValue>("shape")!;
-      return `this.createNew(${shape.shapeId}', ${direction.row}, ${direction.column})`;
+      return `this.createNew('${shape.shapeId}', ${direction.row}, ${direction.column})`;
     },
     icon: "img/instructions/actions/new.svg",
     explanation({direction}: any) {
       return `I create a new Agent in ${direction.explain}`;
     },
+    defaultArguments: getDefaultValue,
   },
   {
     name: "playSound",
@@ -110,6 +121,7 @@ export const instructionDefinitions: Array<InstructionDeclaration> = [
     explanation({direction}: any) {
       return `I move to the ${direction.explain}`;
     },
+    defaultArguments: getDefaultValue,
   },
   // {
   //   name: "rule",
@@ -154,6 +166,7 @@ export const instructionDefinitions: Array<InstructionDeclaration> = [
     },
     icon: "img/instructions/actions/delete.svg",
     explanation: () => "Ich lösche ein Agent",
+    defaultArguments: getDefaultValue,
   },
 
   // {

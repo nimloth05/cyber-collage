@@ -10,7 +10,7 @@
     :toolbarActions="getToolbarActions(action)"
   />
   <add-command-button @click="addNewAction"/>
-  <action-modal
+  <instruction-declarations-modal
     :id="actions.id"
     ref="actionModal"
     @selected="_actionSelected"
@@ -23,8 +23,8 @@ import {Options, Vue} from "vue-class-component";
 import AddCommandButton from "@/components/AddCommandButton.vue";
 import {Action, ActionList, Instruction} from "@/engine/Instruction";
 import {InstructionDeclaration} from "@/model/InstructionDeclaration";
-import ActionModal from "@/components/hud/tab/rule/ActionModal.vue";
-import {DirectionValue, InstructionValue} from "@/engine/instruction-value";
+import InstructionDeclarationsModal from "@/components/hud/tab/rule/InstructionDeclarationsModal.vue";
+import {InstructionValue} from "@/engine/instruction-value";
 import {app} from "@/engine/app";
 import {AddASTNodeCommand} from "@/model/commands/instruction/AddASTNodeCommand";
 import InstructionRenderer from "@/components/hud/tab/rule/InstructionRenderer.vue";
@@ -39,7 +39,7 @@ import {getDefaultActions, InstructionToolbarAction} from "@/components/hud/tab/
   },
   components: {
     AddCommandButton,
-    ActionModal,
+    InstructionDeclarationsModal,
     InstructionRenderer,
   },
 })
@@ -51,10 +51,7 @@ export default class ActionPanel extends Vue {
   }
 
   _actionSelected(decl: InstructionDeclaration): void {
-    const action = new Action(decl, {
-      // FIXME: Remove default values
-      direction: new DirectionValue(0, 1),
-    });
+    const action = Instruction.createNewInstruction(Action, decl);
     app.undoManager.execute(new AddASTNodeCommand<Action>(this.actions, action));
   }
 

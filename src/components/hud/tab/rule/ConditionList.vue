@@ -12,7 +12,7 @@
     <span class="boolean-operator" v-if="index !== conditions.length - 1"> and </span>
   </instruction-renderer>
   <add-command-button @click="addNewCondition"/>
-  <action-modal
+  <instruction-declarations-modal
     :id="conditions.id"
     ref="conditionModal"
     @selected="_conditionSelected"
@@ -25,20 +25,20 @@ import {Options, Vue} from "vue-class-component";
 import AddCommandButton from "../../../AddCommandButton.vue";
 import {Action, AndConditionList, Condition, Instruction} from "@/engine/Instruction";
 import {InstructionDeclaration} from "@/model/InstructionDeclaration";
-import {DirectionValue, InstructionValue, ShapeNameValue} from "@/engine/instruction-value";
+import {InstructionValue} from "@/engine/instruction-value";
 import {app} from "@/engine/app";
 import {AddASTNodeCommand} from "@/model/commands/instruction/AddASTNodeCommand";
 import InstructionRenderer from "@/components/hud/tab/rule/InstructionRenderer.vue";
 import {ChangeInstructionValueCommand} from "@/model/commands/instruction/ChangeInstructionValueCommand";
 import {CONDITION_TYPE, instructionDefinitions} from "@/engine/instruction-definitions";
-import ActionModal from "@/components/hud/tab/rule/ActionModal.vue";
+import InstructionDeclarationsModal from "@/components/hud/tab/rule/InstructionDeclarationsModal.vue";
 import {getDefaultActions, InstructionToolbarAction} from "@/components/hud/tab/rule/InstructionToolbarUtil";
 
 @Options({
   name: "ConditionList",
   components: {
     AddCommandButton,
-    ActionModal,
+    InstructionDeclarationsModal,
     InstructionRenderer,
   },
   props: {
@@ -49,14 +49,11 @@ export default class ConditionPanel extends Vue {
   conditions!: AndConditionList;
 
   addNewCondition(): void {
-    (this.$refs.conditionModal as ActionModal).show();
+    (this.$refs.conditionModal as InstructionDeclarationsModal).show();
   }
 
   _conditionSelected(conditionDecl: InstructionDeclaration): void {
-    const condition = new Condition(conditionDecl, {
-      shape: new ShapeNameValue("cat"),
-      direction: new DirectionValue(0, 1),
-    });
+    const condition = Instruction.createNewInstruction(Condition, conditionDecl);
     app.undoManager.execute(new AddASTNodeCommand<Condition>(this.conditions, condition));
   }
 
