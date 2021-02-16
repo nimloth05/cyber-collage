@@ -283,16 +283,13 @@ export class Agent {
   }
 
    createNew(shapeId: string, deltaRow: number, deltaColumn: number, deltaLayer = 0) {
-     const row = this.row + deltaRow;
-     const column = this.column + deltaColumn;
      if (this.app.gallery == null) {
        throw new Error("Gallery not ready, system cannot be used");
      }
-     const newShape = this.app.gallery.createShapeForAgent(shapeId);
-     const newAgentClass = new AgentClass(newShape, "bla");
-     const newAgent = new Agent("bla", newAgentClass);
+     const row = this.row + deltaRow;
+     const column = this.column + deltaColumn;
+     const newAgent = new Agent(shapeId, this.agentClass);
      app.agentCube.pushAgent(newAgent, row, column);
-    // console.log(app.AgentCube.pushAgent(new Agent(shapeName, AgentClass)));
    }
 
   getPosition(): GridVector {

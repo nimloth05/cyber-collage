@@ -86,7 +86,7 @@ export const instructionDefinitions: Array<InstructionDeclaration> = [
     code(instruction: Instruction) {
       const direction = instruction.getArgumentValue<DirectionValue>("direction")!;
       const shape = instruction.getArgumentValue<ShapeNameValue>("shape")!;
-      return `this.createNew(${shape.shapeId}', ${direction.row}, ${direction.column})`;
+      return `this.createNew('${shape.shapeId}', ${direction.row}, ${direction.column})`;
     },
     icon: "img/instructions/actions/new.svg",
     explanation({direction}: any) {
