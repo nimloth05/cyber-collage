@@ -65,7 +65,7 @@ export default class InstructionRenderer extends Vue {
 
   get finalToolbarActions(): Array<InstructionToolbarAction> {
     if (this.toolbarActions == null || this.toolbarActions.length === 0) {
-      console.log("no actions registered", this.toolbarActions);
+      console.log("no actions registered.");
       return [];
     }
     return [...this.toolbarActions, {

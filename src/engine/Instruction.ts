@@ -3,7 +3,7 @@
 //* **************************************************
 
 import * as uuid from "uuid";
-import {fromPairs} from "lodash";
+import {fromPairs, mapValues} from "lodash";
 import {Arguments, InstructionDeclaration} from "@/model/InstructionDeclaration";
 import {InstructionValue} from "@/engine/instruction-value";
 import {InstructionEntry, MethodListEntry, RuleEntry} from "@/engine/tool/SaveModel";
@@ -92,6 +92,11 @@ export class Instruction implements ASTNode {
       decl,
       args,
     };
+  }
+
+  static createNewInstruction<T extends Instruction>(Ctor: { new(decl: InstructionDeclaration, args: Arguments): T }, decl: InstructionDeclaration): T {
+    const args: Arguments = mapValues(decl.parameters, (value, key) => decl.defaultArguments(key, decl.parameters[key]));
+    return new Ctor(decl, args);
   }
 }
 

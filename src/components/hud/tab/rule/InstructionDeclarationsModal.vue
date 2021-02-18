@@ -8,7 +8,7 @@
             :key="declaration.name"
             @click="_actionSelected(declaration)"
             :declaration="declaration"
-            :argument-resolver="_getDefaultValue"
+            :argument-resolver="declaration.defaultArguments"
             :read-only="true"
             :id="declaration.name"
           />
@@ -25,10 +25,9 @@ import {Options, Vue} from "vue-class-component";
 import {InstructionDeclaration} from "@/model/InstructionDeclaration";
 import {Modal} from "bootstrap";
 import InstructionRenderer from "@/components/hud/tab/rule/InstructionRenderer.vue";
-import {DirectionValue, InstructionValue, ShapeNameValue} from "@/engine/instruction-value";
 
 @Options({
-  name: "ActionModal",
+  name: "InstructionDeclarationsModal",
   components: {
     InstructionRenderer,
   },
@@ -39,9 +38,8 @@ import {DirectionValue, InstructionValue, ShapeNameValue} from "@/engine/instruc
     "selected",
   ],
 })
-export default class ActionModal extends Vue {
-  // FIXME: InstructionDecl funktioniert nicht
-  declarations!: Array<any>;
+export default class InstructionDeclarationsModal extends Vue {
+  declarations!: Array<InstructionDeclaration>;
 
   private _instance?: Modal;
 
@@ -60,14 +58,6 @@ export default class ActionModal extends Vue {
   _actionSelected(conditionDecl: InstructionDeclaration) {
     this.$emit("selected", conditionDecl);
     this.hide();
-  }
-
-  _getDefaultValue(name: string, type: Function): InstructionValue {
-    console.log("defaultValue", type);
-    if (type.name === ShapeNameValue.name) {
-      return new ShapeNameValue("cat");
-    }
-    return new DirectionValue(0, 1);
   }
 }
 </script>

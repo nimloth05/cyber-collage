@@ -122,7 +122,6 @@ export default class ParameterRenderer extends Vue {
   }
 
   shapeSelected(shapeId: string) {
-    console.log("shapeId", shapeId);
     this.$emit("arg-changed", new ShapeNameValue(shapeId));
   }
 }
