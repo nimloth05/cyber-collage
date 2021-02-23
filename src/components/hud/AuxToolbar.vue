@@ -4,11 +4,15 @@
       <img class="tool-icon" v-if="!isFullscreen" src="img/aux/fullscreen.svg" alt="Vollbildschirm"/>
       <img class="tool-icon" v-if="isFullscreen" src="img/aux/close.svg" alt="Vollbildschirm Beenden"/>
     </button>
+    <button @click="openProjectStringPrompt">
+      Project
+    </button>
   </div>
 </template>
 
 <script lang="ts">
 import {Options, Vue} from "vue-class-component";
+import {SaveTool} from "@/engine/tool/SaveTool";
 
 @Options({
   name: "AuxToolbar",
@@ -24,6 +28,15 @@ export default class AuxToolbar extends Vue {
       AuxToolbar.exitFullscreen();
     }
     this.isFullscreen = !this.isFullscreen;
+  }
+
+  openProjectStringPrompt() {
+    const value = window.prompt("Local storage string:  Open Dev Tools, locate local storage, search for 'project', copy value.", "");
+    if (value == null || value === "") {
+      return;
+    }
+
+    SaveTool.storeString(value);
   }
 
   private static requestFullscreen(): void {

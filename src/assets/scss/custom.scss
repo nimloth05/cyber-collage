@@ -264,3 +264,21 @@ $top-bar-index: 10;
   margin-right: 0;
 }
 
+.backdrop {
+  position: fixed;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 60;
+}
+
+.inline-editor {
+  position: absolute;
+  background-color: #2c3e50;
+  z-index: 70;
+  width: max-content;
+  padding: 0.5em;
+  border-radius: 0.25rem;
+}

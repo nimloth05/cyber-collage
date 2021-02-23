@@ -114,4 +114,9 @@ export class SaveTool implements Tool {
     };
     localStorage.setItem("project", JSON.stringify(obj));
   }
+
+  static storeString(value: string) {
+    localStorage.setItem("project", value);
+    window.location.reload();
+  }
 }

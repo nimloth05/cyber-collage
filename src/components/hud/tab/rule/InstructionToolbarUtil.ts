@@ -2,6 +2,12 @@ import {ASTNodeList, Instruction} from "@/engine/Instruction";
 import {app} from "@/engine/app";
 import {RemoveASTNodeCommand} from "@/model/commands/instruction/RemoveASTNodeCommand";
 
+export interface IconLayoutOptions {
+  rowCount: number;
+  columnCount: number;
+  icons: Array<string>;
+}
+
 export type InstructionToolbarAction = {
   label: string;
   icon: string;

@@ -5,9 +5,10 @@ import {
   BufferGeometry,
   Group,
   LineBasicMaterial,
-  MeshPhongMaterial,
+  MeshBasicMaterial,
   PlaneGeometry,
-  RepeatWrapping, Scene,
+  RepeatWrapping,
+  Scene,
   TextureLoader,
   Vector3,
 } from "three";
@@ -68,8 +69,7 @@ export class AgentMap {
         texture.repeat.set(Math.ceil(this.columns / 2), Math.ceil(this.rows / 2));
         this.foundationSurface = new HelperMeshes(
           new PlaneGeometry(this.columns * this.cellSize, this.rows * this.cellSize),
-          // FIXME: Try MeshLambert for better lights
-          new MeshPhongMaterial({map: texture}),
+          new MeshBasicMaterial({map: texture}),
         );
         this.foundationSurface.position.x = 0.5 * this.columns * this.cellSize;
         this.foundationSurface.position.y = 0.5 * this.rows * this.cellSize;

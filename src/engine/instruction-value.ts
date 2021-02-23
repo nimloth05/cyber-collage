@@ -6,6 +6,34 @@ export abstract class InstructionValue {
   }
 }
 
+// interface IconConfiguration {
+//   iconPath: string[];
+//   gridSize: [number, number];
+// }
+//
+// interface IconEditor {
+//   handleIconClicked(icon: string): void;
+//
+//   iconConfiguration: IconConfiguration;
+// }
+//
+// export class CustomValue extends InstructionValue implements IconEditor {
+//   get iconConfiguration(): IconConfiguration {
+//     return {
+//       iconPath: ["A.svg", "B.svg", "C.svg", "D.svg"],
+//       gridSize: [2, 2],
+//     };
+//   }
+//
+//   handleIconClicked(icon: string): void {
+//     if (icon === "A.svg") {
+//       this.doAThing();
+//     } else if (icon === "B.svg") {
+//       this.doBThing();
+//     }
+//   }
+// }
+
 export class DirectionValue extends InstructionValue {
   row: number;
   column: number;

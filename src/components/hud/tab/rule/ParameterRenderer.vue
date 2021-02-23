@@ -1,20 +1,13 @@
 <template>
-  <img
-    class="sizeable-ui-element"
-    v-if="isDirectionValue()" @click="changeDirectionValue"
-    :src="'img/instructions/parameters/' + getDirectionValueImage()" :alt="getDirectionValueImage()"/>
-  <img
-    class="sizeable-ui-element"
-    v-if="isShapeValue()" @click="changeShapeValue"
-    :src="getShapePath()" :alt="getShapeId()"/>
-  <shape-modal v-if="isShapeValue()" :id="id + '-shape-modal'" ref="shapeModal" @shape-selected="shapeSelected"/>
+  <component :is="valueEditor" @arg-changed="onArgChanged" v-bind="currentProperties"/>
 </template>
 
 <script lang="ts">
 import {Options, Vue} from "vue-class-component";
 import {DirectionValue, InstructionValue, ShapeNameValue} from "@/engine/instruction-value";
-import ShapeModal from "@/components/util/ShapeModal.vue";
-import {Gallery} from "@/engine/Gallery";
+import DirectionValueEditor from "@/components/hud/tab/rule/value-editor/DirectionValueEditor.vue";
+import ShapeEditor from "@/components/hud/tab/rule/value-editor/ShapeEditor.vue";
+import FormulaEditor from "@/components/hud/tab/rule/value-editor/FormulaEditor.vue";
 
 @Options({
   name: "ParameterRenderer",
@@ -28,13 +21,40 @@ import {Gallery} from "@/engine/Gallery";
     "arg-changed",
   ],
   components: {
-    ShapeModal,
+    DirectionValueEditor,
+    ShapeEditor,
+    FormulaEditor,
   },
 })
 export default class ParameterRenderer extends Vue {
   param!: Function;
   argument!: InstructionValue;
   readOnly!: boolean;
+  id!: string;
+
+  // FIXME: Use table for paramType -> Editor matching
+
+  get valueEditor(): string {
+    if (this.isDirectionValue()) {
+      return "DirectionValueEditor";
+    }
+    if (this.isShapeValue()) {
+      return "ShapeEditor";
+    }
+    if (this.paramTypeName === "FormulaValue") {
+      return "FormulaEditor";
+    }
+    console.warn("Could not find matching editor: ", this.paramTypeName);
+    return "";
+  }
+
+  get currentProperties(): object {
+    return {
+      readOnly: this.readOnly,
+      argument: this.argument,
+      id: this.id,
+    };
+  }
 
   get paramTypeName(): string {
     if (typeof this.param !== "function") {
@@ -49,80 +69,13 @@ export default class ParameterRenderer extends Vue {
     return this.paramTypeName === DirectionValue.name;
   }
 
-  changeDirectionValue() {
-    if (this.readOnly) {
-      return;
-    }
-
-    const directionValue = this.argument as DirectionValue;
-    let newValue: DirectionValue | undefined;
-    if (directionValue.row === 1 && directionValue.column === 0) {
-      newValue = new DirectionValue(1, 1);
-    } else if (directionValue.row === 1 && directionValue.column === 1) {
-      newValue = new DirectionValue(0, 1);
-    } else if (directionValue.row === 0 && directionValue.column === 1) {
-      newValue = new DirectionValue(-1, 1);
-    } else if (directionValue.row === -1 && directionValue.column === 1) {
-      newValue = new DirectionValue(-1, 0);
-    } else if (directionValue.row === -1 && directionValue.column === 0) {
-      newValue = new DirectionValue(-1, -1);
-    } else if (directionValue.row === -1 && directionValue.column === -1) {
-      newValue = new DirectionValue(0, -1);
-    } else if (directionValue.row === 0 && directionValue.column === -1) {
-      newValue = new DirectionValue(1, -1);
-    } else if (directionValue.row === 1 && directionValue.column === -1) {
-      newValue = new DirectionValue(1, 0);
-    }
-
-    if (newValue !== undefined) {
-      this.$emit("arg-changed", newValue);
-    }
-  }
-
-  getDirectionValueImage(): string {
-    const directionValue = this.argument as DirectionValue;
-    if (directionValue.row === 1 && directionValue.column === 0) {
-      return "arrow-up.svg";
-    } else if (directionValue.row === 1 && directionValue.column === 1) {
-      return "arrow-north-east.svg";
-    } else if (directionValue.row === 0 && directionValue.column === 1) {
-      return "arrow-right.svg";
-    } else if (directionValue.row === -1 && directionValue.column === 1) {
-      return "arrow-south-east.svg";
-    } else if (directionValue.row === -1 && directionValue.column === 0) {
-      return "arrow-down.svg";
-    } else if (directionValue.row === -1 && directionValue.column === -1) {
-      return "arrow-south-west.svg";
-    } else if (directionValue.row === 0 && directionValue.column === -1) {
-      return "arrow-left.svg";
-    } else if (directionValue.row === 1 && directionValue.column === -1) {
-      return "arrow-north-west.svg";
-    }
-    return "arrow-left.svg";
-  }
-
   isShapeValue(): boolean {
     return this.paramTypeName === ShapeNameValue.name;
   }
 
-  changeShapeValue(): void {
-    if (this.readOnly) {
-      return;
-    }
-    (this.$refs.shapeModal as any).show();
-  }
-
-  getShapePath(): string {
-    return Gallery.getShapePath(this.getShapeId());
-  }
-
-  getShapeId(): string {
-    const value = this.argument as ShapeNameValue;
-    return value.shapeId;
-  }
-
-  shapeSelected(shapeId: string) {
-    this.$emit("arg-changed", new ShapeNameValue(shapeId));
+  onArgChanged(event: any) {
+    console.log("arg changed on proxy");
+    this.$emit("arg-changed", event);
   }
 }
 </script>
