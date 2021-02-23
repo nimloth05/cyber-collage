@@ -17,8 +17,8 @@ export class UndoManager {
 
   execute(command: Command): void {
     const undoStack = UndoManager.getStack(command.contextId, this.undoStack);
-
     const undoCommand = command.execute();
+    console.log("execute, command contextId", command.contextId);
     if (undoStack.length > 0) {
       // check for merging process
       const lastCommand = undoStack[undoStack.length - 1];
@@ -35,6 +35,7 @@ export class UndoManager {
     } else {
       undoStack.push(undoCommand);
     }
+    console.log("undoStack", undoStack);
     const redoContextStack = UndoManager.getStack(command.contextId, this.redoStack);
     redoContextStack.splice(0, redoContextStack.length);
     this.listeners.notify();
@@ -58,6 +59,7 @@ export class UndoManager {
 
   canUndo(contextId: UndoContextId): boolean {
     const stack = this.undoStack[contextId];
+    console.log("undoStack inside canUndo", stack, contextId);
     return stack != null && stack.length > 0;
   }
 
@@ -74,7 +76,7 @@ export class UndoManager {
     let result = stackRef[contextId];
     if (result == null) {
       result = [];
-      stackRef[contextId] = [];
+      stackRef[contextId] = result;
     }
     return result;
   }

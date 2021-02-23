@@ -2,7 +2,7 @@
  * Represents a map (world)
  */
 import {
-  BufferGeometry,
+  BufferGeometry, Color,
   Group,
   LineBasicMaterial,
   MeshBasicMaterial,
@@ -69,7 +69,10 @@ export class AgentMap {
         texture.repeat.set(Math.ceil(this.columns / 2), Math.ceil(this.rows / 2));
         this.foundationSurface = new HelperMeshes(
           new PlaneGeometry(this.columns * this.cellSize, this.rows * this.cellSize),
-          new MeshBasicMaterial({map: texture}),
+          new MeshBasicMaterial({
+            map: texture,
+            color: new Color(0xffffff),
+          }),
         );
         this.foundationSurface.position.x = 0.5 * this.columns * this.cellSize;
         this.foundationSurface.position.y = 0.5 * this.rows * this.cellSize;
@@ -176,7 +179,7 @@ export class AgentMap {
     });
   }
 
-  hoverAt(row: number, column: number, layer = 0) {
+  hoverAt(row: number, column: number) {
     this.foundationHoverShape.position.x = column * this.cellSize;
     this.foundationHoverShape.position.y = row * this.cellSize;
   }
