@@ -1,8 +1,5 @@
 <template>
-  <div
-    class="hud"
-    :class="{'hud-small': isDesignTabActive, 'hud-big': !isDesignTabActive}"
-  >
+  <div class="hud" v-if="!isRunning">
     <div style="display: flex">
       <shape-element
         id="current-agent"
@@ -50,6 +47,7 @@ export default class HUD extends Vue {
   toggle = false;
   uiState = app.uiState;
   selectedTab = "design";
+  gameLoop = app.gameLoop;
 
   get selectedAgentClass() {
     return this.uiState.selectedAgentClass;
@@ -61,6 +59,10 @@ export default class HUD extends Vue {
 
   get isDesignTabActive() {
     return this.selectedTab === "design";
+  }
+
+  get isRunning() {
+    return this.gameLoop.running;
   }
 }
 </script>

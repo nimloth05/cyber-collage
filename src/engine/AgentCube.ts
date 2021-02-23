@@ -277,7 +277,7 @@ export class AgentCube {
       const hitResult = this.findAgentAt(this.mouseMove.x, this.mouseMove.y, this.agentDragged);
       if (hitResult.row === -1 || hitResult.column === -1) return;
       const tool = app.uiState.selectedTool;
-      if (tool != null) {
+      if (tool != null && !app.gameLoop.running) {
         tool.executeMove(hitResult);
       }
     }
@@ -288,7 +288,7 @@ export class AgentCube {
       this.mouseWasClicked = false;
 
       const tool = app.uiState.selectedTool;
-      if (tool != null) {
+      if (tool != null && !app.gameLoop.running) {
         const hitResult = this.findAgentAt(this.mouseClick.x, this.mouseClick.y);
         tool.executeClick(hitResult);
       }
