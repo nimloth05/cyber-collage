@@ -291,14 +291,19 @@ export class Agent {
     this.removeFromAgentCube(true);
   }
 
-  createNew(shapeId: string, deltaRow: number, deltaColumn: number, deltaLayer = 0) {
+  createNew(agentClassName: string, deltaRow: number, deltaColumn: number, deltaLayer = 0) {
     if (this.app.gallery == null) {
       throw new Error("Gallery not ready, system cannot be used");
     }
+    const agentClass = this.app.repository.getClass(agentClassName);
+    if (agentClass == null) {
+      return;
+    }
+
     const row = this.row + deltaRow;
     const column = this.column + deltaColumn;
     const layer = this.layer + deltaLayer;
-    const newAgent = new Agent(shapeId, this.agentClass);
+    const newAgent = new Agent(agentClassName, agentClass);
     app.agentCube.pushAgent(newAgent, row, column, layer);
   }
 
