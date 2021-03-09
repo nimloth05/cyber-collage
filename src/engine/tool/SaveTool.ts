@@ -39,8 +39,11 @@ export class SaveTool implements Tool {
     });
 
     obj.worldData.forEach((it: WorldEntry) => {
-      const agent = SaveTool.app().repository.getClass(it.agentClass).createAgent();
-      SaveTool.app().agentCube.pushAgent(agent, parseInt(it.row as never), parseInt(it.column as never), parseInt(it.layer as never));
+      const agentClass = SaveTool.app().repository.getClass(it.agentClass);
+      if (agentClass != null) {
+        const agent = agentClass.createAgent();
+        SaveTool.app().agentCube.pushAgent(agent, parseInt(it.row as never), parseInt(it.column as never), parseInt(it.layer as never));
+      }
     });
 
     const uiStateData = ref(app.uiState);
