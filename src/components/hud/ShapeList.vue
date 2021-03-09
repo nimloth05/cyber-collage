@@ -50,12 +50,4 @@ export default class ShapeList extends Vue {
 </script>
 
 <style>
-.shape-list {
-  list-style: none;
-}
-
-.shape-list li {
-  display: inline;
-  margin: 1rem;
-}
 </style>

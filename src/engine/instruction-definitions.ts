@@ -1,6 +1,13 @@
 import {Instruction} from "@/engine/Instruction";
-import {DirectionValue, FormulaValue, ShapeNameValue} from "@/engine/instruction-value";
+import {
+  AgentClassValue,
+  DirectionValue,
+  FormulaValue,
+  InstructionValue,
+  ShapeNameValue,
+} from "@/engine/instruction-value";
 import {InstructionDeclaration, ParameterType} from "@/model/InstructionDeclaration";
+import {app} from "@/engine/app";
 
 // ***************************************************
 // I N S T R U C T I O N   D E F I N I T I O N S
@@ -11,9 +18,15 @@ import {InstructionDeclaration, ParameterType} from "@/model/InstructionDeclarat
 export const ACTION_TYPE = "Action";
 export const CONDITION_TYPE = "Condition";
 
-export function getDefaultValue(name: string, type: ParameterType) {
+export function getDefaultValue(name: string, type: ParameterType): InstructionValue {
   if (type.name === ShapeNameValue.name) {
     return new ShapeNameValue("cat");
+  }
+  if (type.name === AgentClassValue.name) {
+    return new AgentClassValue(app.repository.agentClasses.length !== 0 ? app.repository.agentClasses[0].name : "");
+  }
+  if (type.name === FormulaValue.name) {
+    return new FormulaValue("");
   }
   return new DirectionValue(0, 1);
 }
@@ -25,12 +38,12 @@ export const instructionDefinitions: Array<InstructionDeclaration> = [
     instructionType: CONDITION_TYPE,
     parameters: {
       direction: DirectionValue,
-      shape: ShapeNameValue,
+      agentClassName: AgentClassValue,
     },
     code(instruction: Instruction) {
-      const shape = instruction.getArgumentValue<ShapeNameValue>("shape")!;
+      const agentClassName = instruction.getArgumentValue<AgentClassValue>("agentClassName")!;
       const direction = instruction.getArgumentValue<DirectionValue>("direction")!;
-      return `this.see('${shape.shapeId}', ${direction.row}, ${direction.column})`;
+      return `this.seeAgent('${agentClassName.agentClassName}', ${direction.row}, ${direction.column})`;
     },
     icon: "img/instructions/conditions/open-eye.svg",
     explanation({shape, direction}: any) {

@@ -64,6 +64,13 @@ button.sizeable-ui-element {
 
 .shape-list .shape-element-button {
   margin-bottom: 0.5em;
+  padding-left: 0;
+  list-style: none;
+}
+
+.shape-list li {
+  display: inline;
+  margin: 1rem;
 }
 
 .hud-tab-list {

@@ -13,7 +13,7 @@
         @click="openAgentClassModal"/>
       <tab-header v-model="selectedTab"/>
     </div>
-    <agent-class-modal ref="agentClassModal"/>
+    <agent-combined-modal ref="agentClassModal"/>
     <tab-container :selected-tab-id="selectedTab"/>
   </div>
 </template>
@@ -26,7 +26,8 @@ import EmptyShapeElement from "@/components/hud/EmptyShapeElement.vue";
 import ShapeElement from "@/components/hud/ShapeElement.vue";
 import TabHeader from "./tab/TabHeader.vue";
 import TabContainer from "./tab/TabContainer.vue";
-import AgentClassModal from "@/components/util/AgentClassModal.vue";
+// import AgentClassModal from "@/components/util/AgentClassModal.vue";
+import AgentCombinedModal from "@/components/util/AgentCombinedModal.vue";
 import {app} from "@/engine/app";
 import ShapeModal from "@/components/util/ShapeModal.vue";
 
@@ -39,7 +40,8 @@ import ShapeModal from "@/components/util/ShapeModal.vue";
     TabContainer,
     EmptyShapeElement,
     ShapeElement,
-    AgentClassModal,
+    // AgentClassModal,
+    AgentCombinedModal,
     ShapeModal,
   },
 })

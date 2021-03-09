@@ -19,7 +19,7 @@ export class AgentRepository {
     return this.agents;
   }
 
-  getClass(name: string): AgentClass {
+  getClass(name: string): AgentClass | undefined {
     // FIXME: Change to Map
     return this.agentClasses.find(it => it.name === name)!;
   }

@@ -63,6 +63,19 @@ export class ShapeNameValue extends InstructionValue {
   }
 }
 
+export class AgentClassValue extends InstructionValue {
+  agentClassName: string;
+
+  constructor(name: string) {
+    super();
+    this.agentClassName = name;
+  }
+
+  static deserialize(argValue: ArgEntry): AgentClassValue {
+    return new AgentClassValue(argValue.agentClassName);
+  }
+}
+
 export class FormulaValue extends InstructionValue {
   formula: string;
 

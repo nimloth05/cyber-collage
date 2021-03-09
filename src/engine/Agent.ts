@@ -223,6 +223,15 @@ export class Agent {
     return (agent != null && agent.shape.id === shapeName);
   }
 
+  seeAgent(agentClassName: string, deltaRow: number, deltaColumn: number, deltaLayer = 0): boolean {
+    const agentClass = this.app.repository.getClass(agentClassName);
+    if (agentClass == null) {
+      return false;
+    }
+
+    return this.see(agentClass.shape.id, deltaRow, deltaColumn, deltaLayer);
+  }
+
   percentChance(chance: number) {
     return (chance / 100.0 > Math.random());
   }
