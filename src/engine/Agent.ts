@@ -306,7 +306,7 @@ export class Agent {
     const row = this.row + deltaRow;
     const column = this.column + deltaColumn;
     const layer = this.layer + deltaLayer;
-    const newAgent = new Agent(agentClassName, agentClass);
+    const newAgent = this.agentClass.createAgent();
     app.agentCube.pushAgent(newAgent, row, column, layer);
   }
 
