@@ -29,6 +29,7 @@ export class Agent {
   rotationSpeed: Vector3 = new Vector3();
   parent!: AgentCube;
   readonly agentClass: AgentClass;
+  tapped = false;
 
   constructor(shapeName: string, agentClass: AgentClass) {
     if (this.app.gallery == null) {
@@ -311,5 +312,11 @@ export class Agent {
 
   getPosition(): GridVector {
     return new GridVector(this.column, this.row, this.layer);
+  }
+
+  getTappedStateAndReset(): boolean {
+    const value = this.tapped;
+    this.tapped = false;
+    return value;
   }
 }

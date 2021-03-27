@@ -84,10 +84,9 @@ export const instructionDefinitions: Array<InstructionDeclaration> = [
     name: "clicked",
     instructionType: CONDITION_TYPE,
     parameters: {
-      agent: AgentClassValue,
     },
     code(instruction: Instruction) {
-      return "";
+      return "this.getTappedStateAndReset()";
     },
     icon: "",
     explanation: () => "",

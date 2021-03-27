@@ -146,6 +146,11 @@ export class AgentCube {
       const tool = app.uiState.selectedTool;
       if (tool != null && !app.gameLoop.running) {
         tool.executeClick(this.mouseClick);
+      } else {
+        const result = this.findAgentAt(this.mouseClick.x, this.mouseClick.y);
+        if (result.agent != null) {
+          result.agent.tapped = true;
+        }
       }
     }
   }
