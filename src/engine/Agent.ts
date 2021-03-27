@@ -26,8 +26,6 @@ export class Agent {
   depth: number;
   private readonly hoverBox: SelectionBox;
   private readonly selectionBox: SelectionBox;
-  isSelected = false;
-  isHovered = false;
   rotationSpeed: Vector3 = new Vector3();
   parent!: AgentCube;
   readonly agentClass: AgentClass;
@@ -64,6 +62,15 @@ export class Agent {
 
     // Selection and Hovering
     this.whenCreatingNewAgent();
+  }
+
+  get isSelected(): boolean {
+    // This agent is selected, if the visual box is actually part of the scene.
+    return this.selectionBox.parent != null;
+  }
+
+  get isHovered(): boolean {
+    return this.hoverBox.parent != null;
   }
 
   get shapeName(): string {
@@ -157,19 +164,16 @@ export class Agent {
   }
 
   hover() {
-    this.isHovered = true;
     this.parent.addToScene(this.hoverBox);
     this.hoverBox.update();
   }
 
   unhover() {
-    this.isHovered = false;
-    this.parent.scene.remove(this.hoverBox);
+    this.parent.renderer.scene.remove(this.hoverBox);
   }
 
   select() {
     console.log(`selected ${this.shape.id}`);
-    this.isSelected = true;
     this.parent.addToScene(this.selectionBox);
     this.selectionBox.update();
     // debugging!!
@@ -178,11 +182,9 @@ export class Agent {
   }
 
   deselect() {
-    if (this === app.agentCube.agentSelected) {
-      app.agentCube.agentSelected = null;
+    if (this.selectionBox.parent != null) {
+      this.selectionBox.parent.remove(this.selectionBox);
     }
-    this.isSelected = false;
-    this.parent.scene.remove(this.selectionBox);
   }
 
   // Queries
@@ -212,7 +214,7 @@ export class Agent {
     }
   }
 
-  removeFromAgentCube(removeFromScene = false) {
+  removeFromMap(removeFromScene = false) {
     this.parent.removeAgent(this, removeFromScene);
   }
 
@@ -251,7 +253,7 @@ export class Agent {
     const column = this.column + deltaColumn;
     const layer = this.layer + deltaLayer;
     if (!this.isValidCoordinate(row, column, layer)) return;
-    this.removeFromAgentCube();
+    this.removeFromMap();
     app.agentCube.pushAgent(this, row, column, layer);
   }
 
@@ -288,7 +290,7 @@ export class Agent {
 
   erase() {
     this.deselect();
-    this.removeFromAgentCube(true);
+    this.removeFromMap(true);
   }
 
   createNew(agentClassName: string, deltaRow: number, deltaColumn: number, deltaLayer = 0) {

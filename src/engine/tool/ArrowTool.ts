@@ -1,50 +1,51 @@
 import {AbstractAgentTool} from "@/engine/tool/AbstractAgentTool";
-import {FindAgentResult} from "@/engine/AgentCube";
 import {Agent} from "@/engine/Agent";
 import {app} from "@/engine/app";
 import {GridVector} from "@/model/util/GridVector";
 import {TeleportCommand} from "@/model/commands/TeleportCommand";
 import {ref} from "vue";
+import {Vector2} from "three";
 
 export class ArrowTool extends AbstractAgentTool {
   id = "arrow";
   icon = "img/tab/hand-pointer.svg";
   name = "Verschieben"; // FIXME: Translate
 
-  get agentSelected(): Agent | null {
-    return app.agentCube.agentSelected;
+  // Cache which agent was selected last time. This field can get absolute if the agent was removed from the map/scene.
+  private lastSelectedAgent?: Agent | null;
+  private draggedAgent?: Agent | null;
+
+  get selectedAgent(): Agent | null {
+    return this.lastSelectedAgent?.isSelected ? this.lastSelectedAgent : null;
   }
 
-  get agentDragged(): Agent | null {
-    return app.agentCube.agentDragged;
-  }
-
-  set agentDragged(value: Agent | null) {
-    app.agentCube.agentDragged = value;
-  }
-
-  executeClick(hitResult: FindAgentResult): void {
+  executeClick(click: Vector2): void {
     // select agent
-    if (hitResult.agent !== this.agentSelected) {
-      if (this.agentSelected) {
-        this.agentSelected.deselect();
-        app.agentCube.agentSelected = null;
+    const hitResult = this.getHitResult(click);
+
+    if (hitResult.agent !== this.selectedAgent) {
+      if (this.selectedAgent) {
+        this.selectedAgent.deselect();
+        this.lastSelectedAgent = null;
       }
       if (hitResult.agent != null) {
         hitResult.agent.select();
-        app.agentCube.agentSelected = hitResult.agent;
+        this.lastSelectedAgent = hitResult.agent;
         const uiState = ref(app.uiState);
         uiState.value.selectedAgentClass = hitResult.agent.agentClass;
       }
     }
     // start drag
     if (hitResult.agent != null) {
-      app.agentCube.agentDragged = hitResult.agent;
+      this.draggedAgent = hitResult.agent;
     }
   }
 
-  executeMove(hitResult: FindAgentResult): void {
-    const agentDragged = app.agentCube.agentDragged;
+  executeMove(move: Vector2): void {
+    const agentDragged = this.draggedAgent;
+
+    const hitResult = this.getHitResult(move, agentDragged);
+    if (hitResult.row === -1 || hitResult.column === -1) return;
 
     if (agentDragged != null) {
       if (hitResult.row === agentDragged.row && hitResult.column === agentDragged.column) {
@@ -70,5 +71,9 @@ export class ArrowTool extends AbstractAgentTool {
         this.agentHovered = agent;
       }
     } */
+  }
+
+  executePointerUp() {
+    this.draggedAgent = null;
   }
 }

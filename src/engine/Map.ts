@@ -250,4 +250,12 @@ export class AgentMap {
       this.agentList[0].erase();
     }
   }
+
+  get rowsInRenderSpace(): number {
+    return this.cellSize * this.rows;
+  }
+
+  get columnsInRenderSpace(): number {
+    return this.cellSize * this.columns;
+  }
 }

@@ -45,7 +45,7 @@ export async function init() {
   // }
 
   window.addEventListener("resize", () => {
-    app.agentCube.threeResize();
+    app.agentCube.renderer.threeResize();
   });
 
   SaveTool.registerListener(app.undoManager);

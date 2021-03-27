@@ -80,6 +80,19 @@ export const instructionDefinitions: Array<InstructionDeclaration> = [
     explanation: () => "Prüfe ob in angegebener Richtung kein Agent steht",
     defaultArguments: getDefaultValue,
   },
+  {
+    name: "clicked",
+    instructionType: CONDITION_TYPE,
+    parameters: {
+      agent: AgentClassValue,
+    },
+    code(instruction: Instruction) {
+      return "";
+    },
+    icon: "",
+    explanation: () => "",
+    defaultArguments: getDefaultValue,
+  },
   // Actions
   {
     name: "move",

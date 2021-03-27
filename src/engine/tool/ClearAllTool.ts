@@ -1,5 +1,4 @@
 import {Tool} from "@/engine/tool/Tool";
-import {FindAgentResult} from "@/engine/AgentCube";
 import {app} from "@/engine/app";
 import {ClearWorldCommand} from "@/model/commands/ClearWorldCommand";
 
@@ -8,11 +7,11 @@ export class ClearAllTool implements Tool {
   id = "clearAll";
   name = "Alles Löschen";
 
-  executeClick(hitResult: FindAgentResult): void {
+  executeClick(): void {
     // no op
   }
 
-  executeMove(hitResult: FindAgentResult): void {
+  executeMove(): void {
     // no op
   }
 

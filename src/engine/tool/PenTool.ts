@@ -5,6 +5,7 @@ import {AddAgentToWorldCommand} from "@/model/commands/AddAgentToWorld";
 import {GridVector} from "@/model/util/GridVector";
 import {UndoManager} from "@/model/UndoManager";
 import {UiState} from "@/engine/AppContext";
+import {Vector2} from "three";
 
 export class PenTool extends AbstractAgentTool {
   static get uiState(): UiState {
@@ -17,9 +18,10 @@ export class PenTool extends AbstractAgentTool {
 
   id = "pen";
   icon = "img/tab/pen.svg";
-  name = "Stift"; // FIXME: Translate
+  name = "Stift";
 
-  executeClick(hitResult: FindAgentResult): void {
+  executeClick(click: Vector2): void {
+    const hitResult = this.getHitResult(click);
     this.toolRow = hitResult.row;
     this.toolColumn = hitResult.column;
     if (hitResult.column < 0 || hitResult.row < 0) {
@@ -32,7 +34,10 @@ export class PenTool extends AbstractAgentTool {
     }
   }
 
-  executeMove(hitResult: FindAgentResult): void {
+  executeMove(move: Vector2): void {
+    const hitResult = this.getHitResult(move);
+    if (hitResult.row === -1 || hitResult.column === -1) return;
+
     if (hitResult.row !== this.toolRow || hitResult.column !== this.toolColumn) {
       this.toolRow = hitResult.row;
       this.toolColumn = hitResult.column;

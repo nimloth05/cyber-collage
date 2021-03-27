@@ -60,11 +60,11 @@ function registerMouseListener(target: Element, eventName: "mousemove" | "click"
 function onMouseWheel(event: any) {
   event.preventDefault();
   if (event.shiftKey) {
-    app.agentCube.camera.trackZoom(event.deltaX, event.deltaY);
+    app.agentCube.renderer.camera.trackZoom(event.deltaX, event.deltaY);
   } else if (event.altKey) {
-    app.agentCube.camera.trackSpinn(event.deltaX, event.deltaY);
+    app.agentCube.renderer.camera.trackSpinn(event.deltaX, event.deltaY);
   } else {
-    app.agentCube.camera.trackPan(event.deltaX, event.deltaY);
+    app.agentCube.renderer.camera.trackPan(event.deltaX, event.deltaY);
   }
 }
 
@@ -232,13 +232,13 @@ function interpretPointerPath(clientX: number, clientY: number, target: any) {
   if (twoFingerTouch()) {
     console.log("angle =", newPointerPathAngle());
     if (isTiltingGesture()) {
-      app.agentCube.camera.trackSpinn(0, dampenedZoom(oldPointerPathDistance() - newPointerPathDistance()), Math.PI / 180);
+      app.agentCube.renderer.camera.trackSpinn(0, dampenedZoom(oldPointerPathDistance() - newPointerPathDistance()), Math.PI / 180);
     } else {
-      app.agentCube.camera.trackSpinn(dampenedSpinn(newPointerPathAngle() - oldPointerPathAngle()), 0, Math.PI / 180);
-      app.agentCube.camera.trackZoom(0, dampenedZoom(newPointerPathDistance() - oldPointerPathDistance()));
-      app.agentCube.camera.trackPan(dampenedPanX(oldPointerPathMidpointX() - newPointerPathMidpointX()),
-                                    dampenedPanY(oldPointerPathMidpointY() - newPointerPathMidpointY()),
-                                    0.2);
+      app.agentCube.renderer.camera.trackSpinn(dampenedSpinn(newPointerPathAngle() - oldPointerPathAngle()), 0, Math.PI / 180);
+      app.agentCube.renderer.camera.trackZoom(0, dampenedZoom(newPointerPathDistance() - oldPointerPathDistance()));
+      app.agentCube.renderer.camera.trackPan(dampenedPanX(oldPointerPathMidpointX() - newPointerPathMidpointX()),
+        dampenedPanY(oldPointerPathMidpointY() - newPointerPathMidpointY()),
+        0.2);
     }
   } else if (!inOneOrTwoTouchLimbo) {
     const [x, y] = normalizedDeviceCoordinates(clientX, clientY, target);
@@ -321,9 +321,7 @@ function resetPath(event: PointerEvent, reason: string): void {
 function handlePointerUp(event: any) {
   event.preventDefault();
   // terminate drag
-  if (app.agentCube.agentDragged) {
-    app.agentCube.agentDragged = null;
-  }
+  app.agentCube.processPointerUp();
   console.log("%c Pointer Up", "background: #000; color: red", event.pointerId, event.pointerType, pointerPath1.identifier, pointerPath2.identifier);
   // start momentum mode
   if (twoFingerTouch()) {
@@ -349,9 +347,9 @@ function handlePointerUp(event: any) {
 
 function handleTouchMomentum() {
   if (inMomentumMode && areDampersRequired()) {
-    app.agentCube.camera.trackSpinn(dampenedSpinn(0), 0, Math.PI / 180);
-    app.agentCube.camera.trackZoom(0, dampenedZoom(0));
-    app.agentCube.camera.trackPan(dampenedPanX(0), dampenedPanY(0), 0.2);
+    app.agentCube.renderer.camera.trackSpinn(dampenedSpinn(0), 0, Math.PI / 180);
+    app.agentCube.renderer.camera.trackZoom(0, dampenedZoom(0));
+    app.agentCube.renderer.camera.trackPan(dampenedPanX(0), dampenedPanY(0), 0.2);
   } else {
     if (inMomentumMode) console.log("%c end of momentun", "background: #000; color: red");
     inMomentumMode = false;

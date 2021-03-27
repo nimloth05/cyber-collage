@@ -7,6 +7,7 @@ import {AgentClass} from "@/engine/agent/AgentClass";
 import {UndoManager} from "@/model/UndoManager";
 import {MethodList} from "@/engine/Instruction";
 import {ClassStoreEntry, ProjectData, WorldEntry} from "@/engine/tool/SaveModel";
+import {Vector2} from "three";
 
 export class SaveTool implements Tool {
   static loadState(): void {
@@ -58,7 +59,7 @@ export class SaveTool implements Tool {
   id = "save";
   name = "Speichern"
 
-  executeClick(): void {
+  executeClick(click: Vector2): void {
     // This is empty
   }
 
