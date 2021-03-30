@@ -15,7 +15,7 @@ export class RemoveASTNodeCommand<T extends ASTNode> extends AbstractCommand {
   }
 
   execute(): Command {
-    removeFromArray(this.list.instructionObjects, this.node);
+    removeFromArray(this.list.instructions, this.node);
     return new AddASTNodeCommand(this.list, this.node);
   }
 

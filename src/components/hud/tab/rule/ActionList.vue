@@ -1,6 +1,6 @@
 <template>
   <instruction-renderer
-    v-for="(action, index) in actions.instructionObjects"
+    v-for="(action, index) in actions.instructions"
     :key="index"
     :declaration="action.declaration"
     :argument-resolver="_argumentResolver(action)"

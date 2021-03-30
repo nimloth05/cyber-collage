@@ -46,19 +46,21 @@ export default class AuxToolbar extends Vue {
   requestPermission() {
     let count = 0;
 
-    const osc = new Tone.Oscillator().toDestination();
+    // const osc = new Tone.Oscillator().toDestination();
     // osc.frequency.value = "C3";
+    const player = new Tone.Player("/sounds/snare-drum.mp3").toDestination();
 
-    const highFreq = osc.frequency.toFrequency("C5");
-    const lowFreq = osc.frequency.toFrequency("C1");
-    const freq = osc.frequency.toFrequency("C3");
+    const highFreq = player.toFrequency("C5");
+    const lowFreq = player.toFrequency("C1");
+    const freq = player.toFrequency("C3");
 
     console.log("C5", highFreq, "C1", lowFreq);
 
 // ramp to "C2" over 2 seconds
 //     osc.frequency.rampTo("C2", 2);
 // start the oscillator for 2 seconds
-    osc.start();
+    player.autostart = true;
+    player.loop = true;
 
     function map(x: number, inMin: number, inMax: number, outMin: number, outMax: number) {
       return (x - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
@@ -69,7 +71,7 @@ export default class AuxToolbar extends Vue {
       count += 1;
       if ((count % 10) === 0) {
         const x = event.gamma;
-        osc.frequency.value = map(x, -90, 90, lowFreq, highFreq);
+        // player.toFrequency().value = map(x, -90, 90, lowFreq, highFreq);
       }
     }
 

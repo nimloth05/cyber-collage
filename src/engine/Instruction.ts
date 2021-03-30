@@ -112,19 +112,19 @@ export class Action extends Instruction {
 
 export abstract class ASTNodeList<T extends ASTNode> implements ASTNode {
   id = uuid.v4(); // FIXME: This is just a test
-  instructionObjects: Array<T>;
+  instructions: Array<T>;
 
   constructor(instructionDefs: Array<T>) {
-    this.instructionObjects = instructionDefs;
+    this.instructions = instructionDefs;
     // this.instructionObjects = instructionDefs.map((idef: any) => createInstruction(idef[0], idef[1]));
   }
 
   get length() {
-    return this.instructionObjects.length;
+    return this.instructions.length;
   }
 
   add(node: T) {
-    this.instructionObjects.push(node);
+    this.instructions.push(node);
   }
 
   abstract compile(): string
@@ -132,11 +132,15 @@ export abstract class ASTNodeList<T extends ASTNode> implements ASTNode {
   explanation = "SHOULD BE OVERRIDDEN BY SUBCLASSES";
 
   getChild(index: number): ASTNode {
-    return this.instructionObjects[index];
+    return this.instructions[index];
   }
 
   map<E>(handler: (node: T) => E): Array<E> {
-    return this.instructionObjects.map(handler);
+    return this.instructions.map(handler);
+  }
+
+  forEach(handler: (t: T) => void) {
+    this.instructions.forEach(handler);
   }
 }
 
@@ -151,7 +155,7 @@ export class Behavior {
 export class AndConditionList extends ASTNodeList<Condition> {
   compile(): string {
     // "<c1> && <c2> && ... <cn>"
-    const conditions = this.instructionObjects;
+    const conditions = this.instructions;
     let code;
     if (conditions.length === 0) {
       code = "true";
@@ -169,7 +173,7 @@ export class ActionList extends ASTNodeList<Action> {
   compile(): string {
     // {<a1>; <a2>; ... <an>}
 
-    return this.instructionObjects
+    return this.instructions
       .map(it => it.compile())
       .join(";\n");
 
@@ -229,7 +233,7 @@ export class RuleList extends ASTNodeList<Rule> {
     //     code += `else ${this.instructionObjects[i].compile()}`;
     //   }
     // }
-    return this.instructionObjects
+    return this.instructions
       .map(i => i.compile())
       .join(" else ");
   }
@@ -267,16 +271,16 @@ export class Method implements ASTNode {
 
 export class MethodList extends ASTNodeList<Method> {
   addMethod(m: Method): void {
-    const index = this.instructionObjects.findIndex(it => it.name === m.name);
+    const index = this.instructions.findIndex(it => it.name === m.name);
     if (index > -1) {
-      this.instructionObjects.splice(index, 1);
+      this.instructions.splice(index, 1);
     }
-    this.instructionObjects.push(m);
+    this.instructions.push(m);
   }
 
   compile(): string {
     // <methodName1>() {<rules>}
-    const methods = this.instructionObjects;
+    const methods = this.instructions;
 
     return methods
       .map(it => it.compile())

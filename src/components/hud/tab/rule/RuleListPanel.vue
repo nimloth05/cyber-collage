@@ -2,7 +2,7 @@
   <div v-if="hasSelectedAgent" class="rules-container">
     <div>
       <rule-panel
-        v-for="(rule, index) in rules.instructionObjects"
+        v-for="(rule, index) in rules.instructions"
         :key="rule.id"
         :rule="rule"
         :ruleIndex="index"

@@ -1,6 +1,6 @@
 <template>
   <instruction-renderer
-    v-for="(instruction, index) in conditions.instructionObjects"
+    v-for="(instruction, index) in conditions.instructions"
     :key="index"
     :declaration="instruction.declaration"
     :id="conditions.id + '-instruction-' + index"

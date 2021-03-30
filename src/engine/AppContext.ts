@@ -6,6 +6,7 @@ import {AgentClass} from "@/engine/agent/AgentClass";
 import {Tool} from "@/engine/tool/Tool";
 import {PenTool} from "@/engine/tool/PenTool";
 import {DesignToolbar} from "@/components/hud/tab/design/DesignToolbar";
+import {SoundSystem} from "@/engine/sound/SoundSystem";
 
 /**
  * Represents global UI state. This class is used as a bridge between Vue (UI framework) and the engine.
@@ -28,4 +29,5 @@ export class AppContext {
   repository = new AgentRepository();
   toolbar = new DesignToolbar();
   gameLoop = new GameLoop();
+  soundSystem = new SoundSystem();
 }

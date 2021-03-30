@@ -15,7 +15,7 @@ export class RemoveRuleCommand extends AbstractCommand {
   }
 
   execute(): Command {
-    removeFromArray(this.method.rules.instructionObjects, this.rule);
+    removeFromArray(this.method.rules.instructions, this.rule);
     return new AddRuleCommand(this.method, this.rule);
   }
 

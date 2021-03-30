@@ -64,7 +64,7 @@ export default class HUD extends Vue {
   }
 
   get isRunning() {
-    return this.gameLoop.running;
+    return this.gameLoop.isRunning;
   }
 }
 </script>

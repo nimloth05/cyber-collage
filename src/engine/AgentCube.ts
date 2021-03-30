@@ -12,7 +12,15 @@ import {ArrowTool} from "@/engine/tool/ArrowTool";
 export class GameLoop {
   running = false;
 
-  play() {
+  get isRunning(): boolean {
+    return this.running;
+  }
+
+  toggleState(): boolean {
+    return (this.running = !this.running);
+  }
+
+  start() {
     this.running = true;
   }
 
@@ -133,7 +141,7 @@ export class AgentCube {
       this.mouseWasMoved = false;
 
       const tool = app.uiState.selectedTool;
-      if (tool != null && !app.gameLoop.running) {
+      if (tool != null && !app.gameLoop.isRunning) {
         tool.executeMove(this.mouseMove);
       }
     }
@@ -144,7 +152,7 @@ export class AgentCube {
       this.mouseWasClicked = false;
 
       const tool = app.uiState.selectedTool;
-      if (tool != null && !app.gameLoop.running) {
+      if (tool != null && !app.gameLoop.isRunning) {
         tool.executeClick(this.mouseClick);
       } else {
         const result = this.findAgentAt(this.mouseClick.x, this.mouseClick.y);
@@ -161,7 +169,7 @@ export class AgentCube {
     const tool = app.uiState.selectedTool;
     // FIXME: This is not very nice, but ATM only the arrow tools needs to handle up. The thing is,
     //  that click represents a touchDown and a touchUp and this is only a touchUp occurring after a certain amount of time.
-    if (tool != null && !app.gameLoop.running && tool instanceof ArrowTool) {
+    if (tool != null && !app.gameLoop.isRunning && tool instanceof ArrowTool) {
       tool.executePointerUp();
     }
   }

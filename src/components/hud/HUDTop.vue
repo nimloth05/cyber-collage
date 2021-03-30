@@ -44,18 +44,33 @@ export default class HUDTop extends Vue {
     if (!this.paused) {
       mapState = app.agentCube.map.createSnapShot();
     }
-    this.gameLoop.running = !this.gameLoop.running;
+
+    const soundFiles: Set<string> = new Set();
+    app.repository.agentClasses.forEach(agClass => {
+      agClass.methods.forEach(method => {
+        method.rules.forEach(rule => {
+          rule.actions.forEach(action => {
+            // FIXME: This is shite
+            if (action.declaration.name === "playSound") {
+              soundFiles.add("/sounds/snare-drum.mp3");
+            }
+          });
+        });
+      });
+    });
+    app.soundSystem.prepareSounds(Array.from(soundFiles.values()));
+    this.gameLoop.toggleState();
   }
 
   pause() {
-    this.gameLoop.running = false;
+    this.gameLoop.stop();
     this.paused = true;
   }
 
   stop() {
     // rewind state
     app.agentCube.map.applySnapShot(mapState);
-    this.gameLoop.running = false;
+    this.gameLoop.stop();
     this.paused = false;
   }
 
@@ -67,7 +82,7 @@ export default class HUDTop extends Vue {
   }
 
   get isRunning(): boolean {
-    return this.gameLoop.running;
+    return this.gameLoop.isRunning;
   }
 }
 </script>

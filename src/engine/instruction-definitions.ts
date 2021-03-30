@@ -83,8 +83,7 @@ export const instructionDefinitions: Array<InstructionDeclaration> = [
   {
     name: "clicked",
     instructionType: CONDITION_TYPE,
-    parameters: {
-    },
+    parameters: {},
     code(instruction: Instruction) {
       return "this.getTappedStateAndReset()";
     },
@@ -135,12 +134,12 @@ export const instructionDefinitions: Array<InstructionDeclaration> = [
     parameters: {
       // sound: SoundValue,
       // FIXME: Replace with SoundValue
-      sound: FormulaValue,
+      // sound: FormulaValue,
     },
     code(instruction: Instruction) {
       // const {sound} = instruction.args;
       // return `this.playSound('${sound.value}')`;
-      return "";
+      return "this.playSound()";
     },
     icon: "img/instructions/actions/play-sound.svg",
     explanation({direction}: any) {

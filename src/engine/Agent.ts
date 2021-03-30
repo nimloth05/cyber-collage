@@ -319,4 +319,8 @@ export class Agent {
     this.tapped = false;
     return value;
   }
+
+  playSound(): void {
+    app.soundSystem.playSound("/sounds/snare-drum.mp3");
+  }
 }

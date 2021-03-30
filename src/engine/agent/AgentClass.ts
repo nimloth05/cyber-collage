@@ -32,7 +32,7 @@ export class AgentClass implements ShapeRef {
 
   compile() {
     // FIXME: Remove old methods from class
-    this.methods.instructionObjects
+    this.methods.instructions
       .map((m: Method) => {
         const code = m.compile();
         console.log("code for ", code);
