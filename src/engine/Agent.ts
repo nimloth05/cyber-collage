@@ -9,6 +9,9 @@ import {Shape} from "@/engine/Shape";
 import {AgentCube} from "@/engine/AgentCube";
 import {AgentClass} from "@/engine/agent/AgentClass";
 import {GridVector} from "@/model/util/GridVector";
+import {mapValue} from "@/util/util";
+
+const FormulaParser = require("hot-formula-parser").Parser;
 
 class SelectionBox extends BoxHelper {
 
@@ -320,7 +323,25 @@ export class Agent {
     return value;
   }
 
-  playSound(): void {
-    app.soundSystem.playSound("/sounds/snare-drum.mp3");
+  playSound(id: string, pitchFormula: string): void {
+    if (pitchFormula !== "") {
+      // FIXME: This has to move somewhere else.
+      // FIXME: Think about caching the parser.
+      const parser = new FormulaParser();
+      parser.setFunction("pitchBeta", () => {
+        return mapValue(this.parent.sensors.beta, -180, 179, -7, 7);
+      });
+      parser.setFunction("pitchAlpha", () => {
+        return mapValue(this.parent.sensors.alpha, 0, 359, -7, 7);
+      });
+      parser.setFunction("pitchGamma", () => {
+        return mapValue(this.parent.sensors.gamma, 0, -90, 89, 7);
+      });
+      const parseResult = parser.parse(pitchFormula);
+      if (parseResult.result != null && typeof parseResult.result === "number") {
+        app.soundSystem.pitchShift(id, parseResult.result);
+      }
+    }
+    app.soundSystem.playSound(id);
   }
 }

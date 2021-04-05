@@ -4,11 +4,18 @@
 
 <script lang="ts">
 import {Options, Vue} from "vue-class-component";
-import {AgentClassValue, DirectionValue, InstructionValue, ShapeNameValue} from "@/engine/instruction-value";
+import {
+  AgentClassValue,
+  DirectionValue,
+  InstructionValue,
+  ShapeNameValue,
+  SoundValue,
+} from "@/engine/instruction-value";
 import DirectionValueEditor from "@/components/hud/tab/rule/value-editor/DirectionValueEditor.vue";
 import ShapeEditor from "@/components/hud/tab/rule/value-editor/ShapeEditor.vue";
 import FormulaEditor from "@/components/hud/tab/rule/value-editor/FormulaEditor.vue";
 import AgentClassSelectorEditor from "@/components/hud/tab/rule/value-editor/AgentClassSelectorEditor.vue";
+import SoundValueEditor from "@/components/hud/tab/rule/value-editor/SoundValueEditor.vue";
 
 @Options({
   name: "ParameterRenderer",
@@ -26,6 +33,7 @@ import AgentClassSelectorEditor from "@/components/hud/tab/rule/value-editor/Age
     ShapeEditor,
     FormulaEditor,
     AgentClassSelectorEditor,
+    SoundValueEditor,
   },
 })
 export default class ParameterRenderer extends Vue {
@@ -48,6 +56,9 @@ export default class ParameterRenderer extends Vue {
     }
     if (this.paramTypeName === AgentClassValue.name) {
       return "AgentClassSelectorEditor";
+    }
+    if (this.paramTypeName === SoundValue.name) {
+      return "SoundValueEditor";
     }
     console.warn("Could not find matching editor: ", this.paramTypeName);
     return "";

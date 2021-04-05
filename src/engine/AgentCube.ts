@@ -66,10 +66,15 @@ export class AgentCube {
   mouseClick: Vector2;
   mouseWasClicked: boolean;
   touchMomentumHandler: Function | null;
-  toolRow: number;
-  toolColumn: number;
   map: AgentMap;
   renderer: Renderer;
+  sensors = {
+    alpha: 0,
+    beta: 0,
+    gamma: 0
+  };
+
+  registered = false;
 
   constructor(rows = 9, columns = 16, layers = 1, cellSize = 20.0) {
     this.map = new AgentMap(rows, columns, layers, cellSize);
@@ -80,8 +85,6 @@ export class AgentCube {
     this.mouseClick = new Vector2();
     this.mouseWasClicked = false;
     this.touchMomentumHandler = null;
-    this.toolRow = -1;
-    this.toolColumn = -1;
     this.renderer = new Renderer();
   }
 
@@ -192,5 +195,30 @@ export class AgentCube {
 
   addToScene(object3D: Object3D) {
     this.renderer.scene.add(object3D);
+  }
+
+  requestDeviceOrientationPermission(): Promise<void> {
+    if (this.registered) {
+      return Promise.resolve();
+    }
+
+    function handleOrientation(event: DeviceOrientationEvent) {
+      app.agentCube.sensors.gamma = event.gamma ?? 0;
+      app.agentCube.sensors.alpha = event.alpha ?? 0;
+      app.agentCube.sensors.beta = event.beta ?? 0;
+    }
+
+    if (typeof DeviceMotionEvent.requestPermission === "function") {
+      return DeviceMotionEvent.requestPermission()
+        .then(permissionState => {
+          if (permissionState === "granted") {
+            window.addEventListener("deviceorientation", handleOrientation);
+          }
+        });
+    } else {
+      // handle regular non iOS 13+ devices
+      window.addEventListener("deviceorientation", handleOrientation);
+      return Promise.resolve();
+    }
   }
 }

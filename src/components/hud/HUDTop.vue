@@ -25,6 +25,8 @@ import AuxToolbar from "@/components/hud/AuxToolbar.vue";
 import {app} from "@/engine/app";
 import {MapSnapShot} from "@/engine/Map";
 import {ApplyMapChangesCommand} from "@/model/commands/ApplyMapChangesCommand";
+import {SoundOptions} from "@/engine/sound/SoundSystem";
+import {SoundValue} from "@/engine/instruction-value";
 
 let mapState: MapSnapShot;
 
@@ -40,25 +42,39 @@ export default class HUDTop extends Vue {
   gameLoop = app.gameLoop;
   paused = false;
 
-  play() {
+  async play() {
     if (!this.paused) {
       mapState = app.agentCube.map.createSnapShot();
     }
 
-    const soundFiles: Set<string> = new Set();
+    await app.agentCube.requestDeviceOrientationPermission();
+
+    const soundOptions: Array<SoundOptions> = [];
     app.repository.agentClasses.forEach(agClass => {
       agClass.methods.forEach(method => {
         method.rules.forEach(rule => {
           rule.actions.forEach(action => {
             // FIXME: This is shite
             if (action.declaration.name === "playSound") {
-              soundFiles.add("/sounds/snare-drum.mp3");
+              const arg = action.getArgumentValue<SoundValue>("sound");
+              if (arg == null) {
+                return;
+              }
+
+              const fileName = arg.fileName;
+              const isPitchModulated = arg.pitchFormula.trim() !== "";
+              soundOptions.push({
+                id: fileName,
+                fileName,
+                pitchModulation: isPitchModulated,
+              });
             }
           });
         });
       });
     });
-    app.soundSystem.prepareSounds(Array.from(soundFiles.values()));
+    await app.soundSystem.prepareSounds(soundOptions);
+
     this.gameLoop.toggleState();
   }
 

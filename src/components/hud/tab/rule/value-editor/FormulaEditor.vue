@@ -1,15 +1,18 @@
 <template>
-  <span>FE</span>
+  <div v-if="!readOnly">
+    <input type="text" v-model="formula"/>
+  </div>
 </template>
 
 <script lang="ts">
 import {Options, Vue} from "vue-class-component";
-import {FormulaValue, InstructionValue} from "@/engine/instruction-value";
+import {FormulaValue} from "@/engine/instruction-value";
 
 @Options({
   name: "FormulaEditor",
   props: {
     argument: FormulaValue,
+    readOnly: Boolean,
     id: String,
   },
   emits: [
@@ -17,6 +20,8 @@ import {FormulaValue, InstructionValue} from "@/engine/instruction-value";
   ],
 })
 export default class FormulaEditor extends Vue {
-
+  argument!: FormulaValue;
+  readOnly!: boolean;
+  formula = "";
 }
 </script>

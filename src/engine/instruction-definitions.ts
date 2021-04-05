@@ -5,6 +5,7 @@ import {
   FormulaValue,
   InstructionValue,
   ShapeNameValue,
+  SoundValue,
 } from "@/engine/instruction-value";
 import {InstructionDeclaration, ParameterType} from "@/model/InstructionDeclaration";
 import {app} from "@/engine/app";
@@ -19,6 +20,14 @@ export const ACTION_TYPE = "Action";
 export const CONDITION_TYPE = "Condition";
 
 export function getDefaultValue(name: string, type: ParameterType): InstructionValue {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+  // @ts-ignore
+  if (type.getDefaultValue != null) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+    // @ts-ignore
+    return type.getDefaultValue();
+  }
+
   if (type.name === ShapeNameValue.name) {
     return new ShapeNameValue("cat");
   }
@@ -132,14 +141,12 @@ export const instructionDefinitions: Array<InstructionDeclaration> = [
     name: "playSound",
     instructionType: ACTION_TYPE,
     parameters: {
-      // sound: SoundValue,
-      // FIXME: Replace with SoundValue
-      // sound: FormulaValue,
+      sound: SoundValue,
     },
     code(instruction: Instruction) {
-      // const {sound} = instruction.args;
+      const sound = instruction.getArgumentValue<SoundValue>("sound");
       // return `this.playSound('${sound.value}')`;
-      return "this.playSound()";
+      return `this.playSound('${sound?.fileName ?? ""}', '${sound?.pitchFormula ?? ""}')`;
     },
     icon: "img/instructions/actions/play-sound.svg",
     explanation({direction}: any) {

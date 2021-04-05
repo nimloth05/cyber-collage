@@ -89,6 +89,25 @@ export class FormulaValue extends InstructionValue {
   }
 }
 
+export class SoundValue extends InstructionValue {
+  fileName: string;
+  pitchFormula: string;
+
+  constructor(fileName: string, pitchFormula: string) {
+    super();
+    this.fileName = fileName;
+    this.pitchFormula = pitchFormula;
+  }
+
+  static deserialize(argValue: ArgEntry): SoundValue {
+    return new SoundValue(argValue.fileName!, argValue.pitchFormula!);
+  }
+
+  static getDefaultValue(): SoundValue {
+    return new SoundValue("?", "");
+  }
+}
+
 //
 // export class MethodNameValue extends InstructionValue {
 //
