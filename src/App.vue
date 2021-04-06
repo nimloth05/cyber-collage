@@ -1,6 +1,6 @@
 <template>
   <router-view/>
-  <modal-root/>
+  <modal-root id="modal-root"/>
 </template>
 
 <script>

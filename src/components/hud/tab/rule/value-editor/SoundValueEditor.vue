@@ -1,10 +1,10 @@
 <template>
   <span @click="openModal" style="min-width: 2em">{{ soundName }}</span>
-  <sound-modal :id="id + '-sound-modal'" ref="soundModal" @ok="soundValueChanged"/>
 </template>
 
 <script lang="ts">
 import {Options, Vue} from "vue-class-component";
+import {markRaw} from "vue";
 import {SoundValue} from "@/engine/instruction-value";
 import SoundModal from "@/components/util/SoundModal.vue";
 import {SoundDatabase} from "@/engine/sound/SoundDatabase";
@@ -26,7 +26,6 @@ import {SoundDatabase} from "@/engine/sound/SoundDatabase";
 export default class SoundValueEditor extends Vue {
   argument!: SoundValue;
   readOnly!: boolean;
-  formula = "";
 
   get soundName(): string {
     return SoundDatabase.getName(this.argument.fileName);
@@ -36,7 +35,16 @@ export default class SoundValueEditor extends Vue {
     if (this.readOnly) {
       return;
     }
-    (this.$refs.soundModal as any).show(this.argument);
+
+    this.$eventBus.emit("open", {
+      component: markRaw(SoundModal),
+      props: {
+        soundValue: this.argument,
+        okHandler: (soundValue: SoundValue) => {
+          this.soundValueChanged(soundValue);
+        },
+      },
+    });
   }
 
   soundValueChanged(args: SoundValue): void {

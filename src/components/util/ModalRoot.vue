@@ -1,5 +1,5 @@
 <template>
-  <modal-component :title="title" @onClose="handleClose">
+  <modal-component ref="modalComponent" :title="title" @onClose="handleClose">
     <component :is="component" @onClose="handleClose" v-bind="props"/>
   </modal-component>
 </template>
@@ -21,25 +21,19 @@ export default class ModalRoot extends Vue {
   private props: any = null;
 
   created() {
-    this.$eventBus.on("open", ({component = null, title = "", props = null}) => {
-      this.component = component;
-      this.title = title;
-      this.props = props;
+    this.$eventBus.on("open", (data: any) => {
+      this.component = data.component;
+      this.title = data.title ?? "";
+      this.props = data.props ?? {};
+      (this.$refs.modalComponent as any).show();
     });
-    // document.addEventListener('keyup', this.handleKeyup);
-  }
-
-  beforeDestroy() {
-    // document.removeEventListener('keyup', this.handleKeyup);
   }
 
   handleClose() {
     this.component = null;
+    this.props = null;
+    (this.$refs.modalComponent as any).hide();
   }
-
-  // handleKeyup(e) {
-  //   if (e.keyCode === 27) this.handleClose();
-  // }
 }
 
 </script>
