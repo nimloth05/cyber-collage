@@ -1,6 +1,17 @@
 <template>
   <router-view/>
+  <modal-root/>
 </template>
+
+<script>
+import ModalRoot from "@/components/util/ModalRoot.vue";
+
+export default {
+  components: {
+    ModalRoot,
+  },
+};
+</script>
 
 <style lang="less">
 #nav {

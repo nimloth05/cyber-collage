@@ -90,13 +90,13 @@ export const instructionDefinitions: Array<InstructionDeclaration> = [
     defaultArguments: getDefaultValue,
   },
   {
-    name: "clicked",
+    name: "tab",
     instructionType: CONDITION_TYPE,
     parameters: {},
     code(instruction: Instruction) {
       return "this.getTappedStateAndReset()";
     },
-    icon: "",
+    icon: "img/instructions/conditions/hand-pointer.svg",
     explanation: () => "",
     defaultArguments: getDefaultValue,
   },

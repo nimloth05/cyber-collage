@@ -7,6 +7,7 @@
 import {Options, Vue} from "vue-class-component";
 import {SoundValue} from "@/engine/instruction-value";
 import SoundModal from "@/components/util/SoundModal.vue";
+import {SoundDatabase} from "@/engine/sound/SoundDatabase";
 
 @Options({
   name: "SoundValueEditor",
@@ -28,8 +29,7 @@ export default class SoundValueEditor extends Vue {
   formula = "";
 
   get soundName(): string {
-    // FIXME: Cut off extension and such
-    return this.argument.fileName;
+    return SoundDatabase.getName(this.argument.fileName);
   }
 
   openModal(): void {

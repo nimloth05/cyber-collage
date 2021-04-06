@@ -5,9 +5,9 @@
       <div class="modal-content">
         <div class="modal-body">
           <list-selection label="Sound wählen" :options="soundFiles" v-model="fileName"/>
-          <formula-input v-model="pitchFormula"/>
+          <formula-input label="Formel für Pitch" v-model="pitchFormula"/>
           <div class="text-end">
-            <button @click="okClicked">Ok</button>
+            <button class="btn btn-dark" @click="okClicked">Ok</button>
           </div>
         </div>
       </div>
@@ -21,6 +21,7 @@ import {Options, Vue} from "vue-class-component";
 import {SoundValue} from "@/engine/instruction-value";
 import ListSelection from "@/components/util/ListSelection.vue";
 import FormulaInput from "@/components/util/FormulaInput.vue";
+import {SoundDatabase} from "@/engine/sound/SoundDatabase";
 
 @Options({
   name: "SoundModal",
@@ -36,13 +37,7 @@ export default class SoundModal extends Vue {
   private _instance?: BModal;
   private fileName = "";
   private pitchFormula = "";
-
-  private soundFiles = [
-    {
-      value: "/sounds/snare-drum.mp3",
-      label: "Snare drum",
-    },
-  ];
+  private soundFiles = SoundDatabase.SOUND_FILES;
 
   get modalInstance() {
     return this._instance != null ? this._instance : new BModal(document.getElementById(this.$el.getAttribute("id"))!);
