@@ -2,6 +2,7 @@ import * as Tone from "tone";
 import {now} from "tone";
 import {chain} from "lodash";
 import {Interval} from "tone/build/esm/core/type/Units";
+import {app} from "@/engine/app";
 
 export type SoundOptions = {
   /**
@@ -82,7 +83,13 @@ export class SoundSystem {
     // if (player.state === "started") {
     //   return;
     // }
-    player.start();
+    console.log("play sound with id", id);
+
+    player.start(Tone.now());
+  }
+
+  async resetSoundContext() {
+    await Tone.start();
   }
 
   stop() {
@@ -92,5 +99,9 @@ export class SoundSystem {
     });
     this.id2Player = {};
     this.audioBuffers.dispose();
+  }
+
+  hasSounds() {
+    return Object.keys(this.id2Player).length > 0;
   }
 }

@@ -8,6 +8,7 @@ import {Agent} from "@/engine/Agent";
 import {AgentMap} from "@/engine/Map";
 import {Renderer} from "@/engine/Renderer";
 import {ArrowTool} from "@/engine/tool/ArrowTool";
+import {Tone} from "tone/build/esm/core/Tone";
 
 export class GameLoop {
   running = false;
@@ -208,7 +209,7 @@ export class AgentCube {
       app.agentCube.sensors.beta = event.beta ?? 0;
     }
 
-    if (typeof DeviceMotionEvent.requestPermission === "function") {
+    if (typeof (DeviceMotionEvent) !== "undefined" != null && typeof DeviceMotionEvent.requestPermission === "function") {
       return DeviceMotionEvent.requestPermission()
         .then(permissionState => {
           if (permissionState === "granted") {

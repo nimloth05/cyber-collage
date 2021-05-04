@@ -27,6 +27,9 @@ import {MapSnapShot} from "@/engine/Map";
 import {ApplyMapChangesCommand} from "@/model/commands/ApplyMapChangesCommand";
 import {SoundOptions} from "@/engine/sound/SoundSystem";
 import {SoundValue} from "@/engine/instruction-value";
+import {markRaw} from "vue";
+import SoundModal from "@/components/util/SoundModal.vue";
+import SoundEnableModal from "@/components/util/SoundEnableModal.vue";
 
 let mapState: MapSnapShot;
 
@@ -75,7 +78,23 @@ export default class HUDTop extends Vue {
     });
     await app.soundSystem.prepareSounds(soundOptions);
 
-    this.gameLoop.toggleState();
+    if (app.soundSystem.hasSounds()) {
+      // Sounds are present we have to enable them inside a user event like Click.
+      // For this reason we open up a small dialog, asking the user for permission to play sounds.
+      this.$eventBus.emit("open", {
+        component: markRaw(SoundEnableModal),
+        props: {
+          okHandler: () => {
+            app.soundSystem.resetSoundContext()
+              .then(() => {
+                this.gameLoop.toggleState();
+              });
+          },
+        },
+      });
+    } else {
+      this.gameLoop.toggleState();
+    }
   }
 
   pause() {
