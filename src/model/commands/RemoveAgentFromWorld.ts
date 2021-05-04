@@ -1,6 +1,5 @@
 import {Command} from "@/model/Command";
 import {Agent} from "@/engine/Agent";
-import {GridVector} from "@/model/util/GridVector";
 import {AddAgentToWorldCommand} from "@/model/commands/AddAgentToWorld";
 import {WORLD_CONTEXT_ID} from "@/model/Commands";
 
@@ -14,7 +13,7 @@ export class RemoveAgentFromWorld implements Command {
   }
 
   execute(): Command {
-    const position = new GridVector(this.agent.column, this.agent.row, this.agent.layer);
+    const position = this.agent.gridPosition;
     this.agent.erase();
     return new AddAgentToWorldCommand(this.agent, position);
   }

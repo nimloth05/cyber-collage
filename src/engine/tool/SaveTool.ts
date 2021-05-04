@@ -8,6 +8,7 @@ import {UndoManager} from "@/model/UndoManager";
 import {MethodList} from "@/engine/Instruction";
 import {ClassStoreEntry, ProjectData, WorldEntry} from "@/engine/tool/SaveModel";
 import {Vector2} from "three";
+import {GridVector} from "@/model/util/GridVector";
 
 export class SaveTool implements Tool {
   static loadState(): void {
@@ -43,7 +44,12 @@ export class SaveTool implements Tool {
       const agentClass = SaveTool.app().repository.getClass(it.agentClass);
       if (agentClass != null) {
         const agent = agentClass.createAgent();
-        SaveTool.app().agentCube.pushAgent(agent, parseInt(it.row as never), parseInt(it.column as never), parseInt(it.layer as never));
+        const position = new GridVector(
+          parseInt(it.column as never),
+          parseInt(it.row as never),
+          parseInt(it.layer as never),
+        );
+        SaveTool.app().agentCube.pushAgent(agent, position);
       }
     });
 
@@ -101,9 +107,9 @@ export class SaveTool implements Tool {
       const result: Array<WorldEntry> = [];
       SaveTool.app().agentCube.map.broadcastGeometrically(it => {
         const obj = {
-          layer: it.layer,
-          row: it.row,
-          column: it.column,
+          layer: it.gridPosition.layer,
+          row: it.gridPosition.row,
+          column: it.gridPosition.column,
           agentClass: it.agentClass.name,
         };
         result.push(obj);

@@ -56,6 +56,10 @@ export class AgentMap {
     this.agentGroup = new Group();
   }
 
+  getStack(position: GridVector): Array<Agent> {
+    return this.grid[position.layer][position.row][position.column];
+  }
+
   addFoundationSurface() {
     const texturePath = "textures/";
     const texturesFile = "chess_texture.png";
@@ -111,30 +115,28 @@ export class AgentMap {
     this.foundationGroup.add(this.foundationHoverShape);
   }
 
-  pushAgent(agent: Agent, row: number, column: number, layer = 0) {
-    if (row === -1 || column === -1) return; // this should never happen
+  pushAgent(agent: Agent, position: GridVector) {
+    if (position.row === -1 || position.column === -1) return; // this should never happen
 
     if (agent.shape.mesh.parent == null) {
       this.agentGroup.add(agent.shape.mesh);
     }
-    const agents = this.grid[layer][row][column];
-    const agentAtTop = this.agentAtTop(row, column, layer);
+    const agents = this.grid[position.layer][position.row][position.column];
+    const agentAtTop = this.agentAtTop(position.row, position.column, position.layer);
 
     // adjust geometry
     // FIXME: If agent would be aware of the cell size it could calculate the correct coordinates by itself
-    agent.x = column * this.cellSize + 0.5 * this.cellSize;
-    agent.y = row * this.cellSize + 0.5 * this.cellSize;
+    agent.x = position.column * this.cellSize + 0.5 * this.cellSize;
+    agent.y = position.row * this.cellSize + 0.5 * this.cellSize;
 
     if (agentAtTop == null) {
-      agent.z = layer * this.cellSize;
+      agent.z = position.layer * this.cellSize;
     } else {
       agent.z = agentAtTop.z + agentAtTop.depth;
     }
 
     // adjust topology
-    agent.row = row;
-    agent.column = column;
-    agent.layer = layer;
+    agent.gridPosition = position;
     // adjust part hierarchy
     // update stack
     agents.push(agent);
@@ -147,7 +149,7 @@ export class AgentMap {
       mesh.parent.remove(agent.shape.mesh);
     }
 
-    const stack = this.grid[agent.layer][agent.row][agent.column];
+    const stack = this.grid[agent.gridPosition.layer][agent.gridPosition.row][agent.gridPosition.column];
     const index = removeFromArray(stack, agent);
 
     removeFromArray(this.agentList, agent);
@@ -234,10 +236,7 @@ export class AgentMap {
               .reduce((acc, depth, currentIndex) => currentIndex < stackIndex ? (acc + depth) : acc, 0);
             console.log(`agent.z (${agent.shapeName})`, agent.z);
 
-            // adjust topology
-            agent.row = rowIndex;
-            agent.column = columnIndex;
-            agent.layer = layerIndex;
+            agent.gridPosition = new GridVector(columnIndex, rowIndex, layerIndex);
             this.agentGroup.add(agent.shape.mesh);
           });
         });

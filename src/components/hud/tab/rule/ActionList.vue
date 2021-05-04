@@ -29,7 +29,7 @@ import {app} from "@/engine/app";
 import {AddASTNodeCommand} from "@/model/commands/instruction/AddASTNodeCommand";
 import InstructionRenderer from "@/components/hud/tab/rule/InstructionRenderer.vue";
 import {ChangeInstructionValueCommand} from "@/model/commands/instruction/ChangeInstructionValueCommand";
-import {ACTION_TYPE, instructionDefinitions} from "@/engine/instruction-definitions";
+import {actionDefinitions} from "@/engine/instruction-definitions";
 import {getDefaultActions, InstructionToolbarAction} from "@/components/hud/tab/rule/InstructionToolbarUtil";
 
 @Options({
@@ -67,7 +67,7 @@ export default class ActionPanel extends Vue {
   }
 
   _getActionDeclarations(): Array<any> {
-    return instructionDefinitions.filter(it => it.instructionType === ACTION_TYPE);
+    return actionDefinitions;
   }
 
   getToolbarActions(instruction: Action): Array<InstructionToolbarAction> {

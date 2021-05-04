@@ -9,6 +9,7 @@ import {AgentMap} from "@/engine/Map";
 import {Renderer} from "@/engine/Renderer";
 import {ArrowTool} from "@/engine/tool/ArrowTool";
 import {Tone} from "tone/build/esm/core/Tone";
+import {GridVector} from "@/model/util/GridVector";
 
 export class GameLoop {
   running = false;
@@ -96,8 +97,8 @@ export class AgentCube {
     this.map.addToScene(this.renderer.scene);
   }
 
-  pushAgent(agent: Agent, row: number, column: number, layer = 0) {
-    this.map.pushAgent(agent, row, column, layer);
+  pushAgent(agent: Agent, position: GridVector) {
+    this.map.pushAgent(agent, position);
     agent.parent = this;
   }
 
@@ -131,8 +132,8 @@ export class AgentCube {
       } else {
         hit.agent = findObjectAgent(firstIntersection.object);
         if (hit.agent) {
-          hit.row = hit.agent.row;
-          hit.column = hit.agent.column;
+          hit.row = hit.agent.gridPosition.row;
+          hit.column = hit.agent.gridPosition.column;
         }
       }
     }

@@ -106,6 +106,7 @@ export const instructionDefinitions: Array<InstructionDeclaration> = [
     instructionType: ACTION_TYPE,
     parameters: {
       direction: DirectionValue,
+      velocity: FormulaValue, // defined the move speed: tile/second
     },
     code(instruction: Instruction) {
       console.log("here");
@@ -215,6 +216,10 @@ export const instructionDefinitions: Array<InstructionDeclaration> = [
   //   explanation: () => "I execute all actions first to last",
   // },
 ];
+
+export const conditionDefinitions = instructionDefinitions.filter(it => it.instructionType === CONDITION_TYPE);
+
+export const actionDefinitions = instructionDefinitions.filter(it => it.instructionType === ACTION_TYPE);
 
 // FIXME: Use hashMap (lodash keyBy) here
 export class InstructionDefinitions {

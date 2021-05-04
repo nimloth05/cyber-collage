@@ -18,7 +18,7 @@ export class AddAgentToWorldCommand extends AbstractCommand {
 
   execute(): Command {
     const agent = this.agent instanceof AgentClass ? this.agent.createAgent() : this.agent;
-    app.agentCube.pushAgent(agent, this.position.row, this.position.column, this.position.layer);
+    app.agentCube.pushAgent(agent, this.position);
     return new RemoveAgentFromWorld(agent);
   }
 

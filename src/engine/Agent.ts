@@ -23,25 +23,24 @@ export class Agent {
   }
 
   shape: Shape;
-  row: number;
-  layer: number;
-  column: number;
   depth: number;
   private readonly hoverBox: SelectionBox;
   private readonly selectionBox: SelectionBox;
-  rotationSpeed: Vector3 = new Vector3();
   parent!: AgentCube;
   readonly agentClass: AgentClass;
   tapped = false;
+
+  gridPosition = new GridVector(0, 0, 0);
+  /**
+   * Exact position in map space, where the center of the mesh resides
+   */
+  subPosition: Vector3 = new Vector3(0.5, 0.5, 0.5);
 
   constructor(shapeName: string, agentClass: AgentClass) {
     if (this.app.gallery == null) {
       throw new Error("Gallery not ready, system cannot be used");
     }
 
-    this.row = 0;
-    this.column = 0;
-    this.layer = 0;
     this.shape = this.app.gallery.createShapeForAgent(shapeName);
 
     this.agentClass = agentClass;
@@ -63,9 +62,6 @@ export class Agent {
     this.hoverBox.userData.agent = this;
     this.selectionBox = new SelectionBox(this.shape.mesh, selectionBoxColor);
     this.selectionBox.userData.agent = this;
-
-    // Selection and Hovering
-    this.whenCreatingNewAgent();
   }
 
   get isSelected(): boolean {
@@ -146,18 +142,6 @@ export class Agent {
     if (this.isSelected) this.selectionBox.update();
   }
 
-  whenCreatingNewAgent() { /*
-    this.rotationSpeed.x = 0.1 * (Math.random() - 0.5);
-    this.rotationSpeed.y = 0.1 * (Math.random() - 0.5);
-    this.rotationSpeed.z = 0.1 * (Math.random() - 0.5); */
-    // default rotation
-    // this.roateTo(Math.PI * -0.5, Math.PI * 1.0, 0);
-  }
-
-  draw() {
-    console.log(`drawing agent: ${this.shape.id} @[${this.row}, ${this.column}]`);
-  }
-
   step() { // Step your behavior
     // console.log(`stepping agent: ${this.shapeName} @[${this.row}, ${this.column}]`);
     // this.rotateBy(this.rotationSpeed.x);
@@ -192,24 +176,21 @@ export class Agent {
   }
 
   // Queries
-  isValidCoordinate(row: number, column: number, layer = 0) {
-    return !(row < 0 ||
-      row >= this.parent.map.rows ||
-      column < 0 ||
-      column >= this.parent.map.columns ||
-      layer < 0 ||
-      layer >= this.parent.map.layers);
+  isValidCoordinate(gridPosition: GridVector) {
+    return !(gridPosition.row < 0 ||
+      gridPosition.row >= this.parent.map.rows ||
+      gridPosition.column < 0 ||
+      gridPosition.column >= this.parent.map.columns ||
+      gridPosition.layer < 0 ||
+      gridPosition.layer >= this.parent.map.layers);
   }
 
   agentRelative(deltaRow: number, deltaColumn: number, deltaLayer = 0) {
-    // return agent or null
-    const row = this.row + deltaRow;
-    const column = this.column + deltaColumn;
-    const layer = this.layer + deltaLayer;
+    const newPosition = this.gridPosition.add(deltaRow, deltaColumn, deltaLayer);
 
     // console.log(`accessing row, column, layer: ${row}, ${column}, ${layer}`)
-    if (!this.isValidCoordinate(row, column, layer)) return null;
-    const agents = this.parent.map.grid[layer][row][column];
+    if (!this.isValidCoordinate(newPosition)) return null;
+    const agents = this.parent.map.getStack(newPosition);
     const agent = agents[agents.length - 1];
     if (agent == null) {
       return null;
@@ -243,30 +224,25 @@ export class Agent {
   }
 
   empty(deltaRow: number, deltaColumn: number, deltaLayer = 0) {
-    const row = this.row + deltaRow;
-    const column = this.column + deltaColumn;
-    const layer = this.layer + deltaLayer;
-    if (!this.isValidCoordinate(row, column, layer)) return false;
-    // console.log(app.agentCube.grid[layer][row][column].length);
-    return this.parent.map.grid[layer][row][column].length === 0;
+    const newPosition = this.gridPosition.add(deltaRow, deltaColumn, deltaLayer);
+    if (!this.isValidCoordinate(newPosition)) return false;
+    return this.parent.map.getStack(newPosition).length === 0;
   }
 
   // A C T I O N S
   move(deltaRow: number, deltaColumn: number, deltaLayer = 0) {
-    const row = this.row + deltaRow;
-    const column = this.column + deltaColumn;
-    const layer = this.layer + deltaLayer;
-    if (!this.isValidCoordinate(row, column, layer)) return;
+    const newPosition = this.gridPosition.add(deltaRow, deltaColumn, deltaLayer);
+    if (!this.isValidCoordinate(newPosition)) return;
     this.removeFromMap();
-    app.agentCube.pushAgent(this, row, column, layer);
+    app.agentCube.pushAgent(this, newPosition);
   }
 
   teleportTo(position: GridVector) {
-    if (!this.isValidCoordinate(position.row, position.column, position.layer)) {
+    if (!this.isValidCoordinate(position)) {
       return;
     }
     this.app.agentCube.removeAgent(this, false);
-    this.app.agentCube.pushAgent(this, position.row, position.column, position.layer);
+    this.app.agentCube.pushAgent(this, position);
   }
 
   moveRandom() {
@@ -274,8 +250,9 @@ export class Agent {
     const min = -1;
     const deltaRow = Math.floor(Math.random() * (max - min + 1)) + min;
     const deltaColumn = Math.floor(Math.random() * (max - min + 1)) + min;
+    const newPosition = this.gridPosition.add(deltaRow, deltaColumn, 0);
     // ignore layers for now
-    if (this.isValidCoordinate(this.row + deltaRow, this.column + deltaColumn)) {
+    if (this.isValidCoordinate(newPosition)) {
       this.move(deltaRow, deltaColumn);
     }
   }
@@ -306,15 +283,9 @@ export class Agent {
       return;
     }
 
-    const row = this.row + deltaRow;
-    const column = this.column + deltaColumn;
-    const layer = this.layer + deltaLayer;
+    const newPosition = this.gridPosition.add(deltaRow, deltaColumn, deltaLayer);
     const newAgent = this.agentClass.createAgent();
-    app.agentCube.pushAgent(newAgent, row, column, layer);
-  }
-
-  getPosition(): GridVector {
-    return new GridVector(this.column, this.row, this.layer);
+    app.agentCube.pushAgent(newAgent, newPosition);
   }
 
   getTappedStateAndReset(): boolean {

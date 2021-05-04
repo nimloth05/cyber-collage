@@ -30,7 +30,7 @@ import {app} from "@/engine/app";
 import {AddASTNodeCommand} from "@/model/commands/instruction/AddASTNodeCommand";
 import InstructionRenderer from "@/components/hud/tab/rule/InstructionRenderer.vue";
 import {ChangeInstructionValueCommand} from "@/model/commands/instruction/ChangeInstructionValueCommand";
-import {CONDITION_TYPE, instructionDefinitions} from "@/engine/instruction-definitions";
+import {conditionDefinitions} from "@/engine/instruction-definitions";
 import InstructionDeclarationsModal from "@/components/hud/tab/rule/InstructionDeclarationsModal.vue";
 import {getDefaultActions, InstructionToolbarAction} from "@/components/hud/tab/rule/InstructionToolbarUtil";
 
@@ -69,8 +69,7 @@ export default class ConditionPanel extends Vue {
   }
 
   _getConditions(): Array<any> {
-    console.log("instructioNDefintiions", instructionDefinitions, "filter", instructionDefinitions.filter(it => it.instructionType === CONDITION_TYPE));
-    return instructionDefinitions.filter(it => it.instructionType === CONDITION_TYPE);
+    return conditionDefinitions;
   }
 
   getToolbarActions(instruction: Condition): Array<InstructionToolbarAction> {
