@@ -48,7 +48,7 @@ export class ArrowTool extends AbstractAgentTool {
     if (hitResult.row === -1 || hitResult.column === -1) return;
 
     if (agentDragged != null) {
-      if (hitResult.row === agentDragged.row && hitResult.column === agentDragged.column) {
+      if (hitResult.row === agentDragged.gridPosition.row && hitResult.column === agentDragged.gridPosition.column) {
         return;
       }
 

@@ -17,9 +17,9 @@ export class TeleportCommand implements Command {
   }
 
   execute(): Command {
-    const previousPosition = this.agent.getPosition();
+    const previousPosition = this.agent.gridPosition;
     this.agent.teleportTo(this.position);
-    console.log(`teleporting agent from ${previousPosition} to new ${this.position} (agent.getPosition: ${this.agent.getPosition()})`);
+    console.log(`teleporting agent from ${previousPosition} to new ${this.position} (agent.getPosition: ${this.agent.gridPosition})`);
     return new TeleportCommand(this.agent, previousPosition);
   }
 

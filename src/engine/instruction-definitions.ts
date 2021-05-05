@@ -1,9 +1,11 @@
 import {Instruction} from "@/engine/Instruction";
 import {
   AgentClassValue,
+  AxisValue,
   DirectionValue,
   FormulaValue,
   InstructionValue,
+  OperatorValue,
   ShapeNameValue,
   SoundValue,
 } from "@/engine/instruction-value";
@@ -100,13 +102,27 @@ export const instructionDefinitions: Array<InstructionDeclaration> = [
     explanation: () => "",
     defaultArguments: getDefaultValue,
   },
+  {
+    name: "tilted",
+    instructionType: CONDITION_TYPE,
+    parameters: {
+      axis: AxisValue,
+      comparisonOperator: OperatorValue,
+      value: FormulaValue,
+    },
+    code(instruction: Instruction) {
+      return `this.deviceOrientationCondition(${instruction.getArgumentValue("axis")}, ${instruction.getArgumentValue("comparisonOperator")}, value)`;
+    },
+    icon: "",
+    explanation: () => "",
+    defaultArguments: getDefaultValue,
+  },
   // Actions
   {
     name: "move",
     instructionType: ACTION_TYPE,
     parameters: {
       direction: DirectionValue,
-      velocity: FormulaValue, // defined the move speed: tile/second
     },
     code(instruction: Instruction) {
       console.log("here");

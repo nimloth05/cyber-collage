@@ -1,4 +1,6 @@
 import {ArgEntry} from "@/engine/tool/SaveModel";
+import {ParameterType} from "@/model/InstructionDeclaration";
+import {Param} from "tone";
 
 export abstract class InstructionValue {
   get explanation() {
@@ -107,6 +109,92 @@ export class SoundValue extends InstructionValue {
     return new SoundValue("?", "");
   }
 }
+
+export type ListSelectionEntry = {
+  instructionValue: string;
+  label: string;
+}
+
+// export abstract class ListSelection extends InstructionValue {
+//   value: ListSelectionEntry;
+//
+//   public constructor(value: ListSelectionEntry) {
+//     super();
+//     this.value = value;
+//   }
+//
+//   static deserialize(argValue: ArgEntry): ListSelection {
+//     throw new Error("should not be called");
+//   }
+// }
+
+export type AxisType = "alpha" | "beta" | "gamma";
+
+export abstract class GenericListValue extends InstructionValue {
+  value: any;
+}
+
+export class AxisValue extends InstructionValue {
+  value: AxisType
+
+  constructor(value: AxisType) {
+    super();
+    this.value = value;
+  }
+
+  static deserialize(argValue: ArgEntry): AxisValue {
+    return new AxisValue(argValue.value);
+  }
+
+  static options(): Array<ListSelectionEntry> {
+    return [
+      {
+        label: "Drehen",
+        instructionValue: "alpha",
+      },
+    ];
+  }
+}
+
+export type OperatorType = "<" | "<=" | "=" | ">=" | ">"
+
+export class OperatorValue extends InstructionValue {
+  public value: OperatorType;
+
+  constructor(value: OperatorType) {
+    super();
+    this.value = value;
+  }
+
+  static deserialize(argValue: ArgEntry): AxisValue {
+    return new AxisValue(argValue.value);
+  }
+
+  static options(): Array<ListSelectionEntry> {
+    return [
+      {
+        instructionValue: "<",
+        label: "<",
+      },
+    ];
+  }
+}
+
+// export function createListSelection(options: Array<ListSelectionEntry>): ParameterType {
+//   return class MyListSelection extends ListSelection {
+//     static getOptions(): Array<ListSelectionEntry> {
+//       return options;
+//     }
+//
+//     static deserialize(argValue: ArgEntry): MyListSelection {
+//       return new MyListSelection()
+//       return new MyListSelection({
+//         instructionValue: argValue.value.instrunctionValue,
+//         label: argValue.value.label,
+//       });
+//     }
+//   };
+// }
 
 //
 // export class MethodNameValue extends InstructionValue {

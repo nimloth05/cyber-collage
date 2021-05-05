@@ -3,13 +3,14 @@
 // ***************************************************
 
 import {app} from "@/engine/app";
-import {Box3, BoxHelper, Vector3} from "three";
+import {Box3, BoxHelper} from "three";
 import {hoverBoxColor, selectionBoxColor} from "@/engine/globals";
 import {Shape} from "@/engine/Shape";
 import {AgentCube} from "@/engine/AgentCube";
 import {AgentClass} from "@/engine/agent/AgentClass";
 import {GridVector} from "@/model/util/GridVector";
 import {mapValue} from "@/util/util";
+import {AxisValue, OperatorValue} from "@/engine/instruction-value";
 
 const FormulaParser = require("hot-formula-parser").Parser;
 
@@ -31,10 +32,6 @@ export class Agent {
   tapped = false;
 
   gridPosition = new GridVector(0, 0, 0);
-  /**
-   * Exact position in map space, where the center of the mesh resides
-   */
-  subPosition: Vector3 = new Vector3(0.5, 0.5, 0.5);
 
   constructor(shapeName: string, agentClass: AgentClass) {
     if (this.app.gallery == null) {
@@ -314,5 +311,21 @@ export class Agent {
       }
     }
     app.soundSystem.playSound(id);
+  }
+
+  deviceOrientationCondition(axisValue: AxisValue, operatorValue: OperatorValue, value: string): boolean {
+    const parser = new FormulaParser();
+    parser.setFunction("alpha", () => {
+      return this.parent.sensors.alpha;
+    });
+    parser.setFunction("beta", () => {
+      return this.parent.sensors.beta;
+    });
+    parser.setFunction("gamma", () => {
+      return this.parent.sensors.gamma;
+    });
+    const formula = `${axisValue.value}() ${operatorValue.value} (${value})`;
+    const result = parser.parse(formula);
+    return result.result != null && typeof result.result === "boolean" ? result.result : false;
   }
 }

@@ -6,7 +6,7 @@
 import {Options, Vue} from "vue-class-component";
 import {
   AgentClassValue,
-  DirectionValue,
+  DirectionValue, FormulaValue,
   InstructionValue,
   ShapeNameValue,
   SoundValue,
@@ -16,6 +16,15 @@ import ShapeEditor from "@/components/hud/tab/rule/value-editor/ShapeEditor.vue"
 import FormulaEditor from "@/components/hud/tab/rule/value-editor/FormulaEditor.vue";
 import AgentClassSelectorEditor from "@/components/hud/tab/rule/value-editor/AgentClassSelectorEditor.vue";
 import SoundValueEditor from "@/components/hud/tab/rule/value-editor/SoundValueEditor.vue";
+
+const value2Editor = {
+  [DirectionValue.name]: DirectionValueEditor.name,
+  [ShapeNameValue.name]: ShapeEditor.name,
+  [FormulaValue.name]: FormulaEditor.name,
+  [AgentClassValue.name]: AgentClassSelectorEditor.name,
+  [SoundValue.name]: SoundValueEditor.name,
+  // ["MyListSelection"]: ListSelectionEditor.name,
+};
 
 @Options({
   name: "ParameterRenderer",
@@ -45,23 +54,33 @@ export default class ParameterRenderer extends Vue {
   // FIXME: Use table for paramType -> Editor matching
 
   get valueEditor(): string {
-    if (this.isDirectionValue()) {
-      return "DirectionValueEditor";
+    const value = value2Editor[this.paramTypeName];
+    if (value == null) {
+      console.log("param", this.param);
+      if ((this.param as any).options != null) {
+        return ListSelectionEditor;
+      }
+      console.warn("Could not find matching editor: ", this.paramTypeName);
+      return "";
     }
-    if (this.isShapeValue()) {
-      return "ShapeEditor";
-    }
-    if (this.paramTypeName === "FormulaValue") {
-      return "FormulaEditor";
-    }
-    if (this.paramTypeName === AgentClassValue.name) {
-      return "AgentClassSelectorEditor";
-    }
-    if (this.paramTypeName === SoundValue.name) {
-      return "SoundValueEditor";
-    }
-    console.warn("Could not find matching editor: ", this.paramTypeName);
-    return "";
+    return value;
+    // if (this.isDirectionValue()) {
+    //   return "DirectionValueEditor";
+    // }
+    // if (this.isShapeValue()) {
+    //   return "ShapeEditor";
+    // }
+    // if (this.paramTypeName === "FormulaValue") {
+    //   return "FormulaEditor";
+    // }
+    // if (this.paramTypeName === AgentClassValue.name) {
+    //   return "AgentClassSelectorEditor";
+    // }
+    // if (this.paramTypeName === SoundValue.name) {
+    //   return "SoundValueEditor";
+    // }
+    // console.warn("Could not find matching editor: ", this.paramTypeName);
+    // return "";
   }
 
   get currentProperties(): object {
