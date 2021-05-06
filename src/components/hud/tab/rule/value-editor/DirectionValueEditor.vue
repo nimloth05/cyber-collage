@@ -75,6 +75,7 @@ export default class DirectionValueEditor extends Vue {
 
   getDirectionValueImage(): string {
     const directionValue = this.argument as DirectionValue;
+    // FIXME: Use some sort of data structure for this (e.g. Map<[row, column], string>)
     if (directionValue.row === 1 && directionValue.column === 0) {
       return "arrow-up.svg";
     } else if (directionValue.row === 1 && directionValue.column === 1) {

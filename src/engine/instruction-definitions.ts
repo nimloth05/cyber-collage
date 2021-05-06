@@ -39,6 +39,12 @@ export function getDefaultValue(name: string, type: ParameterType): InstructionV
   if (type.name === FormulaValue.name) {
     return new FormulaValue("");
   }
+  if (type.name === AxisValue.name) {
+    return new AxisValue("beta");
+  }
+  if (type.name === OperatorValue.name) {
+    return new OperatorValue(">");
+  }
   return new DirectionValue(0, 1);
 }
 
@@ -111,7 +117,9 @@ export const instructionDefinitions: Array<InstructionDeclaration> = [
       value: FormulaValue,
     },
     code(instruction: Instruction) {
-      return `this.deviceOrientationCondition(${instruction.getArgumentValue("axis")}, ${instruction.getArgumentValue("comparisonOperator")}, value)`;
+      const axisValue: AxisValue = instruction.getArgumentValue("axis") ?? new AxisValue("beta");
+      const operatorValue: OperatorValue = instruction.getArgumentValue("comparisonOperator") ?? new OperatorValue("<");
+      return `this.deviceOrientationCondition('${axisValue.value}', '${operatorValue.value}', '1')`;
     },
     icon: "",
     explanation: () => "",

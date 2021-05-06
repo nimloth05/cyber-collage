@@ -1,22 +1,35 @@
 <template>
   <list-selection-editor
-    :argument="value"
+    :id="id"
+    v-model="instructionValue"
+    :read-only="readOnly"
     :options="options"
-    @option-selected="optionSelected"/>
+  />
 </template>
 <script lang="ts">
-import ListSelectionEditor from "@/components/hud/tab/rule/value-editor/ListSelectionEditor";
-import {defineComponent} from "vue";
-import {ListSelectionEntry, OperatorValue} from "@/engine/instruction-value";
+import ListSelectionEditor from "@/components/hud/tab/rule/value-editor/ListSelectionEditor.vue";
+import {defineComponent, PropType} from "vue";
+import {OperatorType, OperatorValue} from "@/engine/instruction-value";
 
 export default defineComponent({
   components: {ListSelectionEditor},
-  data(props) {
-    return {};
+  props: {
+    argument: Object as PropType<OperatorValue>,
+    readOnly: Boolean,
+    id: String,
   },
-  methods: {
-    optionSelected(option: ListSelectionEntry) {
-      this.$emit("arg-changed", new OperatorValue(option.instructionValue));
+  emits: [
+    "arg-changed",
+  ],
+  data(props) {
+    return {
+      instructionValue: props?.argument?.value,
+      options: OperatorValue.options(),
+    };
+  },
+  watch: {
+    instructionValue() {
+      this.$emit("arg-changed", new OperatorValue(this.instructionValue as OperatorType));
     },
   },
 });

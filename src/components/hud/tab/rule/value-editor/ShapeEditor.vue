@@ -11,11 +11,12 @@ import {Options, Vue} from "vue-class-component";
 import {Gallery} from "@/engine/Gallery";
 import {ShapeNameValue} from "@/engine/instruction-value";
 import ShapeModal from "@/components/util/ShapeModal.vue";
+import {PropType} from "vue";
 
 @Options({
   name: "ShapeEditor",
   props: {
-    argument: ShapeNameValue,
+    argument: Object as PropType<ShapeNameValue>,
     readOnly: Boolean,
     id: String,
   },

@@ -3,7 +3,7 @@
   <div v-if="visible" class="inline-editor">
     <div class="container-fluid">
       <div
-        v-for="option in options()"
+        v-for="option in options"
         :key="option.instructionValue"
         @click="handleClick(option)"
       >
@@ -14,7 +14,7 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue";
+import {defineComponent, PropType} from "vue";
 import {ListSelectionEntry} from "@/engine/instruction-value";
 
 export default defineComponent({
@@ -22,20 +22,19 @@ export default defineComponent({
   components: {},
   props: {
     visible: Boolean,
+    options: Array as PropType<Array<ListSelectionEntry>>,
   },
-  data(props) {
-    return {
-      visible: props.visiible,
-    };
-  },
+  emits: [
+    "element-selected",
+    "update:visible",
+  ],
   watch: {},
   methods: {
     close() {
       this.$emit("update:visible", false);
     },
-
     handleClick(option: ListSelectionEntry): void {
-      this.$emit("option-selected", option);
+      this.$emit("element-selected", option);
       this.close();
     },
   },

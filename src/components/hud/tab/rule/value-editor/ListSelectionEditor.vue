@@ -1,6 +1,7 @@
 <template>
   <overlay-list-selection-editor
     v-model:visible="editorVisible"
+    :options="options"
     @element-selected="elementSelected"
   />
   <span
@@ -14,13 +15,16 @@
 
 import {defineComponent, PropType} from "vue";
 import OverlayListSelectionEditor from "@/components/hud/tab/rule/value-editor/OverlayListSelectionEditor.vue";
-import {DirectionValue, ListSelectionEntry} from "@/engine/instruction-value";
+import {ListSelectionEntry} from "@/engine/instruction-value";
 
 export default defineComponent({
   components: {OverlayListSelectionEditor},
   props: {
-    argument: Object as PropType<unknown>,
-    options: Array as PropType<Array<ListSelectionEntry>>,
+    modelValue: String,
+    options: {
+      type: Array as PropType<Array<ListSelectionEntry>>,
+      required: true,
+    },
     readOnly: Boolean,
     id: String,
   },
@@ -30,16 +34,19 @@ export default defineComponent({
     };
   },
   methods: {
-    elementChanged(eventData: ListSelectionEntry): void {
+    elementSelected(eventData: ListSelectionEntry): void {
       console.log("changed", eventData);
       // Middle icon pressed, no change
 
-      this.$emit("arg-changed", new DirectionValue(directionRow, directionColumn));
-    }
+      this.$emit("update:modelValue", eventData.instructionValue);
+    },
+    changeElement() {
+      this.editorVisible = true;
+    },
   },
   computed: {
-    selectedElementLabel() {
-      const label = this.options.find(s => s.instructionValue === this.argument);
+    selectedElementLabel(): string {
+      const label = this.options.find(s => (s.instructionValue as unknown) === this.modelValue);
       return label !== undefined ? label.label : "not found";
     },
   },

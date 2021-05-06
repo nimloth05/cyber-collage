@@ -6,8 +6,11 @@
 import {Options, Vue} from "vue-class-component";
 import {
   AgentClassValue,
-  DirectionValue, FormulaValue,
+  AxisValue,
+  DirectionValue,
+  FormulaValue,
   InstructionValue,
+  OperatorValue,
   ShapeNameValue,
   SoundValue,
 } from "@/engine/instruction-value";
@@ -16,6 +19,8 @@ import ShapeEditor from "@/components/hud/tab/rule/value-editor/ShapeEditor.vue"
 import FormulaEditor from "@/components/hud/tab/rule/value-editor/FormulaEditor.vue";
 import AgentClassSelectorEditor from "@/components/hud/tab/rule/value-editor/AgentClassSelectorEditor.vue";
 import SoundValueEditor from "@/components/hud/tab/rule/value-editor/SoundValueEditor.vue";
+import AxisEditor from "@/components/hud/tab/rule/value-editor/AxisEditor.vue";
+import OperatorEditor from "@/components/hud/tab/rule/value-editor/OperatorEditor.vue";
 
 const value2Editor = {
   [DirectionValue.name]: DirectionValueEditor.name,
@@ -23,7 +28,8 @@ const value2Editor = {
   [FormulaValue.name]: FormulaEditor.name,
   [AgentClassValue.name]: AgentClassSelectorEditor.name,
   [SoundValue.name]: SoundValueEditor.name,
-  // ["MyListSelection"]: ListSelectionEditor.name,
+  [AxisValue.name]: "AxisEditor",
+  [OperatorValue.name]: "OperatorEditor",
 };
 
 @Options({
@@ -43,6 +49,8 @@ const value2Editor = {
     FormulaEditor,
     AgentClassSelectorEditor,
     SoundValueEditor,
+    AxisEditor,
+    OperatorEditor,
   },
 })
 export default class ParameterRenderer extends Vue {
@@ -56,31 +64,10 @@ export default class ParameterRenderer extends Vue {
   get valueEditor(): string {
     const value = value2Editor[this.paramTypeName];
     if (value == null) {
-      console.log("param", this.param);
-      if ((this.param as any).options != null) {
-        return ListSelectionEditor;
-      }
       console.warn("Could not find matching editor: ", this.paramTypeName);
       return "";
     }
     return value;
-    // if (this.isDirectionValue()) {
-    //   return "DirectionValueEditor";
-    // }
-    // if (this.isShapeValue()) {
-    //   return "ShapeEditor";
-    // }
-    // if (this.paramTypeName === "FormulaValue") {
-    //   return "FormulaEditor";
-    // }
-    // if (this.paramTypeName === AgentClassValue.name) {
-    //   return "AgentClassSelectorEditor";
-    // }
-    // if (this.paramTypeName === SoundValue.name) {
-    //   return "SoundValueEditor";
-    // }
-    // console.warn("Could not find matching editor: ", this.paramTypeName);
-    // return "";
   }
 
   get currentProperties(): object {
