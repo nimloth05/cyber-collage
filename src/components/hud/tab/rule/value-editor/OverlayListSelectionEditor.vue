@@ -3,6 +3,7 @@
   <div v-if="visible" class="inline-editor">
     <div class="container-fluid">
       <div
+        class="overlay-list-selection-container"
         v-for="option in options"
         :key="option.instructionValue"
         @click="handleClick(option)"

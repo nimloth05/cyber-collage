@@ -18,10 +18,15 @@ import {FormulaValue} from "@/engine/instruction-value";
   emits: [
     "arg-changed",
   ],
+  watch: {
+    formula() {
+      this.$emit("arg-changed", new FormulaValue(this.formula));
+    },
+  },
 })
 export default class FormulaEditor extends Vue {
   argument!: FormulaValue;
   readOnly!: boolean;
-  formula = "";
+  formula = this.argument.formula;
 }
 </script>

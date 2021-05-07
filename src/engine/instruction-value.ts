@@ -152,6 +152,14 @@ export class AxisValue extends InstructionValue {
         label: "Drehen",
         instructionValue: "alpha",
       },
+      {
+        label: "Kippen",
+        instructionValue: "gamma",
+      },
+      {
+        label: "Neigen",
+        instructionValue: "beta",
+      },
     ];
   }
 }
@@ -175,6 +183,22 @@ export class OperatorValue extends InstructionValue {
       {
         instructionValue: "<",
         label: "<",
+      },
+      {
+        instructionValue: "<=",
+        label: "<=",
+      },
+      {
+        instructionValue: "=",
+        label: "=",
+      },
+      {
+        instructionValue: ">=",
+        label: ">=",
+      },
+      {
+        instructionValue: ">",
+        label: ">",
       },
     ];
   }

@@ -68,21 +68,21 @@ export const instructionDefinitions: Array<InstructionDeclaration> = [
     },
     defaultArguments: getDefaultValue,
   },
-  {
-    name: "percentChance",
-    instructionType: CONDITION_TYPE,
-    parameters: {
-      chance: FormulaValue,
-    },
-    code(instruction: Instruction) {
-      return `this.percentChance(${instruction.getArgumentValue<FormulaValue>("chance")?.formula})`;
-    },
-    icon: "percentChance.png",
-    // explanation: () => `True with a ${chance.explain} percent chance.`,
-    // FIXME: Replace with above code, after its clear what "chance" is
-    explanation: () => "True with a <unknown> percent chance.",
-    defaultArguments: getDefaultValue,
-  },
+  // {
+  //   name: "percentChance",
+  //   instructionType: CONDITION_TYPE,
+  //   parameters: {
+  //     chance: FormulaValue,
+  //   },
+  //   code(instruction: Instruction) {
+  //     return `this.percentChance(${instruction.getArgumentValue<FormulaValue>("chance")?.formula})`;
+  //   },
+  //   icon: "percentChance.png",
+  //   // explanation: () => `True with a ${chance.explain} percent chance.`,
+  //   // FIXME: Replace with above code, after its clear what "chance" is
+  //   explanation: () => "True with a <unknown> percent chance.",
+  //   defaultArguments: getDefaultValue,
+  // },
   {
     name: "empty",
     instructionType: CONDITION_TYPE,
@@ -119,9 +119,11 @@ export const instructionDefinitions: Array<InstructionDeclaration> = [
     code(instruction: Instruction) {
       const axisValue: AxisValue = instruction.getArgumentValue("axis") ?? new AxisValue("beta");
       const operatorValue: OperatorValue = instruction.getArgumentValue("comparisonOperator") ?? new OperatorValue("<");
-      return `this.deviceOrientationCondition('${axisValue.value}', '${operatorValue.value}', '1')`;
+      const value: FormulaValue = instruction.getArgumentValue("value") ?? new FormulaValue("0");
+      const validFormula = value.formula !== "" ? value.formula : "0";
+      return `this.deviceOrientationCondition('${axisValue.value}', '${operatorValue.value}', '${validFormula}')`;
     },
-    icon: "",
+    icon: "img/instructions/conditions/kippen.svg",
     explanation: () => "",
     defaultArguments: getDefaultValue,
   },
