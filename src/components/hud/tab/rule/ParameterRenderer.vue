@@ -23,11 +23,11 @@ import AxisEditor from "@/components/hud/tab/rule/value-editor/AxisEditor.vue";
 import OperatorEditor from "@/components/hud/tab/rule/value-editor/OperatorEditor.vue";
 
 const value2Editor = {
-  [DirectionValue.name]: DirectionValueEditor.name,
-  [ShapeNameValue.name]: ShapeEditor.name,
-  [FormulaValue.name]: FormulaEditor.name,
-  [AgentClassValue.name]: AgentClassSelectorEditor.name,
-  [SoundValue.name]: SoundValueEditor.name,
+  [DirectionValue.name]: "DirectionValueEditor",
+  [ShapeNameValue.name]: "ShapeEditor",
+  [FormulaValue.name]: "FormulaEditor",
+  [AgentClassValue.name]: "AgentClassSelectorEditor",
+  [SoundValue.name]: "SoundValueEditor",
   [AxisValue.name]: "AxisEditor",
   [OperatorValue.name]: "OperatorEditor",
 };
