@@ -3,14 +3,14 @@
 // ***************************************************
 
 import {app} from "@/engine/app";
-import {Box3, BoxHelper} from "three";
+import {Box3, BoxHelper, Vector2} from "three";
 import {hoverBoxColor, selectionBoxColor} from "@/engine/globals";
 import {Shape} from "@/engine/Shape";
 import {AgentCube} from "@/engine/AgentCube";
 import {AgentClass} from "@/engine/agent/AgentClass";
 import {GridVector} from "@/model/util/GridVector";
 import {mapValue} from "@/util/util";
-import {AxisType, AxisValue, OperatorType, OperatorValue} from "@/engine/instruction-value";
+import {AxisType, OperatorType} from "@/engine/instruction-value";
 
 const FormulaParser = require("hot-formula-parser").Parser;
 
@@ -200,11 +200,23 @@ export class Agent {
     this.parent.removeAgent(this, removeFromScene);
   }
 
+  collisionTest(otherAgent: Agent): boolean {
+    const myBox = new Box3();
+    myBox.setFromObject(this.shape.mesh);
+    const otherBox = new Box3();
+    otherBox.setFromObject(otherAgent.shape.mesh);
+    return myBox.intersectsBox(otherBox);
+  }
+
   // C O N D I T I O N S
   see(shapeName: string, deltaRow: number, deltaColumn: number, deltaLayer = 0) {
     const agent = this.agentRelative(deltaRow, deltaColumn, deltaLayer);
-    // console.log(`agent: ${agent}`);
-    return (agent != null && agent.shape.id === shapeName);
+    if (agent == null || agent.shape.id !== shapeName) {
+      return false;
+    }
+
+    // ok, we have an agent that could be close to us with the given shape.
+    return this.collisionTest(agent);
   }
 
   seeAgent(agentClassName: string, deltaRow: number, deltaColumn: number, deltaLayer = 0): boolean {
@@ -221,17 +233,34 @@ export class Agent {
   }
 
   empty(deltaRow: number, deltaColumn: number, deltaLayer = 0) {
-    const newPosition = this.gridPosition.add(deltaRow, deltaColumn, deltaLayer);
-    if (!this.isValidCoordinate(newPosition)) return false;
-    return this.parent.map.getStack(newPosition).length === 0;
+    // const newPosition = this.gridPosition.add(deltaRow, deltaColumn, deltaLayer);
+    const agentRelative = this.agentRelative(deltaRow, deltaColumn, deltaLayer);
+    // if (!this.isValidCoordinate(newPosition)) return false;
+    // return this.parent.map.getStack(newPosition).length === 0;
+    return agentRelative == null || !this.collisionTest(agentRelative);
   }
 
   // A C T I O N S
-  move(deltaRow: number, deltaColumn: number, deltaLayer = 0) {
-    const newPosition = this.gridPosition.add(deltaRow, deltaColumn, deltaLayer);
-    if (!this.isValidCoordinate(newPosition)) return;
-    this.removeFromMap();
-    app.agentCube.pushAgent(this, newPosition);
+  move(deltaRow: number, deltaColumn: number, deltaLayer: number, velocityFormula: string) {
+    const velocityValue = parseFloat(velocityFormula) * this.parent.map.cellSize;
+    const velocityVector = new Vector2(deltaColumn, deltaRow);
+    // FIXME: This time is the threejs last loop update time, find a way to get this information here
+    const time = 0.1;
+    velocityVector.multiplyScalar(velocityValue * time);
+
+    this.x += velocityVector.x;
+    this.y += velocityVector.y;
+    const gridPos = new GridVector(Math.floor(this.x / this.parent.map.cellSize), Math.floor(this.y / this.parent.map.cellSize));
+    console.log(gridPos);
+    console.log("current map pos", this.gridPosition);
+
+    this.parent.map.updateAgentPosition(this, gridPos);
+
+    // Old Code
+    // const newPosition = this.gridPosition.add(deltaRow, deltaColumn, deltaLayer);
+    // if (!this.isValidCoordinate(newPosition)) return;
+    // this.removeFromMap();
+    // app.agentCube.pushAgent(this, newPosition);
   }
 
   teleportTo(position: GridVector) {
@@ -250,7 +279,7 @@ export class Agent {
     const newPosition = this.gridPosition.add(deltaRow, deltaColumn, 0);
     // ignore layers for now
     if (this.isValidCoordinate(newPosition)) {
-      this.move(deltaRow, deltaColumn);
+      this.move(deltaRow, deltaColumn, 0, "0.1");
     }
   }
 

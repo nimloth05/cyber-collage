@@ -133,12 +133,13 @@ export const instructionDefinitions: Array<InstructionDeclaration> = [
     instructionType: ACTION_TYPE,
     parameters: {
       direction: DirectionValue,
+      velocity: FormulaValue,
     },
     code(instruction: Instruction) {
       console.log("here");
-      const {direction} = instruction.args;
-      const asDirectionValue = direction as DirectionValue;
-      return `this.move(${asDirectionValue.row}, ${asDirectionValue.column})`;
+      const direction: DirectionValue = instruction.getArgumentValue("direction") ?? new DirectionValue(0, 0);
+      const velocity: FormulaValue = instruction.getArgumentValue("velocity") ?? new FormulaValue("1.0");
+      return `this.move(${direction.row}, ${direction.column}, 0, '${velocity.formula}')`;
     },
     icon: "img/instructions/actions/move.svg",
     explanation({direction}: any) {

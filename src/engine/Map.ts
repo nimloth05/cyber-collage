@@ -257,4 +257,36 @@ export class AgentMap {
   get columnsInRenderSpace(): number {
     return this.cellSize * this.columns;
   }
+
+  updateAgentPosition(agent: Agent, newPos: GridVector) {
+    if (newPos.row === -1 || newPos.column === -1) return; // this should never happen
+    if (agent.gridPosition.row === newPos.row && agent.gridPosition.column === newPos.column) {
+      return;
+    }
+
+    const oldStack = this.getStack(agent.gridPosition);
+    const newStack = this.getStack(newPos);
+
+    oldStack.splice(oldStack.indexOf(agent), 1);
+    // FIXME: Update stack z positions
+
+    // if (agent.shape.mesh.parent == null) {
+    //   // FIXME: This is a hack
+    //   this.agentGroup.add(agent.shape.mesh);
+    // }
+    const agentAtTop = newStack[newStack.length - 1];
+    if (agentAtTop == null) {
+      agent.z = newPos.layer * this.cellSize;
+    } else {
+      // Agents can be of different heights! So we cannot do stack.length * agentHeight
+      agent.z = agentAtTop.z + agentAtTop.depth;
+    }
+
+    // adjust topology
+    agent.gridPosition = newPos;
+    // adjust part hierarchy
+    // update stack
+    newStack.push(agent);
+    // this.agentList.push(agent);
+  }
 }
