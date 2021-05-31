@@ -93,7 +93,7 @@ export const instructionDefinitions: Array<InstructionDeclaration> = [
       const direction = instruction.getArgumentValue<DirectionValue>("direction")!;
       return `this.empty(${direction.row}, ${direction?.column})`;
     },
-    icon: "img/instructions/conditions/question.svg",
+    icon: "img/instructions/conditions/empty.svg",
     explanation: () => "Prüfe ob in angegebener Richtung kein Agent steht",
     defaultArguments: getDefaultValue,
   },
@@ -146,6 +146,20 @@ export const instructionDefinitions: Array<InstructionDeclaration> = [
     },
     defaultArguments: getDefaultValue,
   },
+  {
+    name: "moveRandom",
+    instructionType: ACTION_TYPE,
+    parameters: {},
+    code(instruction: Instruction) {
+      return "this.moveRandom()";
+    },
+    icon: "img/instructions/actions/moverandom.svg",
+    explanation({direction}: any) {
+    return "I move random}";
+    },
+    defaultArguments: getDefaultValue,
+  },
+
   {
     name: "createNew",
     instructionType: ACTION_TYPE,

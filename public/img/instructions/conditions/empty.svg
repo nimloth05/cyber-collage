@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 19 19">
+  <g id="Gruppe_729" data-name="Gruppe 729" transform="translate(-4 -3.915)">
+    <path id="Pfad_313" data-name="Pfad 313" d="M5.72,6.579a.86.86,0,0,1,.86-.86H9.159V4H6.579A2.579,2.579,0,0,0,4,6.579V9.159H5.72Z" fill="#795800"/>
+    <rect id="Rechteck_488" data-name="Rechteck 488" width="7" height="2" transform="translate(10 3.915)" fill="#795800"/>
+    <rect id="Rechteck_489" data-name="Rechteck 489" width="2" height="7" transform="translate(4 9.915)" fill="#795800"/>
+    <path id="Pfad_314" data-name="Pfad 314" d="M6.579,71.439a.86.86,0,0,1-.86-.86V68H4v2.579a2.579,2.579,0,0,0,2.579,2.579H9.159v-1.72Z" transform="translate(0 -50.244)" fill="#795800"/>
+    <rect id="Rechteck_490" data-name="Rechteck 490" width="2" height="7" transform="translate(21 9.915)" fill="#795800"/>
+    <path id="Pfad_315" data-name="Pfad 315" d="M70.579,4H68V5.72h2.579a.86.86,0,0,1,.86.86V9.159h1.72V6.579A2.579,2.579,0,0,0,70.579,4Z" transform="translate(-50.244)" fill="#795800"/>
+    <rect id="Rechteck_491" data-name="Rechteck 491" width="7" height="2" transform="translate(10 20.915)" fill="#795800"/>
+    <path id="Pfad_316" data-name="Pfad 316" d="M71.439,70.579a.86.86,0,0,1-.86.86H68v1.72h2.579a2.579,2.579,0,0,0,2.579-2.579V68h-1.72Z" transform="translate(-50.244 -50.244)" fill="#795800"/>
+  </g>
+</svg>
