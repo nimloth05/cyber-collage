@@ -130,16 +130,28 @@ export type ListSelectionEntry = {
 
 export type AxisType = "alpha" | "beta" | "gamma";
 
-export abstract class GenericListValue extends InstructionValue {
-  value: any;
+export abstract class AbstractStringListValue<T> extends InstructionValue {
+  abstract value: string;
+
+  abstract getOptions(): Array<ListSelectionEntry>;
+
+  abstract createFromString(value: string): AbstractStringListValue<T>
 }
 
-export class AxisValue extends InstructionValue {
+export class AxisValue extends AbstractStringListValue<AxisValue> {
   value: AxisType
 
   constructor(value: AxisType) {
     super();
     this.value = value;
+  }
+
+  getOptions(): Array<ListSelectionEntry> {
+    return AxisValue.options();
+  }
+
+  createFromString(value: string): AbstractStringListValue<AxisValue> {
+    return new AxisValue(value as AxisType);
   }
 
   static deserialize(argValue: ArgEntry): AxisValue {

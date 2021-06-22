@@ -5,8 +5,8 @@
 <script lang="ts">
 import {Options, Vue} from "vue-class-component";
 import {
+  AbstractStringListValue,
   AgentClassValue,
-  AxisValue,
   DirectionValue,
   FormulaValue,
   InstructionValue,
@@ -19,8 +19,8 @@ import ShapeEditor from "@/components/hud/tab/rule/value-editor/ShapeEditor.vue"
 import FormulaEditor from "@/components/hud/tab/rule/value-editor/FormulaEditor.vue";
 import AgentClassSelectorEditor from "@/components/hud/tab/rule/value-editor/AgentClassSelectorEditor.vue";
 import SoundValueEditor from "@/components/hud/tab/rule/value-editor/SoundValueEditor.vue";
-import AxisEditor from "@/components/hud/tab/rule/value-editor/AxisEditor.vue";
 import OperatorEditor from "@/components/hud/tab/rule/value-editor/OperatorEditor.vue";
+import ListSelectionEditorWrapper from "@/components/hud/tab/rule/value-editor/ListSelectionEditorWrapper.vue";
 
 const value2Editor = {
   [DirectionValue.name]: "DirectionValueEditor",
@@ -28,7 +28,6 @@ const value2Editor = {
   [FormulaValue.name]: "FormulaEditor",
   [AgentClassValue.name]: "AgentClassSelectorEditor",
   [SoundValue.name]: "SoundValueEditor",
-  [AxisValue.name]: "AxisEditor",
   [OperatorValue.name]: "OperatorEditor",
 };
 
@@ -49,8 +48,8 @@ const value2Editor = {
     FormulaEditor,
     AgentClassSelectorEditor,
     SoundValueEditor,
-    AxisEditor,
     OperatorEditor,
+    ListSelectionEditorWrapper,
   },
 })
 export default class ParameterRenderer extends Vue {
@@ -59,9 +58,16 @@ export default class ParameterRenderer extends Vue {
   readOnly!: boolean;
   id!: string;
 
-  // FIXME: Use table for paramType -> Editor matching
-
   get valueEditor(): string {
+    if (this.param instanceof DirectionValue) {
+      return "DirectionValueEditor";
+    }
+
+    // eslint-disable-next-line
+    if (AbstractStringListValue.isPrototypeOf(this.param)) {
+      return "ListSelectionEditorWrapper";
+    }
+
     const value = value2Editor[this.paramTypeName];
     if (value == null) {
       console.warn("Could not find matching editor: ", this.paramTypeName);
@@ -85,6 +91,10 @@ export default class ParameterRenderer extends Vue {
 
     // Param should be a constructor function and so it must have a name.
     return this.param.name;
+  }
+
+  get paramType(): Function {
+    return this.param;
   }
 
   isDirectionValue(): boolean {

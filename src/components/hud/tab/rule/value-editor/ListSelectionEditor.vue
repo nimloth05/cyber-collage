@@ -39,6 +39,7 @@ export default defineComponent({
       // Middle icon pressed, no change
 
       this.$emit("update:modelValue", eventData.instructionValue);
+      this.$emit("arg-changed", eventData.instructionValue);
     },
     changeElement() {
       this.editorVisible = true;
