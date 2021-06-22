@@ -3,7 +3,7 @@
 // ***************************************************
 
 import {app} from "@/engine/app";
-import {Box3, BoxHelper, Vector2} from "three";
+import {Box3, BoxHelper, Vector2, Vector3} from "three";
 import {hoverBoxColor, selectionBoxColor} from "@/engine/globals";
 import {Shape} from "@/engine/Shape";
 import {AgentCube} from "@/engine/AgentCube";
@@ -201,10 +201,23 @@ export class Agent {
   }
 
   collisionTest(otherAgent: Agent): boolean {
+    const cellSize = this.parent.map.cellSize;
     const myBox = new Box3();
     myBox.setFromObject(this.shape.mesh);
+    const mySize = myBox.getSize(new Vector3());
+    myBox.min.x -= (cellSize - mySize.x) / 2;
+    myBox.max.x += (cellSize - mySize.x) / 2;
+    myBox.min.y -= (cellSize - mySize.y) / 2;
+    myBox.max.y += (cellSize - mySize.y) / 2;
+
     const otherBox = new Box3();
     otherBox.setFromObject(otherAgent.shape.mesh);
+    const otherSize = otherBox.getSize(new Vector3());
+    otherBox.min.x -= (cellSize - otherSize.x) / 2;
+    otherBox.max.x += (cellSize - otherSize.x) / 2;
+    otherBox.min.y -= (cellSize - otherSize.y) / 2;
+    otherBox.max.y += (cellSize - otherSize.y) / 2;
+
     return myBox.intersectsBox(otherBox);
   }
 
@@ -251,8 +264,6 @@ export class Agent {
     this.x += velocityVector.x;
     this.y += velocityVector.y;
     const gridPos = new GridVector(Math.floor(this.x / this.parent.map.cellSize), Math.floor(this.y / this.parent.map.cellSize));
-    console.log(gridPos);
-    console.log("current map pos", this.gridPosition);
 
     this.parent.map.updateAgentPosition(this, gridPos);
 
@@ -306,12 +317,13 @@ export class Agent {
     }
     const agentClass = this.app.repository.getClass(agentClassName);
     if (agentClass == null) {
+      console.warn("class not found", agentClassName);
       return;
     }
 
     const newPosition = this.gridPosition.add(deltaRow, deltaColumn, deltaLayer);
-    const newAgent = this.agentClass.createAgent();
-    app.agentCube.pushAgent(newAgent, newPosition);
+    const newAgent = agentClass.createAgent();
+    this.parent.pushAgent(newAgent, newPosition);
   }
 
   getTappedStateAndReset(): boolean {

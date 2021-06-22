@@ -265,7 +265,15 @@ export class AgentMap {
     }
 
     const oldStack = this.getStack(agent.gridPosition);
+    // if (oldStack == null) {
+    //   return;
+    // }
     const newStack = this.getStack(newPos);
+
+    if (newStack == null) {
+      console.warn("stack not found", newPos);
+      return;
+    }
 
     oldStack.splice(oldStack.indexOf(agent), 1);
     // FIXME: Update stack z positions
