@@ -38,7 +38,7 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 
 ## License
 
-The code of this project is licensed as <PLEASE SPECIFY>. Some parts of the project use a different licensed:
+The code of this project is licensed as GPL. Some parts of the project use a different licensed:
 
 - Assets in public/shapes-mmmm: The files inside this directory are licensed as Creative Commons Attribution 4.0
   International The original source of the voxel models is https://github.com/mikelovesrobots/mmmm 
